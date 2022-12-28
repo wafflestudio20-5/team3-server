@@ -21,5 +21,4 @@ class User(
     @NotNull
     val username: String,
     val imageUrl: String
-) : BaseTimeEntity() {
-}
+) : BaseTimeEntity()

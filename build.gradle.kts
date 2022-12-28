@@ -46,8 +46,8 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
 
     // Swagger
-//	implementation("org.springdoc:springdoc-openapi-ui:1.6.13")
-//	implementation("org.springdoc:springdoc-openapi-kotlin:1.6.13")
+// 	implementation("org.springdoc:springdoc-openapi-ui:1.6.13")
+// 	implementation("org.springdoc:springdoc-openapi-kotlin:1.6.13")
 
     // Kotlin Features
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

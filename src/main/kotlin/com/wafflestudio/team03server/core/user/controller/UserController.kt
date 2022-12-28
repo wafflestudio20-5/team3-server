@@ -10,5 +10,4 @@ class UserController {
     fun hello(): String {
         return "hello"
     }
-
 }

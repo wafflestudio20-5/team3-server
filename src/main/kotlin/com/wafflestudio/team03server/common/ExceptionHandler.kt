@@ -6,5 +6,4 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 class SeminarExceptionHandler {
 
     // TODO as-you-wish
-
 }
