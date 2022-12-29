@@ -24,11 +24,7 @@ class OAuthUserController(
     }
 
     @GetMapping("/google/callback")
-    fun googleLoginCallback(
-        @RequestParam(name = "code") code: String
-    ): GoogleLoginResponse
-    {
+    fun googleLoginCallback(@RequestParam(name = "code") code: String): GoogleLoginResponse {
         return oAuthService.oAuthLogin(code)
     }
-
 }

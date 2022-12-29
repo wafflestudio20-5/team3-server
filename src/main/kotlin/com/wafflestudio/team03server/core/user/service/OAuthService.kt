@@ -15,8 +15,13 @@ class OAuthService(
 
     fun oAuthLogin(code: String): GoogleLoginResponse {
         val googleAuthToken: GoogleAuthToken = googleOAuth.getAccessToken(code)
-        val googleUser: GoogleUser = googleOAuth.getUserInfo(googleAuthToken);
+        val googleUser: GoogleUser = googleOAuth.getUserInfo(googleAuthToken)
         val userEmail: String = googleUser.email
-        return GoogleLoginResponse("zxcuasc.asxauisx.asdxas", 100, googleAuthToken.access_token, googleAuthToken.token_type)
+        return GoogleLoginResponse(
+            "zxcuasc.asxauisx.asdxas",
+            100,
+            googleAuthToken.access_token,
+            googleAuthToken.token_type
+        )
     }
 }

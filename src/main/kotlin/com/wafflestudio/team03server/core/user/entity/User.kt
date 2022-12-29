@@ -15,11 +15,10 @@ class User(
     @NotNull
     val location: String,
     @NotNull
-    val password:String,
+    val password: String,
     @NotNull
     val temperature: Double,
     @NotNull
     val username: String,
-    val imageUrl:String
-):BaseTimeEntity() {
-}
+    val imageUrl: String
+) : BaseTimeEntity()

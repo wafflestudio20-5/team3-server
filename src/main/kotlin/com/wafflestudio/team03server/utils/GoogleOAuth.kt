@@ -32,14 +32,14 @@ class GoogleOAuth(
     private val GOOGLE_SCOPE: String? = null
 
     private val GOOGLE_TOKEN_REQUEST_URL: String = "https://oauth2.googleapis.com/token"
-    private val GOOGLE_USERINFO_REQUEST_URL: String ="https://www.googleapis.com/oauth2/v1/userinfo";
+    private val GOOGLE_USERINFO_REQUEST_URL: String = "https://www.googleapis.com/oauth2/v1/userinfo"
 
     fun getOAuthRedirectUrl(): String {
         return "$GOOGLE_LOGIN_URL" +
-                "?response_type=code&" +
-                "scope=${GOOGLE_SCOPE}&" +
-                "client_id=${GOOGLE_CLIENT_ID}&" +
-                "redirect_uri=${GOOGLE_CALLBACK_URL}"
+            "?response_type=code&" +
+            "scope=$GOOGLE_SCOPE&" +
+            "client_id=$GOOGLE_CLIENT_ID&" +
+            "redirect_uri=$GOOGLE_CALLBACK_URL"
     }
 
     fun getAccessToken(code: String): GoogleAuthToken {

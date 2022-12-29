@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class Team03ServerApplication
 
 fun main(args: Array<String>) {
-	runApplication<Team03ServerApplication>(*args)
+    runApplication<Team03ServerApplication>(*args)
 }
