@@ -5,12 +5,10 @@ import com.wafflestudio.team03server.core.user.controller.vo.GoogleAuthToken
 import com.wafflestudio.team03server.core.user.controller.vo.GoogleUser
 import com.wafflestudio.team03server.utils.GoogleOAuth
 import org.springframework.stereotype.Service
-import javax.servlet.http.HttpServletResponse
 
 @Service
 class OAuthService(
     private val googleOAuth: GoogleOAuth,
-    private val response: HttpServletResponse,
 ) {
 
     fun oAuthLogin(code: String): GoogleLoginResponse {
