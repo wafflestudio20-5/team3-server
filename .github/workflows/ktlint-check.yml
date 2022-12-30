@@ -1,21 +1,27 @@
-name: ktlint
+name: Ktlint
 
-on:
-    pull_request:
-        branches:
-            - main
+on: [pull_request]
+
 jobs:
-    ktlint:
-        name: Check Code Quality
-        runs-on: ubuntu-latest
+  ktlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Set up Kotlin
+        uses: jetbrains/setup-kotlin@v1
+        with:
+          kotlin-version: 1.6.21
+      - name: Install ktlint
+        run: |
+          curl -sSLO https://github.com/pinterest/ktlint/releases/download/$(curl -s https://api.github.com/repos/pinterest/ktlint/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')/ktlint.jar
+          mv ktlint.jar ~/.local/bin/ktlint
+          chmod a+x ~/.local/bin/ktlint
+      - name: Lint code with ktlint
+        run: |
+          ktlint -F "$(find . -name '*.kt' | tr '\n' ' ')"
+          if [[ $? -ne 0 ]]; then exit 1; fi
 
-        steps:
-            - name: Clone repo
-              uses: actions/checkout@master
-              with:
-                  fetch-depth: 1
-            - name: ktlint
-              uses: ScaCap/action-ktlint@master
-              with:
-                  github_token: ${{ secrets.github_token }}
-                  reporter: github-pr-check # Change reporter
