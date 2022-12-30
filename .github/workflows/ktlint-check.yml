@@ -1,29 +1,21 @@
 name: Ktlint
 
-on: [pull_request]
+on:
+  pull_request:
+    branches: [ main ]
 
 jobs:
   ktlint:
+
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-      - name: Set up Kotlin
-        run: |
-          curl -sSL -o kotlin.zip https://github.com/JetBrains/kotlin/releases/download/v1.6.21/kotlin-1.6.21.zip
-          unzip kotlin.zip
-          chmod +x kotlin/bin/kotlin
-          chmod +x kotlin/bin/kotlinc
-          export PATH=$PATH:$PWD/kotlin/bin
-      - name: Install ktlint
-        run: |
-          curl -sSLO https://github.com/pinterest/ktlint/releases/download/$(curl -s https://api.github.com/repos/pinterest/ktlint/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')/ktlint.jar
-          mv ktlint.jar ~/.local/bin/ktlint
-          chmod a+x ~/.local/bin/ktlint
-      - name: Lint code with ktlint
-        run: |
-          ktlint -F "$(find . -name '*.kt' | tr '\n' ' ')"
-          if [[ $? -ne 0 ]]; then exit 1; fi
+    - uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: ktlintCheck with Gradle
+      run: ./gradlew ktlintCheck
