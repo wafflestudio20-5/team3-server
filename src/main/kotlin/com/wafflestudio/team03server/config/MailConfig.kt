@@ -27,6 +27,4 @@ class MailConfig {
         mailSender.password = password
         return mailSender
     }
-
-
 }

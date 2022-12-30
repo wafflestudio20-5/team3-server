@@ -20,5 +20,4 @@ class EmailService(
         helper.setText(content, true)
         mailSender.send(message)
     }
-
 }
