@@ -1,6 +1,6 @@
 name: Ktlint
 
-on: [pull_request]
+on: [push, pull_request]
 
 jobs:
   ktlint:
@@ -12,9 +12,12 @@ jobs:
         with:
           java-version: 11
       - name: Set up Kotlin
-        uses: jetbrains/setup-kotlin@v1
-        with:
-          kotlin-version: 1.6.21
+        run: |
+          curl -sSL -o kotlin.zip https://github.com/JetBrains/kotlin/releases/download/v1.6.21/kotlin-1.6.21.zip
+          unzip kotlin.zip
+          chmod +x kotlin/bin/kotlin
+          chmod +x kotlin/bin/kotlinc
+          export PATH=$PATH:$PWD/kotlin/bin
       - name: Install ktlint
         run: |
           curl -sSLO https://github.com/pinterest/ktlint/releases/download/$(curl -s https://api.github.com/repos/pinterest/ktlint/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')/ktlint.jar
@@ -24,4 +27,3 @@ jobs:
         run: |
           ktlint -F "$(find . -name '*.kt' | tr '\n' ' ')"
           if [[ $? -ne 0 ]]; then exit 1; fi
-
