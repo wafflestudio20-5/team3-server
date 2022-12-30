@@ -2,7 +2,6 @@ package com.wafflestudio.team03server.core.user.api
 
 import com.wafflestudio.team03server.core.user.api.request.GoogleLoginRequest
 import com.wafflestudio.team03server.core.user.api.response.GoogleLoginResponse
-import com.wafflestudio.team03server.core.user.service.AuthTokenService
 import com.wafflestudio.team03server.core.user.service.OAuthService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -14,7 +13,6 @@ import javax.validation.Valid
 @RestController
 class OAuthUserController(
     private val oAuthService: OAuthService,
-    private val authTokenService: AuthTokenService,
 ) {
 
     @PostMapping("/google/login")
