@@ -1,5 +1,7 @@
 package com.wafflestudio.team03server.core.user.service
 
+import com.wafflestudio.team03server.common.Exception401
+import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import org.springframework.http.ResponseEntity
@@ -15,6 +17,7 @@ interface UserService {
     fun checkDuplicatedEmail(email: String): Boolean
     fun checkDuplicateUsername(username: String): Boolean
     fun verifyEmail(token: String): ResponseEntity<Any>
+    fun login(email: String, password: String)
 }
 
 @Service
@@ -60,6 +63,13 @@ class UserServiceImpl(
         user.emailVerified = true
 
         return ResponseEntity.ok().build()
+    }
+
+    override fun login(email: String, password: String) {
+        val user = userRepository.findByEmail(email) ?: throw Exception404("No exsisting user with email: ${email}")
+        if (!passwordEncoder.matches(password, user.password)) {
+            throw Exception401("Incorrect password")
+        }
     }
 
     private fun generateVerificationToken(): String {

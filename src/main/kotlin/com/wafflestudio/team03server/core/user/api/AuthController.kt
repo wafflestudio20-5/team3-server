@@ -1,6 +1,9 @@
 package com.wafflestudio.team03server.core.user.api
 
+import com.wafflestudio.team03server.core.user.api.request.LoginRequest
 import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
+import com.wafflestudio.team03server.core.user.service.AuthToken
+import com.wafflestudio.team03server.core.user.service.AuthTokenService
 import com.wafflestudio.team03server.core.user.service.UserService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -10,6 +13,7 @@ import javax.validation.Valid
 @RequestMapping("/auth")
 class AuthController(
     private val userService: UserService,
+    private val authTokenService: AuthTokenService
 ) {
     // 이메일 중복체크
     @PostMapping("/checkEmail")
@@ -37,5 +41,11 @@ class AuthController(
     @GetMapping("/verifyEmail")
     fun verifyEmail(@RequestParam("token") token: String): ResponseEntity<Any> {
         return userService.verifyEmail(token)
+    }
+
+    @PostMapping("/login")
+    fun login(@RequestBody @Valid loginRequest: LoginRequest): ResponseEntity<AuthToken> {
+        userService.login(loginRequest.email!!, loginRequest.password!!)
+        return ResponseEntity.ok(authTokenService.generateTokenByEmail(loginRequest.email))
     }
 }
