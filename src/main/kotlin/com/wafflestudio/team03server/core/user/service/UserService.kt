@@ -66,7 +66,7 @@ class UserServiceImpl(
     }
 
     override fun login(email: String, password: String) {
-        val user = userRepository.findByEmail(email) ?: throw Exception404("No exsisting user with email: ${email}")
+        val user = userRepository.findByEmail(email) ?: throw Exception404("No exsisting user with email: $email")
         if (!passwordEncoder.matches(password, user.password)) {
             throw Exception401("Incorrect password")
         }
