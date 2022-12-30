@@ -33,6 +33,7 @@ repositories {
 }
 
 dependencies {
+    // Web & DB
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -41,6 +42,7 @@ dependencies {
 
     // Auth
     implementation("org.springframework.boot:spring-boot-starter-security")
+
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
     implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
@@ -55,6 +57,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    // Mail
+    implementation("com.sun.mail:javax.mail:1.6.2")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
