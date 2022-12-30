@@ -11,14 +11,18 @@ import javax.validation.constraints.NotNull
 class User(
     @Column(unique = true)
     @NotNull
+    val username: String,
+    @Column(unique = true)
+    @NotNull
     val email: String,
+    @NotNull
+    var password: String,
     @NotNull
     val location: String,
     @NotNull
-    val password: String,
-    @NotNull
-    val temperature: Double,
-    @NotNull
-    val username: String,
-    val imageUrl: String
+    val temperature: Double = 36.5,
+    val imageUrl: String? = null,
+    @Column(unique = true)
+    var verificationToken: String? = null,
+    var emailVerified: Boolean = false
 ) : BaseTimeEntity()

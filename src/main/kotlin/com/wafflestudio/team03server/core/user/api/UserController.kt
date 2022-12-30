@@ -1,4 +1,4 @@
-package com.wafflestudio.team03server.core.user.controller
+package com.wafflestudio.team03server.core.user.api
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController

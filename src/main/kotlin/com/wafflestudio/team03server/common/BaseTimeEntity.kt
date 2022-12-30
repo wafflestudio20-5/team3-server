@@ -1,14 +1,10 @@
 package com.wafflestudio.team03server.common
 
 import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
-import javax.persistence.Column
-import javax.persistence.EntityListeners
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.MappedSuperclass
+import javax.persistence.*
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
@@ -18,7 +14,7 @@ abstract class BaseTimeEntity {
     @Column(columnDefinition = "datetime(6) default '1999-01-01'")
     var createdAt: LocalDateTime? = null
 
-    @CreatedDate
+    @LastModifiedDate
     @Column(columnDefinition = "datetime(6) default '1999-01-01'")
     var modifiedAt: LocalDateTime? = null
 

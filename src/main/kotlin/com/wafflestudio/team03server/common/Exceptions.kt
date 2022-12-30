@@ -2,8 +2,10 @@ package com.wafflestudio.team03server.common
 
 import org.springframework.http.HttpStatus
 
-open class SeminarException(msg: String, val status: HttpStatus) : RuntimeException(msg)
+open class Exception(msg: String, val status: HttpStatus) : RuntimeException(msg)
 
-class Seminar404(msg: String) : SeminarException(msg, HttpStatus.NOT_FOUND)
-
-class Seminar400(msg: String) : SeminarException(msg, HttpStatus.BAD_REQUEST)
+class Exception404(msg: String) : Exception(msg, HttpStatus.NOT_FOUND)
+class Exception400(msg: String) : Exception(msg, HttpStatus.BAD_REQUEST)
+class Exception401(msg: String) : Exception(msg, HttpStatus.UNAUTHORIZED)
+class Exception403(msg: String) : Exception(msg, HttpStatus.FORBIDDEN)
+class Exception409(msg: String) : Exception(msg, HttpStatus.CONFLICT)
