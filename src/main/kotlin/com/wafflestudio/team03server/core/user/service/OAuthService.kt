@@ -18,8 +18,8 @@ class OAuthService(
     fun googleLogin(email: String): GoogleLoginResponse {
         val findUser = userRepository.findByEmail(email) ?: throw Exception404(NEED_SIGNUP_MESSAGE)
         checkVerifiedUser(findUser)
-        val jwtToken = authTokenService.generateTokenByEmail(findUser.email).accessToken
-        return GoogleLoginResponse(jwtToken, SimpleUserResponse.of(findUser))
+        val accessToken = authTokenService.generateTokenByEmail(findUser.email).accessToken
+        return GoogleLoginResponse(accessToken, SimpleUserResponse.of(findUser))
     }
 
     private fun checkVerifiedUser(findUser: User) {
