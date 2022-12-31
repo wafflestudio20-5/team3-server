@@ -13,7 +13,7 @@ class MailConfig {
     @Bean
     fun mailSender(
         @Value("\${gmail.username}") username: String,
-        @Value("\${gmail.password}") password: String
+        @Value("\${gmail.password}") password: String,
     ): JavaMailSender {
         val props = Properties()
         props["mail.smtp.auth"] = true

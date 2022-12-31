@@ -14,7 +14,7 @@ data class SignUpRequest(
     val password: String?,
     @field:NotBlank(message = "location is required")
     val location: String?,
-    val imageUrl: String? = null
+    val imageUrl: String? = null,
 ) {
     fun toUser(): User {
         return User(username!!, email!!, password!!, location!!, imageUrl = imageUrl)

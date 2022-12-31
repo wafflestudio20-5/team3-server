@@ -24,5 +24,5 @@ class User(
     val imageUrl: String? = null,
     @Column(unique = true)
     var verificationToken: String? = null,
-    var emailVerified: Boolean = false
+    var emailVerified: Boolean = false,
 ) : BaseTimeEntity()
