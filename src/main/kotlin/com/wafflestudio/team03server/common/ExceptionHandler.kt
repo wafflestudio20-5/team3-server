@@ -14,7 +14,6 @@ class ExceptionHandler {
 
     // Request Validation
     @ExceptionHandler(value = [MethodArgumentNotValidException::class])
-    fun handle(e: MethodArgumentNotValidException): ResponseEntity<Any> {
-        return ResponseEntity(e.bindingResult.allErrors[0].defaultMessage, HttpStatus.BAD_REQUEST)
-    }
+    fun handle(e: MethodArgumentNotValidException): ResponseEntity<Any> =
+        ResponseEntity(e.bindingResult.allErrors[0].defaultMessage, HttpStatus.BAD_REQUEST)
 }
