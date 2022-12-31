@@ -22,7 +22,7 @@ interface UserService {
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val emailService: EmailService
+    private val emailService: EmailService,
 ) : UserService {
 
     override fun signUp(signUpRequest: SignUpRequest) {
@@ -35,8 +35,9 @@ class UserServiceImpl(
         user.verificationToken = verificationToken
         userRepository.save(user)
         emailService.sendEmail(
-            signUpRequest.email, "회원가입 인증 이메일",
-            "http://localhost:8080/auth/verifyEmail?token=$verificationToken"
+            signUpRequest.email,
+            "회원가입 인증 이메일",
+            "http://localhost:8080/auth/verifyEmail?token=$verificationToken",
         )
     }
 

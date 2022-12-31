@@ -16,7 +16,10 @@ class OAuthUserController(
 ) {
 
     @PostMapping("/google/login")
-    fun googleLogin(@Valid @RequestBody googleLoginRequest: GoogleLoginRequest): ResponseEntity<GoogleLoginResponse> {
+    fun googleLogin(
+        @Valid @RequestBody
+        googleLoginRequest: GoogleLoginRequest,
+    ): ResponseEntity<GoogleLoginResponse> {
         val userEmail = googleLoginRequest.email
         val response = oAuthService.googleLogin(userEmail)
         return ResponseEntity(response, HttpStatus.OK)

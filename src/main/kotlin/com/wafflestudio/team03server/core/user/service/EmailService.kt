@@ -7,7 +7,7 @@ import javax.mail.internet.MimeMessage
 
 @Service
 class EmailService(
-    private val mailSender: JavaMailSender
+    private val mailSender: JavaMailSender,
 ) {
 
     fun sendEmail(toMail: String, title: String, content: String) {

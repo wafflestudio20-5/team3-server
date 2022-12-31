@@ -15,13 +15,12 @@ class AuthConfig {
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
-    fun securityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain =
-        httpSecurity
-            .csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeRequests()
-            .anyRequest().permitAll()
-            .and()
-            .build()
+    fun securityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain = httpSecurity
+        .csrf().disable()
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .authorizeRequests()
+        .anyRequest().permitAll()
+        .and()
+        .build()
 }

@@ -9,7 +9,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/auth")
 class AuthController(
-    private val userService: UserService
+    private val userService: UserService,
 ) {
     // 이메일 중복체크
     @PostMapping("/checkEmail")
@@ -25,7 +25,10 @@ class AuthController(
 
     // 회원가입
     @PostMapping("/signup")
-    fun signUp(@Valid @RequestBody signUpRequest: SignUpRequest): ResponseEntity<Any> {
+    fun signUp(
+        @Valid @RequestBody
+        signUpRequest: SignUpRequest,
+    ): ResponseEntity<Any> {
         userService.signUp(signUpRequest)
         return ResponseEntity.ok().build()
     }
