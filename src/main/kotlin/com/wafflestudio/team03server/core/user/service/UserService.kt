@@ -3,6 +3,8 @@ package com.wafflestudio.team03server.core.user.service
 import com.wafflestudio.team03server.common.Exception400
 import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
+import com.wafflestudio.team03server.core.user.api.response.LoginResponse
+import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -17,7 +19,7 @@ interface UserService {
     fun checkDuplicatedEmail(email: String): Boolean
     fun checkDuplicateUsername(username: String): Boolean
     fun verifyEmail(token: String): ResponseEntity<Any>
-    fun login(email: String, password: String)
+    fun login(email: String, password: String): LoginResponse
 }
 
 @Service
@@ -26,6 +28,7 @@ class UserServiceImpl(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val emailService: EmailService,
+    private val authTokenService: AuthTokenService
 ) : UserService {
 
     override fun signUp(signUpRequest: SignUpRequest) {
@@ -65,14 +68,16 @@ class UserServiceImpl(
         return ResponseEntity.ok().build()
     }
 
-    override fun login(email: String, password: String) {
-        val user = userRepository.findByEmail(email) ?: throw Exception403("이메일 또는 비밀번호가 잘못되었습니다.")
-        if (!passwordEncoder.matches(password, user.password)) {
+    override fun login(email: String, password: String): LoginResponse {
+        val findUser = userRepository.findByEmail(email) ?: throw Exception403("이메일 또는 비밀번호가 잘못되었습니다.")
+        if (!passwordEncoder.matches(password, findUser.password)) {
             throw Exception403("이메일 또는 비밀번호가 잘못되었습니다.")
         }
-        if (!user.emailVerified) {
+        if (!findUser.emailVerified) {
             throw Exception400("이메일 인증이 필요합니다.")
         }
+        val accessToken = authTokenService.generateTokenByEmail(email).accessToken
+        return LoginResponse(accessToken, SimpleUserResponse.of(findUser))
     }
 
     private fun generateVerificationToken(): String {

@@ -1,7 +1,7 @@
 package com.wafflestudio.team03server.core.user.service
 
 import com.wafflestudio.team03server.common.Exception404
-import com.wafflestudio.team03server.core.user.api.response.GoogleLoginResponse
+import com.wafflestudio.team03server.core.user.api.response.LoginResponse
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
@@ -15,11 +15,11 @@ class OAuthService(
     private val authTokenService: AuthTokenService,
 ) {
 
-    fun googleLogin(email: String): GoogleLoginResponse {
+    fun googleLogin(email: String): LoginResponse {
         val findUser = userRepository.findByEmail(email) ?: throw Exception404(NEED_SIGNUP_MESSAGE)
         checkVerifiedUser(findUser)
         val accessToken = authTokenService.generateTokenByEmail(findUser.email).accessToken
-        return GoogleLoginResponse(accessToken, SimpleUserResponse.of(findUser))
+        return LoginResponse(accessToken, SimpleUserResponse.of(findUser))
     }
 
     private fun checkVerifiedUser(findUser: User) {
