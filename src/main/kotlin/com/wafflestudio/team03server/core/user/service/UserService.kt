@@ -1,7 +1,7 @@
 package com.wafflestudio.team03server.core.user.service
 
-import com.wafflestudio.team03server.common.Exception401
-import com.wafflestudio.team03server.common.Exception404
+import com.wafflestudio.team03server.common.Exception400
+import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import org.springframework.http.ResponseEntity
@@ -66,9 +66,12 @@ class UserServiceImpl(
     }
 
     override fun login(email: String, password: String) {
-        val user = userRepository.findByEmail(email) ?: throw Exception404("No exsisting user with email: $email")
+        val user = userRepository.findByEmail(email) ?: throw Exception403("이메일 또는 비밀번호가 잘못되었습니다.")
         if (!passwordEncoder.matches(password, user.password)) {
-            throw Exception401("Incorrect password")
+            throw Exception403("이메일 또는 비밀번호가 잘못되었습니다.")
+        }
+        if (!user.emailVerified) {
+            throw Exception400("이메일 인증이 필요합니다.")
         }
     }
 
