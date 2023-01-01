@@ -1,6 +1,6 @@
 package com.wafflestudio.team03server.core.user.api.response
 
-data class GoogleLoginResponse(
+data class LoginResponse(
     val jwtToken: String,
-    val user: SimpleUserResponse
+    val user: SimpleUserResponse,
 )
