@@ -13,7 +13,7 @@ import java.util.*
 @EnableConfigurationProperties(AuthProperties::class)
 class AuthTokenService(
     private val authProperties: AuthProperties,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) {
     private val tokenPrefix = "Bearer "
     private val signingKey = Keys.hmacShaKeyFor(authProperties.jwtSecret.toByteArray())
