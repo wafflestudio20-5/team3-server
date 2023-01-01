@@ -12,7 +12,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/auth")
 class AuthController(
-    private val userService: UserService
+    private val userService: UserService,
 ) {
     // 이메일 중복체크
     @PostMapping("/checkEmail")
