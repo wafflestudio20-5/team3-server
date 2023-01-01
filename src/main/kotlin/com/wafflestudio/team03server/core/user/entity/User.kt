@@ -21,7 +21,7 @@ class User(
     val location: String,
     @NotNull
     val temperature: Double = 36.5,
-    val imageUrl: String? = null,
+    val imgUrl: String? = null,
     @Column(unique = true)
     var verificationToken: String? = null,
     var emailVerified: Boolean = false,
