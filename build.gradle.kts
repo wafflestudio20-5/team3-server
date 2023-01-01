@@ -50,7 +50,7 @@ dependencies {
     // OAuth
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 
-//    Swagger
+    // Swagger
 //	implementation("org.springdoc:springdoc-openapi-ui:1.6.13")
 //	implementation("org.springdoc:springdoc-openapi-kotlin:1.6.13")
 
