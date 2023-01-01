@@ -47,8 +47,11 @@ class AuthServiceImpl(
     }
 
     override fun sendVerificationMail(email: String) {
-        val verificationToken = generateVerificationToken()
         val user = userRepository.findByEmail(email) ?: throw Exception404("유저를 찾을 수 없습니다.")
+        if (user.emailVerified){
+            throw Exception400("이미 인증 완료된 이메일입니다.")
+        }
+        val verificationToken = generateVerificationToken()
         user.verificationToken = verificationToken
         emailService.sendVerificationEmail(email,verificationToken)
     }
