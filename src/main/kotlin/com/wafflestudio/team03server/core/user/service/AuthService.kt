@@ -14,7 +14,7 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
 
-interface UserService {
+interface AuthService {
     fun signUp(signUpRequest: SignUpRequest)
     fun checkDuplicatedEmail(email: String): Boolean
     fun checkDuplicateUsername(username: String): Boolean
@@ -24,12 +24,12 @@ interface UserService {
 
 @Service
 @Transactional
-class UserServiceImpl(
+class AuthServiceImpl(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val emailService: EmailService,
     private val authTokenService: AuthTokenService
-) : UserService {
+) : AuthService {
 
     override fun signUp(signUpRequest: SignUpRequest) {
         checkDuplicatedEmail(signUpRequest.email!!)
