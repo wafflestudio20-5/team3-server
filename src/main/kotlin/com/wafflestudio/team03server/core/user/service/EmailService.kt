@@ -20,4 +20,12 @@ class EmailService(
         helper.setText(content, true)
         mailSender.send(message)
     }
+
+    fun sendVerificationEmail(email:String, verificationToken:String){
+        sendEmail(
+            email,
+            "회원가입 인증 이메일",
+            "http://localhost:8080/auth/verifyEmail?token=$verificationToken",
+        )
+    }
 }

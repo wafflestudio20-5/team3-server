@@ -15,13 +15,13 @@ class AuthController(
     private val authService: AuthService
 ) {
     // 이메일 중복체크
-    @PostMapping("/checkEmail")
+    @GetMapping("/checkEmail")
     fun checkEmail(@RequestParam("email") email: String): ResponseEntity<Boolean> {
         return ResponseEntity(authService.checkDuplicatedEmail(email), HttpStatus.OK)
     }
 
     // 유저네임 중복체크
-    @PostMapping("/checkUsername")
+    @GetMapping("/checkUsername")
     fun checkUsername(@RequestParam("username") username: String): ResponseEntity<Boolean> {
         return ResponseEntity(authService.checkDuplicateUsername(username), HttpStatus.OK)
     }
@@ -36,12 +36,27 @@ class AuthController(
         return ResponseEntity(HttpStatus.OK)
     }
 
+    // 인증 이메일 전송
+    @GetMapping("/sendVerificationEmail")
+    fun sendVerificationEmail(@RequestParam email: String):ResponseEntity<Any>{
+        authService.sendVerificationMail(email)
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    // 이메일 인증 확인
+    @GetMapping("/checkEmailVerified")
+    fun checkEmailVerified(@RequestParam email: String):ResponseEntity<Boolean>{
+        return ResponseEntity(authService.checkEmailVerified(email),HttpStatus.OK)
+    }
+
     // 이메일 인증
     @GetMapping("/verifyEmail")
     fun verifyEmail(@RequestParam("token") token: String): ResponseEntity<Any> {
-        return authService.verifyEmail(token)
+        authService.verifyEmail(token)
+        return ResponseEntity(HttpStatus.OK)
     }
 
+    // 로그인
     @PostMapping("/login")
     fun login(@RequestBody @Valid loginRequest: LoginRequest): ResponseEntity<LoginResponse> {
         val response = authService.login(loginRequest.email!!, loginRequest.password!!)
