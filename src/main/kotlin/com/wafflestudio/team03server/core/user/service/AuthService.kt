@@ -7,7 +7,6 @@ import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
 import com.wafflestudio.team03server.core.user.api.response.LoginResponse
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
 import com.wafflestudio.team03server.core.user.repository.UserRepository
-import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,7 +17,7 @@ import java.util.*
 interface AuthService {
     fun signUp(signUpRequest: SignUpRequest)
     fun sendVerificationMail(email: String)
-    fun checkEmailVerified(email: String):Boolean
+    fun checkEmailVerified(email: String): Boolean
     fun checkDuplicatedEmail(email: String): Boolean
     fun checkDuplicateUsername(username: String): Boolean
     fun verifyEmail(token: String)
@@ -48,12 +47,12 @@ class AuthServiceImpl(
 
     override fun sendVerificationMail(email: String) {
         val user = userRepository.findByEmail(email) ?: throw Exception404("유저를 찾을 수 없습니다.")
-        if (user.emailVerified){
+        if (user.emailVerified) {
             throw Exception400("이미 인증 완료된 이메일입니다.")
         }
         val verificationToken = generateVerificationToken()
         user.verificationToken = verificationToken
-        emailService.sendVerificationEmail(email,verificationToken)
+        emailService.sendVerificationEmail(email, verificationToken)
     }
 
     override fun checkEmailVerified(email: String): Boolean {
@@ -69,9 +68,9 @@ class AuthServiceImpl(
         return userRepository.findByUsername(username) == null
     }
 
-    override fun verifyEmail(token: String){
+    override fun verifyEmail(token: String) {
         val user = userRepository.findByVerificationToken(token) ?: throw Exception404("토큰이 유효하지 않습니다.")
-        if (user.emailVerified){
+        if (user.emailVerified) {
             throw Exception403("이미 인증 완료된 이메일입니다.")
         }
         val diff = Duration.between(user.modifiedAt, LocalDateTime.now())
