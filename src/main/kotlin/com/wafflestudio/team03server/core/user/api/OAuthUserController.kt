@@ -1,7 +1,7 @@
 package com.wafflestudio.team03server.core.user.api
 
 import com.wafflestudio.team03server.core.user.api.request.GoogleLoginRequest
-import com.wafflestudio.team03server.core.user.api.response.GoogleLoginResponse
+import com.wafflestudio.team03server.core.user.api.response.LoginResponse
 import com.wafflestudio.team03server.core.user.service.OAuthService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,7 +19,7 @@ class OAuthUserController(
     fun googleLogin(
         @Valid @RequestBody
         googleLoginRequest: GoogleLoginRequest,
-    ): ResponseEntity<GoogleLoginResponse> {
+    ): ResponseEntity<LoginResponse> {
         val userEmail = googleLoginRequest.email
         val response = oAuthService.googleLogin(userEmail)
         return ResponseEntity(response, HttpStatus.OK)
