@@ -38,15 +38,15 @@ class AuthController(
 
     // 인증 이메일 전송
     @GetMapping("/sendVerificationEmail")
-    fun sendVerificationEmail(@RequestParam email: String):ResponseEntity<Any>{
+    fun sendVerificationEmail(@RequestParam email: String): ResponseEntity<Any> {
         authService.sendVerificationMail(email)
         return ResponseEntity(HttpStatus.OK)
     }
 
     // 이메일 인증 확인
     @GetMapping("/checkEmailVerified")
-    fun checkEmailVerified(@RequestParam email: String):ResponseEntity<Boolean>{
-        return ResponseEntity(authService.checkEmailVerified(email),HttpStatus.OK)
+    fun checkEmailVerified(@RequestParam email: String): ResponseEntity<Boolean> {
+        return ResponseEntity(authService.checkEmailVerified(email), HttpStatus.OK)
     }
 
     // 이메일 인증

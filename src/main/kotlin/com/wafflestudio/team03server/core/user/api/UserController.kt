@@ -19,25 +19,25 @@ class UserController(
 
     @GetMapping("/{user-id}")
     fun getUser(@PathVariable("user-id") userId: Long): ResponseEntity<UserResponse> {
-        return ResponseEntity(userService.getProfile(userId),HttpStatus.OK)
+        return ResponseEntity(userService.getProfile(userId), HttpStatus.OK)
     }
 
     @Authenticated
     @GetMapping("/me")
-    fun getMe(@UserContext userId: Long): ResponseEntity<UserResponse>{
-        return ResponseEntity(userService.getProfile(userId),HttpStatus.OK)
+    fun getMe(@UserContext userId: Long): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.getProfile(userId), HttpStatus.OK)
     }
 
     @Authenticated
     @PatchMapping("/me")
-    fun editMe(@UserContext userId: Long, @Valid @RequestBody editProfileRequest: EditProfileRequest): ResponseEntity<UserResponse>{
-        return ResponseEntity(userService.editProfile(userId,editProfileRequest),HttpStatus.OK)
+    fun editMe(@UserContext userId: Long, @Valid @RequestBody editProfileRequest: EditProfileRequest): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.editProfile(userId, editProfileRequest), HttpStatus.OK)
     }
 
     @Authenticated
     @PutMapping("/me/password")
-    fun editPassword(@UserContext userId:Long,@Valid @RequestBody editPasswordRequest: EditPasswordRequest ):ResponseEntity<Any>{
-        userService.editPassword(userId,editPasswordRequest)
+    fun editPassword(@UserContext userId: Long, @Valid @RequestBody editPasswordRequest: EditPasswordRequest): ResponseEntity<Any> {
+        userService.editPassword(userId, editPasswordRequest)
         return ResponseEntity(HttpStatus.OK)
     }
 }

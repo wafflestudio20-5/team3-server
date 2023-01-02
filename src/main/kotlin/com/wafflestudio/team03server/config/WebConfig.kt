@@ -2,7 +2,6 @@ package com.wafflestudio.team03server.config
 
 import com.wafflestudio.team03server.common.Authenticated
 import com.wafflestudio.team03server.common.Exception401
-import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.common.UserContext
 import com.wafflestudio.team03server.core.user.service.AuthTokenService
 import org.springframework.context.annotation.Configuration

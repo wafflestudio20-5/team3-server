@@ -18,7 +18,7 @@ import java.util.*
 interface AuthService {
     fun signUp(signUpRequest: SignUpRequest)
     fun sendVerificationMail(email: String)
-    fun checkEmailVerified(email: String):Boolean
+    fun checkEmailVerified(email: String): Boolean
     fun isDuplicateEmail(email: String): Boolean
     fun isDuplicateUsername(username: String): Boolean
     fun verifyEmail(token: String)
@@ -35,10 +35,10 @@ class AuthServiceImpl(
 ) : AuthService {
 
     override fun signUp(signUpRequest: SignUpRequest) {
-        if(isDuplicateEmail(signUpRequest.email!!)){
+        if (isDuplicateEmail(signUpRequest.email!!)) {
             throw Exception409("이미 존재하는 이메일 입니다.")
         }
-        if(isDuplicateUsername(signUpRequest.username!!)){
+        if (isDuplicateUsername(signUpRequest.username!!)) {
             throw Exception409("이미 존재하는 유저네임 입니다.")
         }
         val user = signUpRequest.toUser()
@@ -52,12 +52,12 @@ class AuthServiceImpl(
 
     override fun sendVerificationMail(email: String) {
         val user = userRepository.findByEmail(email) ?: throw Exception404("유저를 찾을 수 없습니다.")
-        if (user.emailVerified){
+        if (user.emailVerified) {
             throw Exception400("이미 인증 완료된 이메일입니다.")
         }
         val verificationToken = generateVerificationToken()
         user.verificationToken = verificationToken
-        emailService.sendVerificationEmail(email,verificationToken)
+        emailService.sendVerificationEmail(email, verificationToken)
     }
 
     override fun checkEmailVerified(email: String): Boolean {
@@ -73,9 +73,9 @@ class AuthServiceImpl(
         return userRepository.findByUsername(username) != null
     }
 
-    override fun verifyEmail(token: String){
+    override fun verifyEmail(token: String) {
         val user = userRepository.findByVerificationToken(token) ?: throw Exception404("토큰이 유효하지 않습니다.")
-        if (user.emailVerified){
+        if (user.emailVerified) {
             throw Exception403("이미 인증 완료된 이메일입니다.")
         }
         val diff = Duration.between(user.modifiedAt, LocalDateTime.now())

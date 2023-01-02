@@ -21,7 +21,7 @@ class EmailService(
         mailSender.send(message)
     }
 
-    fun sendVerificationEmail(email:String, verificationToken:String){
+    fun sendVerificationEmail(email: String, verificationToken: String) {
         sendEmail(
             email,
             "회원가입 인증 이메일",
