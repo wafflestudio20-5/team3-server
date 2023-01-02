@@ -36,10 +36,10 @@ class AuthServiceImpl(
 
     override fun signUp(signUpRequest: SignUpRequest) {
         if(isDuplicateEmail(signUpRequest.email!!)){
-            throw Exception409("중복되는 이메일 입니다.")
+            throw Exception409("이미 존재하는 이메일 입니다.")
         }
         if(isDuplicateUsername(signUpRequest.username!!)){
-            throw Exception409("중복되는 유저네임 입니다.")
+            throw Exception409("이미 존재하는 유저네임 입니다.")
         }
         val user = signUpRequest.toUser()
         user.password = passwordEncoder.encode(user.password)
