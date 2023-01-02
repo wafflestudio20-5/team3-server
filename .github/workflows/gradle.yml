@@ -36,7 +36,9 @@ jobs:
     - name: make application.yml
       run: |
         # create application.yml
-        cd ./src/main/resources
+        cd ./src/main
+        mkdir resources
+        cd ./resources
 
         # application.yml 파일 생성
         touch ./application.yml
