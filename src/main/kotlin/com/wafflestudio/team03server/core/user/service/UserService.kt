@@ -47,6 +47,6 @@ class UserServiceImpl(
         if(editPasswordRequest.newPassword != editPasswordRequest.newPasswordConfirm){
             throw Exception400("비밀번호가 일치하지 않습니다.")
         }
-        user.password = editPasswordRequest.newPassword
+        user.password = passwordEncoder.encode(editPasswordRequest.newPassword)
     }
 }
