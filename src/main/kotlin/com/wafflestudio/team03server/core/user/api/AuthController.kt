@@ -17,13 +17,13 @@ class AuthController(
     // 이메일 중복체크
     @GetMapping("/checkEmail")
     fun checkEmail(@RequestParam("email") email: String): ResponseEntity<Boolean> {
-        return ResponseEntity(authService.checkDuplicatedEmail(email), HttpStatus.OK)
+        return ResponseEntity(!authService.isDuplicateEmail(email), HttpStatus.OK)
     }
 
     // 유저네임 중복체크
     @GetMapping("/checkUsername")
     fun checkUsername(@RequestParam("username") username: String): ResponseEntity<Boolean> {
-        return ResponseEntity(authService.checkDuplicateUsername(username), HttpStatus.OK)
+        return ResponseEntity(!authService.isDuplicateUsername(username), HttpStatus.OK)
     }
 
     // 회원가입

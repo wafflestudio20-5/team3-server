@@ -3,6 +3,7 @@ package com.wafflestudio.team03server.core.user.service
 import com.wafflestudio.team03server.common.Exception400
 import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.common.Exception404
+import com.wafflestudio.team03server.common.Exception409
 import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
 import com.wafflestudio.team03server.core.user.api.response.LoginResponse
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
@@ -17,9 +18,9 @@ import java.util.*
 interface AuthService {
     fun signUp(signUpRequest: SignUpRequest)
     fun sendVerificationMail(email: String)
-    fun checkEmailVerified(email: String): Boolean
-    fun checkDuplicatedEmail(email: String): Boolean
-    fun checkDuplicateUsername(username: String): Boolean
+    fun checkEmailVerified(email: String):Boolean
+    fun isDuplicateEmail(email: String): Boolean
+    fun isDuplicateUsername(username: String): Boolean
     fun verifyEmail(token: String)
     fun login(email: String, password: String): LoginResponse
 }
@@ -34,8 +35,12 @@ class AuthServiceImpl(
 ) : AuthService {
 
     override fun signUp(signUpRequest: SignUpRequest) {
-        checkDuplicatedEmail(signUpRequest.email!!)
-        checkDuplicateUsername(signUpRequest.username!!)
+        if(isDuplicateEmail(signUpRequest.email!!)){
+            throw Exception409("중복되는 이메일 입니다.")
+        }
+        if(isDuplicateUsername(signUpRequest.username!!)){
+            throw Exception409("중복되는 유저네임 입니다.")
+        }
         val user = signUpRequest.toUser()
         user.password = passwordEncoder.encode(user.password)
         // 인증 토큰 생성
@@ -60,12 +65,12 @@ class AuthServiceImpl(
         return user.emailVerified
     }
 
-    override fun checkDuplicatedEmail(email: String): Boolean {
-        return userRepository.findByEmail(email) == null
+    override fun isDuplicateEmail(email: String): Boolean {
+        return userRepository.findByEmail(email) != null
     }
 
-    override fun checkDuplicateUsername(username: String): Boolean {
-        return userRepository.findByUsername(username) == null
+    override fun isDuplicateUsername(username: String): Boolean {
+        return userRepository.findByUsername(username) != null
     }
 
     override fun verifyEmail(token: String) {
