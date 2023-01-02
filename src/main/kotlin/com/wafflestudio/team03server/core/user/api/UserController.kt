@@ -30,13 +30,19 @@ class UserController(
 
     @Authenticated
     @PatchMapping("/me")
-    fun editMe(@UserContext userId: Long, @Valid @RequestBody editProfileRequest: EditProfileRequest): ResponseEntity<UserResponse> {
+    fun editMe(
+        @UserContext userId: Long,
+        @Valid @RequestBody editProfileRequest: EditProfileRequest
+    ): ResponseEntity<UserResponse> {
         return ResponseEntity(userService.editProfile(userId, editProfileRequest), HttpStatus.OK)
     }
 
     @Authenticated
     @PutMapping("/me/password")
-    fun editPassword(@UserContext userId: Long, @Valid @RequestBody editPasswordRequest: EditPasswordRequest): ResponseEntity<Any> {
+    fun editPassword(
+        @UserContext userId: Long,
+        @Valid @RequestBody editPasswordRequest: EditPasswordRequest
+    ): ResponseEntity<Any> {
         userService.editPassword(userId, editPasswordRequest)
         return ResponseEntity(HttpStatus.OK)
     }
