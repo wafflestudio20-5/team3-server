@@ -18,7 +18,7 @@ import java.util.*
 interface AuthService {
     fun signUp(signUpRequest: SignUpRequest)
     fun sendVerificationMail(email: String)
-    fun checkEmailVerified(email: String):Boolean
+    fun checkEmailVerified(email: String): Boolean
     fun isDuplicateEmail(email: String): Boolean
     fun isDuplicateUsername(username: String): Boolean
     fun verifyEmail(token: String)
@@ -35,10 +35,10 @@ class AuthServiceImpl(
 ) : AuthService {
 
     override fun signUp(signUpRequest: SignUpRequest) {
-        if(isDuplicateEmail(signUpRequest.email!!)){
+        if (isDuplicateEmail(signUpRequest.email!!)) {
             throw Exception409("이미 존재하는 이메일 입니다.")
         }
-        if(isDuplicateUsername(signUpRequest.username!!)){
+        if (isDuplicateUsername(signUpRequest.username!!)) {
             throw Exception409("이미 존재하는 유저네임 입니다.")
         }
         val user = signUpRequest.toUser()
