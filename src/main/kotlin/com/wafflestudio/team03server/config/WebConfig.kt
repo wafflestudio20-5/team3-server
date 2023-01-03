@@ -13,12 +13,15 @@ import org.springframework.web.method.HandlerMethod
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
 import org.springframework.web.servlet.HandlerInterceptor
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Configuration
+@EnableWebMvc
 class WebConfig(
     private val authInterceptor: AuthInterceptor,
     private val authArgumentResolver: AuthArgumentResolver,
@@ -29,6 +32,14 @@ class WebConfig(
 
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
         resolvers.add(authArgumentResolver)
+    }
+
+    override fun addCorsMappings(registry: CorsRegistry) {
+        registry.addMapping("/**")
+            .allowedOrigins("http://waffle-market-03.s3-website-ap-northeast-1.amazonaws.com")
+            .allowedMethods("*")
+            .allowCredentials(false)
+            .maxAge(3000)
     }
 }
 
