@@ -46,8 +46,8 @@ jobs:
         # GitHub-Actions 에서 설정한 값을 application.yml 파일에 쓰기
         echo "${{ secrets.DATABASE }}" >> ./application.yml
         
-        # check current location
-        pwd
+        # check application.yml
+        ls
       shell: bash
     
     ## 웹 이미지 빌드 및 도커허브에 push
