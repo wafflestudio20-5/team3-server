@@ -59,7 +59,7 @@ class AuthController(
     // 로그인
     @PostMapping("/login")
     fun login(@RequestBody @Valid loginRequest: LoginRequest): ResponseEntity<LoginResponse> {
-        val response = authService.login(loginRequest.email!!, loginRequest.password!!)
+        val response = authService.login(loginRequest.email, loginRequest.password)
         return ResponseEntity(response, HttpStatus.OK)
     }
 }
