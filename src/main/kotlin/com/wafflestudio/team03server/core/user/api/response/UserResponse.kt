@@ -16,14 +16,14 @@ data class UserResponse(
     companion object {
         fun of(user: User): UserResponse {
             return UserResponse(
-                user.id,
-                user.username,
-                user.email,
-                user.location,
-                user.temperature,
-                user.imgUrl,
-                user.createdAt!!,
-                user.modifiedAt!!
+                id = user.id,
+                username = user.username,
+                email = user.email,
+                location = user.location,
+                temperature = user.temperature,
+                imgUrl = user.imgUrl,
+                createdAt = user.createdAt!!,
+                modifiedAt = user.modifiedAt!!
             )
         }
     }
