@@ -1,7 +1,7 @@
 package com.wafflestudio.team03server.config
 
 import com.wafflestudio.team03server.common.Authenticated
-import com.wafflestudio.team03server.common.Exception403
+import com.wafflestudio.team03server.common.Exception401
 import com.wafflestudio.team03server.common.UserContext
 import com.wafflestudio.team03server.core.user.service.AuthTokenService
 import org.springframework.context.annotation.Configuration
@@ -55,7 +55,7 @@ class AuthInterceptor(private val authTokenService: AuthTokenService) : HandlerI
         val handlerCasted = (handler as? HandlerMethod) ?: return true
         if (handlerCasted.hasMethodAnnotation(Authenticated::class.java)) {
             val accessToken =
-                request.getHeader("Authorization") ?: throw Exception403("Missing token for authorization")
+                request.getHeader("Authorization") ?: throw Exception401("로그인 후 이용하실 수 있습니다.")
             authTokenService.verifyToken(accessToken)
             request.setAttribute("userId", authTokenService.getCurrentUserId(accessToken))
         }
