@@ -28,7 +28,7 @@ class UserServiceImpl(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val emailService: EmailService,
-    private val authTokenService: AuthTokenService
+    private val authTokenService: AuthTokenService,
 ) : UserService {
 
     override fun signUp(signUpRequest: SignUpRequest) {
