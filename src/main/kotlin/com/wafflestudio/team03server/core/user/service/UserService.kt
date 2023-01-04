@@ -1,86 +1,55 @@
 package com.wafflestudio.team03server.core.user.service
 
-import com.wafflestudio.team03server.common.Exception400
-import com.wafflestudio.team03server.common.Exception403
-import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
-import com.wafflestudio.team03server.core.user.api.response.LoginResponse
-import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
+import com.wafflestudio.team03server.common.*
+import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
+import com.wafflestudio.team03server.core.user.api.request.EditProfileRequest
+import com.wafflestudio.team03server.core.user.api.response.UserResponse
 import com.wafflestudio.team03server.core.user.repository.UserRepository
-import org.springframework.http.ResponseEntity
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.Duration
-import java.time.LocalDateTime
-import java.util.*
 
 interface UserService {
-    fun signUp(signUpRequest: SignUpRequest)
-    fun checkDuplicatedEmail(email: String): Boolean
-    fun checkDuplicateUsername(username: String): Boolean
-    fun verifyEmail(token: String): ResponseEntity<Any>
-    fun login(email: String, password: String): LoginResponse
+    fun getProfile(userId: Long): UserResponse
+    fun editProfile(userId: Long, editProfileRequest: EditProfileRequest): UserResponse
+    fun editPassword(userId: Long, editPasswordRequest: EditPasswordRequest)
 }
 
 @Service
 @Transactional
 class UserServiceImpl(
     private val userRepository: UserRepository,
-    private val passwordEncoder: PasswordEncoder,
-    private val emailService: EmailService,
-    private val authTokenService: AuthTokenService,
+    private val authService: AuthService,
+    private val passwordEncoder: PasswordEncoder
 ) : UserService {
-
-    override fun signUp(signUpRequest: SignUpRequest) {
-        checkDuplicatedEmail(signUpRequest.email!!)
-        checkDuplicateUsername(signUpRequest.username!!)
-        val user = signUpRequest.toUser()
-        user.password = passwordEncoder.encode(user.password)
-        // 인증 토큰 생성
-        val verificationToken = generateVerificationToken()
-        user.verificationToken = verificationToken
-        userRepository.save(user)
-        emailService.sendEmail(
-            signUpRequest.email,
-            "회원가입 인증 이메일",
-            "http://localhost:8080/auth/verifyEmail?token=$verificationToken",
-        )
+    override fun getProfile(userId: Long): UserResponse {
+        val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        return UserResponse.of(user)
     }
 
-    override fun checkDuplicatedEmail(email: String): Boolean {
-        return userRepository.findByEmail(email) == null
-    }
-
-    override fun checkDuplicateUsername(username: String): Boolean {
-        return userRepository.findByUsername(username) == null
-    }
-
-    override fun verifyEmail(token: String): ResponseEntity<Any> {
-        val user = userRepository.findByVerificationToken(token) ?: return ResponseEntity.notFound().build()
-        val diff = Duration.between(user.createdAt, LocalDateTime.now())
-        // 30분 초과시 토큰 무효화
-        if (diff.toSeconds() > 1800) {
-            return ResponseEntity.badRequest().build()
+    override fun editProfile(userId: Long, editProfileRequest: EditProfileRequest): UserResponse {
+        val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        // 유저네임 변경 감지 후 중복 체크
+        if (editProfileRequest.username != user.username &&
+            authService.isDuplicateUsername(editProfileRequest.username!!)
+        ) {
+            throw Exception409("이미 존재하는 유저네임 입니다.")
         }
-
-        user.emailVerified = true
-
-        return ResponseEntity.ok().build()
+        user.username = editProfileRequest.username
+        user.location = editProfileRequest.location!!
+        user.imgUrl = editProfileRequest.imgUrl
+        return UserResponse.of(user)
     }
 
-    override fun login(email: String, password: String): LoginResponse {
-        val findUser = userRepository.findByEmail(email) ?: throw Exception403("이메일 또는 비밀번호가 잘못되었습니다.")
-        if (!passwordEncoder.matches(password, findUser.password)) {
-            throw Exception403("이메일 또는 비밀번호가 잘못되었습니다.")
+    override fun editPassword(userId: Long, editPasswordRequest: EditPasswordRequest) {
+        val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        if (!passwordEncoder.matches(editPasswordRequest.password, user.password)) {
+            throw Exception403("기존 비밀번호가 틀렸습니다.")
         }
-        if (!findUser.emailVerified) {
-            throw Exception400("이메일 인증이 필요합니다.")
+        if (editPasswordRequest.newPassword != editPasswordRequest.newPasswordConfirm) {
+            throw Exception400("비밀번호가 일치하지 않습니다.")
         }
-        val accessToken = authTokenService.generateTokenByEmail(email).accessToken
-        return LoginResponse(accessToken, SimpleUserResponse.of(findUser))
-    }
-
-    private fun generateVerificationToken(): String {
-        return UUID.randomUUID().toString()
+        user.password = passwordEncoder.encode(editPasswordRequest.newPassword)
     }
 }

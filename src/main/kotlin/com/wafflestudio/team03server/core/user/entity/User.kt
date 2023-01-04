@@ -11,17 +11,17 @@ import javax.validation.constraints.NotNull
 class User(
     @Column(unique = true)
     @NotNull
-    val username: String,
+    var username: String,
     @Column(unique = true)
     @NotNull
     val email: String,
     @NotNull
     var password: String,
     @NotNull
-    val location: String,
+    var location: String,
     @NotNull
     val temperature: Double = 36.5,
-    val imageUrl: String? = null,
+    var imgUrl: String? = null,
     @Column(unique = true)
     var verificationToken: String? = null,
     var emailVerified: Boolean = false,
