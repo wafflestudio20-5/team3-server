@@ -1,0 +1,29 @@
+package com.wafflestudio.team03server.core.trade.entity
+
+import com.wafflestudio.team03server.common.BaseTimeEntity
+import com.wafflestudio.team03server.core.trade.entity.TradeState.*
+import com.wafflestudio.team03server.core.user.entity.User
+import javax.persistence.*
+
+@Entity
+class TradePost(
+    var title: String,
+    var description: String,
+    var price: Int,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    var seller: User,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "buyer_id")
+    var buyer: User? = null,
+
+    @OneToMany(mappedBy = "post")
+    var reservations: MutableList<Reservation> = mutableListOf(),
+
+    @Enumerated(EnumType.STRING)
+    var tradeState: TradeState = TRADING,
+    var viewCount: Int = 0,
+
+) : BaseTimeEntity()
