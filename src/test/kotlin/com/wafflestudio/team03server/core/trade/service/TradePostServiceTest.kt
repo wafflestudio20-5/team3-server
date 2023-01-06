@@ -1,6 +1,7 @@
 package com.wafflestudio.team03server.core.trade.service
 
 import com.wafflestudio.team03server.core.trade.api.request.CreatePostRequest
+import com.wafflestudio.team03server.core.trade.api.request.UpdatePostRequest
 import com.wafflestudio.team03server.core.trade.entity.TradeState
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
@@ -81,5 +82,39 @@ internal class TradePostServiceTest @Autowired constructor(
 
         // then
         assertThat(posts.size).isEqualTo(2)
+    }
+
+    @Test
+    fun 글_수정_성공() {
+        // given
+        val user = User("user1", "abc@naver.com", "1234", "관악구")
+        val savedUser = userRepository.save(user)
+        val request = CreatePostRequest("title1", "desc1", 10000)
+        val createdPost = tradePostService.createPost(savedUser.id, request)
+
+        // when
+        val updateRequest = UpdatePostRequest("변경된 title", null, 20000)
+        val updatePost = tradePostService.updatePost(savedUser.id, createdPost.postId, updateRequest)
+
+        // then
+        assertThat(updatePost.title).isEqualTo("변경된 title")
+        assertThat(updatePost.desc).isEqualTo(createdPost.desc)
+        assertThat(updatePost.price).isEqualTo(updateRequest.price)
+    }
+
+    @Test
+    fun 글_삭제_성공() {
+        // given
+        val user = User("user1", "abc@naver.com", "1234", "관악구")
+        val savedUser = userRepository.save(user)
+        val request = CreatePostRequest("title1", "desc1", 10000)
+        val createdPost = tradePostService.createPost(savedUser.id, request)
+
+        // when
+        tradePostService.removePost(savedUser.id, createdPost.postId)
+
+        //then
+        val posts = tradePostService.getPosts()
+        assertThat(posts.size).isEqualTo(0)
     }
 }
