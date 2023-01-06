@@ -9,6 +9,7 @@ import com.wafflestudio.team03server.core.trade.service.TradePostService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
+
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -37,7 +38,7 @@ class TradePostController(
     fun getPosts(): List<PostResponse> {
         return tradePostService.getPosts()
     }
-
+    
     @Authenticated
     @PatchMapping("/{pid}")
     fun updatePost(
@@ -53,4 +54,5 @@ class TradePostController(
     fun deletePost(@UserContext userId: Long, @PathVariable(name = "pid") postId: Long) {
         return tradePostService.removePost(userId, postId)
     }
+
 }
