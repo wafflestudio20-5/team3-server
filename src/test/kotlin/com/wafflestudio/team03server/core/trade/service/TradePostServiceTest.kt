@@ -28,7 +28,7 @@ internal class TradePostServiceTest @Autowired constructor(
         val request = CreatePostRequest("title1", "String1", 10000)
 
         // when
-        val (_, title, desc, price, seller, _, _, tradeStatus, _) = tradePostService.createPost(
+        val (_, title, desc, price, seller, buyer, _, tradeStatus, _) = tradePostService.createPost(
             savedUser.id,
             request
         )
@@ -38,6 +38,7 @@ internal class TradePostServiceTest @Autowired constructor(
         assertThat(desc).isEqualTo(request.desc)
         assertThat(price).isEqualTo(request.price)
         assertThat(seller.id).isEqualTo(savedUser.id)
+        assertThat(buyer).isNull()
         assertThat(tradeStatus).isEqualTo(TradeState.TRADING)
     }
 
@@ -48,7 +49,7 @@ internal class TradePostServiceTest @Autowired constructor(
         val savedUser = userRepository.save(user)
         val request = CreatePostRequest("title1", "String1", 10000)
 
-        val (postId, title, desc, price, seller, _, _, tradeStatus, _) = tradePostService.createPost(
+        val (postId, title, desc, price, seller, buyer, _, tradeStatus, _) = tradePostService.createPost(
             savedUser.id,
             request
         )
@@ -61,6 +62,7 @@ internal class TradePostServiceTest @Autowired constructor(
         assertThat(desc).isEqualTo(findPost.desc)
         assertThat(price).isEqualTo(findPost.price)
         assertThat(seller.id).isEqualTo(savedUser.id)
+        assertThat(buyer).isNull()
         assertThat(tradeStatus).isEqualTo(TradeState.TRADING)
     }
 
