@@ -1,5 +1,6 @@
 package com.wafflestudio.team03server.common
 
+import com.wafflestudio.team03server.core.user.api.response.SocialLoginSignupResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -22,4 +23,11 @@ class ExceptionHandler {
         }
         return ResponseEntity(errors, HttpStatus.BAD_REQUEST)
     }
+
+    // For Social login signup flow exception
+    @ExceptionHandler(value = [SocialLoginNotFoundException::class])
+    fun handle(e: SocialLoginNotFoundException): ResponseEntity<SocialLoginSignupResponse> = ResponseEntity(
+        SocialLoginSignupResponse(e.msg, e.email),
+        HttpStatus.NOT_FOUND,
+    )
 }

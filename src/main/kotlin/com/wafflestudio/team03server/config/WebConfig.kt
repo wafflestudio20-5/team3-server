@@ -53,7 +53,7 @@ class AuthArgumentResolver : HandlerMethodArgumentResolver {
         parameter: MethodParameter,
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
-        binderFactory: WebDataBinderFactory?
+        binderFactory: WebDataBinderFactory?,
     ): Any? {
         val userId = (webRequest as ServletWebRequest).request.getAttribute("userId")
         return userId
