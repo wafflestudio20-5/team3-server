@@ -58,7 +58,6 @@ class UserServiceImpl(
 
     override fun uploadImage(userId: Long, image: MultipartFile): String {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
-        image.originalFilename
         val imgUrl = s3Service.upload(image)
         user.imgUrl = imgUrl
         return imgUrl
