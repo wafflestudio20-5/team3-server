@@ -1,6 +1,5 @@
 package com.wafflestudio.team03server.core.trade.service
 
-
 import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.core.trade.api.request.CreatePostRequest
@@ -58,7 +57,7 @@ class TradePostService(
         return tradePostRepository.findAll() // 추후 N + 1, Paging 적용하기
             .map { PostResponse.of(it) }
     }
-    
+
     fun updatePost(userId: Long, postId: Long, request: UpdatePostRequest): PostResponse {
         val findUser = getUserById(userId)
         val findPost = getPostById(postId)
@@ -86,5 +85,4 @@ class TradePostService(
         checkPostOwner(findPost, userId)
         tradePostRepository.delete(findPost)
     }
-    
 }

@@ -15,7 +15,7 @@ interface UserService {
     fun getProfile(userId: Long): UserResponse
     fun editProfile(userId: Long, editProfileRequest: EditProfileRequest): UserResponse
     fun editPassword(userId: Long, editPasswordRequest: EditPasswordRequest)
-    fun uploadImage(userId: Long, image:MultipartFile):String
+    fun uploadImage(userId: Long, image: MultipartFile): String
 }
 
 @Service

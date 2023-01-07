@@ -38,7 +38,7 @@ class TradePostController(
     fun getPosts(): List<PostResponse> {
         return tradePostService.getPosts()
     }
-    
+
     @Authenticated
     @PatchMapping("/{pid}")
     fun updatePost(
@@ -54,5 +54,4 @@ class TradePostController(
     fun deletePost(@UserContext userId: Long, @PathVariable(name = "pid") postId: Long) {
         return tradePostService.removePost(userId, postId)
     }
-
 }

@@ -3,7 +3,6 @@ package com.wafflestudio.team03server.core.user.service
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
-
 @ConstructorBinding
 @ConfigurationProperties(prefix = "cloud.aws")
 data class S3Properties(
@@ -12,10 +11,10 @@ data class S3Properties(
 )
 
 class Credentials(
-    val accessKey:String,
-    val secretKey:String
+    val accessKey: String,
+    val secretKey: String
 )
 
 class Region(
-    val static:String
+    val static: String
 )

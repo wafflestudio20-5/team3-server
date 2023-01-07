@@ -54,8 +54,8 @@ class UserController(
 
     @Authenticated
     @PutMapping("/me/image")
-    fun uploadProfileImage(@UserContext userId: Long, @RequestParam("image") image:MultipartFile):String{
-        if(!isFileAnImage(image)){
+    fun uploadProfileImage(@UserContext userId: Long, @RequestParam("image") image: MultipartFile): String {
+        if (!isFileAnImage(image)) {
             throw Exception400("허용되지 않는 파일 형식입니다.")
         }
         return userService.uploadImage(userId, image)

@@ -117,5 +117,4 @@ internal class TradePostServiceTest @Autowired constructor(
         val posts = tradePostService.getPosts()
         assertThat(posts.size).isEqualTo(0)
     }
-
 }
