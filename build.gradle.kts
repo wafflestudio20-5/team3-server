@@ -65,6 +65,12 @@ dependencies {
     implementation("com.sun.mail:javax.mail:1.6.2")
     implementation("org.springframework.boot:spring-boot-starter-mail")
 
+    // AWS S3
+    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+
+    // Apache IO
+    implementation("commons-io:commons-io:2.11.0")
+
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

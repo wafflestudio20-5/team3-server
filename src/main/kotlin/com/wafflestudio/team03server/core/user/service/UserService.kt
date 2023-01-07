@@ -9,11 +9,13 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 
 interface UserService {
     fun getProfile(userId: Long): UserResponse
     fun editProfile(userId: Long, editProfileRequest: EditProfileRequest): UserResponse
     fun editPassword(userId: Long, editPasswordRequest: EditPasswordRequest)
+    fun uploadImage(userId: Long, image: MultipartFile): String
 }
 
 @Service
@@ -21,7 +23,8 @@ interface UserService {
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val authService: AuthService,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val s3Service: S3Service
 ) : UserService {
     override fun getProfile(userId: Long): UserResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
@@ -51,5 +54,12 @@ class UserServiceImpl(
             throw Exception400("비밀번호가 일치하지 않습니다.")
         }
         user.password = passwordEncoder.encode(editPasswordRequest.newPassword)
+    }
+
+    override fun uploadImage(userId: Long, image: MultipartFile): String {
+        val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        val imgUrl = s3Service.upload(image)
+        user.imgUrl = imgUrl
+        return imgUrl
     }
 }
