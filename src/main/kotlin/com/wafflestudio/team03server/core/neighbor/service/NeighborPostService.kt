@@ -6,8 +6,9 @@ import com.wafflestudio.team03server.core.neighbor.api.request.CreateNeighborPos
 import com.wafflestudio.team03server.core.neighbor.api.request.UpdateNeighborPostRequest
 import com.wafflestudio.team03server.core.neighbor.api.response.NeighborCommentResponse
 import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostResponse
+import com.wafflestudio.team03server.core.neighbor.entity.NeighborLike
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborPost
-import com.wafflestudio.team03server.core.neighbor.repository.NeighborCommentRepository
+import com.wafflestudio.team03server.core.neighbor.repository.NeighborLikeRepository
 import com.wafflestudio.team03server.core.neighbor.repository.NeighborPostRepository
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
 import com.wafflestudio.team03server.core.user.repository.UserRepository
@@ -19,15 +20,22 @@ interface NeighborPostService {
     fun getAllNeighborPosts(): List<NeighborPostResponse>
     fun createNeighborPost(userId: Long, createNeighborPostRequest: CreateNeighborPostRequest): NeighborPostResponse
     fun getNeighborPost(postId: Long): NeighborPostResponse
-    fun updateNeighborPost(userId: Long, postId: Long, updateNeighborPostRequest: UpdateNeighborPostRequest): NeighborPostResponse
+    fun updateNeighborPost(
+        userId: Long,
+        postId: Long,
+        updateNeighborPostRequest: UpdateNeighborPostRequest
+    ): NeighborPostResponse
+
     fun deleteNeighborPost(userId: Long, postId: Long)
+    fun likeNeighborPost(userId: Long, postId: Long)
 }
 
 @Service
 @Transactional
 class NeighborPostServiceImpl(
     val userRepository: UserRepository,
-    val neighborPostRepository: NeighborPostRepository
+    val neighborPostRepository: NeighborPostRepository,
+    val neighborLikeRepository: NeighborLikeRepository
 ) : NeighborPostService {
 
     override fun getAllNeighborPosts(): List<NeighborPostResponse> {
@@ -36,7 +44,10 @@ class NeighborPostServiceImpl(
 
     private fun getUserById(userId: Long) = userRepository.findByIdOrNull(userId) ?: throw Exception404("유효한 회원이 아닙니다.")
 
-    override fun createNeighborPost(userId: Long, createNeighborPostRequest: CreateNeighborPostRequest): NeighborPostResponse {
+    override fun createNeighborPost(
+        userId: Long,
+        createNeighborPostRequest: CreateNeighborPostRequest
+    ): NeighborPostResponse {
         val publisher = getUserById(userId)
         val (title, content) = createNeighborPostRequest
         val neighborPost = NeighborPost(title = title, content = content, publisher = publisher)
@@ -52,7 +63,8 @@ class NeighborPostServiceImpl(
         )
     }
 
-    private fun getNeighborPostById(postId: Long) = neighborPostRepository.findByIdOrNull(postId) ?: throw Exception404("${postId}에 해당하는 글이 없습니다.")
+    private fun getNeighborPostById(postId: Long) =
+        neighborPostRepository.findByIdOrNull(postId) ?: throw Exception404("${postId}에 해당하는 글이 없습니다.")
 
     private fun updateViewCount(post: NeighborPost) {
         post.viewCount += 1
@@ -96,5 +108,12 @@ class NeighborPostServiceImpl(
         val readPost = getNeighborPostById(postId)
         checkPublisher(readPost, userId)
         neighborPostRepository.delete(readPost)
+    }
+
+    override fun likeNeighborPost(userId: Long, postId: Long) {
+        val readUser = getUserById(userId)
+        val readPost = getNeighborPostById(postId)
+        val newLike = NeighborLike(liker = readUser, likedPost = readPost)
+        neighborLikeRepository.save(newLike)
     }
 }

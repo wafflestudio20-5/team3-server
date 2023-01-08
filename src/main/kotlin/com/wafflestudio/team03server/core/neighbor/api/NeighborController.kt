@@ -19,15 +19,16 @@ class NeighborController(
     val neighborCommentService: NeighborCommentService
 ) {
     @GetMapping("")
-   fun getAllNeighborPosts(): List<NeighborPostResponse> {
-       return neighborPostService.getAllNeighborPosts()
-   }
+    fun getAllNeighborPosts(): List<NeighborPostResponse> {
+        return neighborPostService.getAllNeighborPosts()
+    }
 
     @Authenticated
     @PostMapping("")
     fun createNeighborPost(
         @UserContext userId: Long,
-        @Valid @RequestBody createNeighborPostRequest: CreateNeighborPostRequest): NeighborPostResponse {
+        @Valid @RequestBody createNeighborPostRequest: CreateNeighborPostRequest
+    ): NeighborPostResponse {
         return neighborPostService.createNeighborPost(userId, createNeighborPostRequest)
     }
 
@@ -53,6 +54,15 @@ class NeighborController(
         @PathVariable("postId") postId: Long
     ) {
         return neighborPostService.deleteNeighborPost(userId, postId)
+    }
+
+    @Authenticated
+    @PostMapping("/{postId}/like")
+    fun likeNeighborPost(
+        @UserContext userId: Long,
+        @PathVariable("postId") postId: Long
+    ) {
+        return neighborPostService.likeNeighborPost(userId, postId)
     }
 
     @Authenticated
