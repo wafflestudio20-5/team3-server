@@ -1,5 +1,6 @@
 package com.wafflestudio.team03server.common
 
+import com.wafflestudio.team03server.core.user.api.response.SocialLoginSignupResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -14,6 +15,19 @@ class ExceptionHandler {
 
     // Request Validation
     @ExceptionHandler(value = [MethodArgumentNotValidException::class])
-    fun handle(e: MethodArgumentNotValidException): ResponseEntity<Any> =
-        ResponseEntity(e.bindingResult.allErrors[0].defaultMessage, HttpStatus.BAD_REQUEST)
+    fun handle(e: MethodArgumentNotValidException): ResponseEntity<Any> {
+        val errors = mutableListOf<String>()
+        e.bindingResult.fieldErrors.forEach { fieldError ->
+            val errorMessage = fieldError.defaultMessage ?: "값이 유효하지 않습니다."
+            errors.add(errorMessage)
+        }
+        return ResponseEntity(errors, HttpStatus.BAD_REQUEST)
+    }
+
+    // For Social login signup flow exception
+    @ExceptionHandler(value = [SocialLoginNotFoundException::class])
+    fun handle(e: SocialLoginNotFoundException): ResponseEntity<SocialLoginSignupResponse> = ResponseEntity(
+        SocialLoginSignupResponse(e.msg, e.email),
+        HttpStatus.NOT_FOUND,
+    )
 }

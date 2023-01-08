@@ -39,3 +39,4 @@ out/
 # oauth properties 파일
 application-oauth.properties
 /src/main/resources/application.yml
+/src/test/resources/application.yml

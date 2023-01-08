@@ -1,6 +1,7 @@
 package com.wafflestudio.team03server.core.user.service
 
 import com.wafflestudio.team03server.common.Exception404
+import com.wafflestudio.team03server.common.SocialLoginNotFoundException
 import com.wafflestudio.team03server.core.user.api.response.LoginResponse
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
 import com.wafflestudio.team03server.core.user.entity.User
@@ -24,13 +25,16 @@ class OAuthService(
 
     fun kakaoLogin(code: String): LoginResponse {
         val accessToken: String = kakaoOAuth.getKaKaoAccessToken(code)
-        val (id, _, kakaoUserAccount) = kakaoOAuth.getKakaoUserInfo(accessToken)
+        val (connected_at, _, kakaoUserAccount) = kakaoOAuth.getKakaoUserInfo(accessToken)
         val (findUser, jwtToken) = getUserAndJwtTokenByEmail(kakaoUserAccount.email)
         return LoginResponse(jwtToken, SimpleUserResponse.of(findUser))
     }
 
     private fun getUserAndJwtTokenByEmail(email: String): Pair<User, String> {
-        val findUser = userRepository.findByEmail(email) ?: throw Exception404(NEED_SIGNUP_MESSAGE)
+        val findUser = userRepository.findByEmail(email) ?: throw SocialLoginNotFoundException(
+            NEED_SIGNUP_MESSAGE,
+            email,
+        )
         checkVerifiedUser(findUser)
         val jwtToken = authTokenService.generateTokenByEmail(findUser.email).accessToken
         return Pair(findUser, jwtToken)

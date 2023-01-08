@@ -1,13 +1,68 @@
 package com.wafflestudio.team03server.core.user.api
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
+import com.wafflestudio.team03server.common.Authenticated
+import com.wafflestudio.team03server.common.Exception400
+import com.wafflestudio.team03server.common.UserContext
+import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
+import com.wafflestudio.team03server.core.user.api.request.EditProfileRequest
+import com.wafflestudio.team03server.core.user.api.response.UserResponse
+import com.wafflestudio.team03server.core.user.service.S3Service
+import com.wafflestudio.team03server.core.user.service.UserService
+import org.apache.commons.io.FilenameUtils
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+import javax.validation.Valid
 
 @RestController
-class UserController {
+@RequestMapping("/users")
+class UserController(
+    private val userService: UserService,
+    private val s3Service: S3Service
+) {
 
-    @GetMapping("/hello")
-    fun hello(): String {
-        return "hello"
+    @GetMapping("/{user-id}")
+    fun getUser(@PathVariable("user-id") userId: Long): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.getProfile(userId), HttpStatus.OK)
+    }
+
+    @Authenticated
+    @GetMapping("/me")
+    fun getMe(@UserContext userId: Long): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.getProfile(userId), HttpStatus.OK)
+    }
+
+    @Authenticated
+    @PatchMapping("/me")
+    fun editMe(
+        @UserContext userId: Long,
+        @Valid @RequestBody editProfileRequest: EditProfileRequest
+    ): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.editProfile(userId, editProfileRequest), HttpStatus.OK)
+    }
+
+    @Authenticated
+    @PutMapping("/me/password")
+    fun editPassword(
+        @UserContext userId: Long,
+        @Valid @RequestBody editPasswordRequest: EditPasswordRequest
+    ): ResponseEntity<Any> {
+        userService.editPassword(userId, editPasswordRequest)
+        return ResponseEntity(HttpStatus.OK)
+    }
+
+    @Authenticated
+    @PutMapping("/me/image")
+    fun uploadProfileImage(@UserContext userId: Long, @RequestParam("image") image: MultipartFile): String {
+        if (!isFileAnImage(image)) {
+            throw Exception400("허용되지 않는 파일 형식입니다.")
+        }
+        return userService.uploadImage(userId, image)
+    }
+
+    private fun isFileAnImage(file: MultipartFile): Boolean {
+        val fileExtension = FilenameUtils.getExtension(file.originalFilename).lowercase()
+        return fileExtension == "jpg" || fileExtension == "jpeg" || fileExtension == "png"
     }
 }
