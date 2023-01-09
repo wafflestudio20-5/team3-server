@@ -71,6 +71,9 @@ dependencies {
     // Apache IO
     implementation("commons-io:commons-io:2.11.0")
 
+    // Redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
