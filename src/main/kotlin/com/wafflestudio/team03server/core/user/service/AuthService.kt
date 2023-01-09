@@ -1,8 +1,6 @@
 package com.wafflestudio.team03server.core.user.service
 
-import com.wafflestudio.team03server.common.Exception400
 import com.wafflestudio.team03server.common.Exception403
-import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.common.Exception409
 import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
 import com.wafflestudio.team03server.core.user.api.response.LoginResponse
@@ -13,8 +11,6 @@ import com.wafflestudio.team03server.utils.RedisUtil
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.Duration
-import java.time.LocalDateTime
 import java.util.*
 
 interface AuthService {
@@ -55,7 +51,6 @@ class AuthServiceImpl(
         redisUtil.setDataExpire(email, code, 600000) // 10분
         emailService.sendVerificationEmail(email, code)
     }
-
 
     override fun isDuplicateEmail(email: String): Boolean {
         return userRepository.findByEmail(email) != null

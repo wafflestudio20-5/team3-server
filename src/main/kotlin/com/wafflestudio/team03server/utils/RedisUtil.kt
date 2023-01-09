@@ -22,6 +22,4 @@ class RedisUtil(private val redisTemplate: StringRedisTemplate) {
     fun deleteData(key: String) {
         redisTemplate.delete(key)
     }
-
 }
-

@@ -35,4 +35,4 @@ class User(
     @OneToMany(mappedBy = "user")
     var reservations: MutableList<Reservation> = mutableListOf(),
 
-    ) : BaseTimeEntity()
+) : BaseTimeEntity()
