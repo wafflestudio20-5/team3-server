@@ -2,6 +2,7 @@ package com.wafflestudio.team03server.utils
 
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import javax.mail.internet.MimeMessage
 
@@ -21,6 +22,7 @@ class EmailService(
         mailSender.send(message)
     }
 
+    @Async
     fun sendVerificationEmail(email: String, code: String) {
         sendEmail(
             email,
