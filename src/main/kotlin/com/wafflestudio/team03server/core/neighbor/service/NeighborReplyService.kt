@@ -37,15 +37,16 @@ class NeighborReplyServiceImpl(
         commentId: Long,
         createNeighborReplyRequest: CreateNeighborReplyRequest
     ) {
-        val replyer = getUserById(userId)
+        val replier = getUserById(userId)
         val comment = getNeighborCommentById(commentId)
         val message = createNeighborReplyRequest.message
-        val neighborReply = NeighborReply(neighborComment = comment, replyer = replyer, replyingMessage = message)
+        val neighborReply = NeighborReply(neighborComment = comment, replier = replier, replyingMessage = message)
+        comment.replies.add(neighborReply)
         neighborReplyRepository.save(neighborReply)
     }
 
-    private fun checkReplyer(reply: NeighborReply, userId: Long) {
-        if (reply.replyer.id != userId) throw Exception403("답글 작성자에게만 권한이 있습니다.")
+    private fun checkReplier(reply: NeighborReply, userId: Long) {
+        if (reply.replier.id != userId) throw Exception403("답글 작성자에게만 권한이 있습니다.")
     }
 
     private fun getReplyById(replyId: Long) =
@@ -61,13 +62,13 @@ class NeighborReplyServiceImpl(
         updateNeighborReplyResponse: UpdateNeighborReplyRequest
     ) {
         val readReply = getReplyById(replyId)
-        checkReplyer(readReply, userId)
+        checkReplier(readReply, userId)
         updateReplyByRequest(readReply, updateNeighborReplyResponse)
     }
 
     override fun deleteNeighborReply(userId: Long, replyId: Long) {
         val readReply = getReplyById(replyId)
-        checkReplyer(readReply, userId)
+        checkReplier(readReply, userId)
         neighborReplyRepository.delete(readReply)
     }
 }

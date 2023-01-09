@@ -9,13 +9,20 @@ import javax.persistence.ManyToOne
 
 @Entity
 class NeighborReply(
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "neighbor_comment_id")
-    val neighborComment: NeighborComment,
+    neighborComment: NeighborComment,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "neighbor_replyer_id")
-    val replyer: User,
+    val replier: User,
 
     var replyingMessage: String
-) : BaseTimeEntity()
+) : BaseTimeEntity() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "neighbor_comment_id")
+    var neighborComment = neighborComment
+        set(comment) {
+            field.replies.remove(this)
+            field = comment
+            field.replies.add(this)
+        }
+}
