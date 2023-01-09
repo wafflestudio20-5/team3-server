@@ -16,7 +16,7 @@ class NeighborComment(
 
     var comment: String,
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "neighborComment", cascade = [CascadeType.ALL])
     var replies: MutableList<NeighborReply> = mutableListOf()
 
 ) : BaseTimeEntity()
