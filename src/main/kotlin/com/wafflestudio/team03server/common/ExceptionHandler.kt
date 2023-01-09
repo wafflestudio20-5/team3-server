@@ -16,10 +16,10 @@ class ExceptionHandler {
     // Request Validation
     @ExceptionHandler(value = [MethodArgumentNotValidException::class])
     fun handle(e: MethodArgumentNotValidException): ResponseEntity<Any> {
-        val errors = mutableListOf<String>()
+        val errors = mutableListOf<ErrorResponse>()
         e.bindingResult.fieldErrors.forEach { fieldError ->
             val errorMessage = fieldError.defaultMessage ?: "값이 유효하지 않습니다."
-            errors.add(errorMessage)
+            errors.add(ErrorResponse(errorMessage))
         }
         return ResponseEntity(errors, HttpStatus.BAD_REQUEST)
     }

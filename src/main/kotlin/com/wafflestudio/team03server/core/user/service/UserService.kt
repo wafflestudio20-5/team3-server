@@ -1,8 +1,9 @@
 package com.wafflestudio.team03server.core.user.service
 
 import com.wafflestudio.team03server.common.*
+import com.wafflestudio.team03server.core.user.api.request.EditLocationRequest
 import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
-import com.wafflestudio.team03server.core.user.api.request.EditProfileRequest
+import com.wafflestudio.team03server.core.user.api.request.EditUsernameRequest
 import com.wafflestudio.team03server.core.user.api.response.UserResponse
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -13,7 +14,8 @@ import org.springframework.web.multipart.MultipartFile
 
 interface UserService {
     fun getProfile(userId: Long): UserResponse
-    fun editProfile(userId: Long, editProfileRequest: EditProfileRequest): UserResponse
+    fun editUsername(userId: Long, editUsernameRequest: EditUsernameRequest): UserResponse
+    fun editLocation(userId: Long, editLocationRequest: EditLocationRequest): UserResponse
     fun editPassword(userId: Long, editPasswordRequest: EditPasswordRequest)
     fun uploadImage(userId: Long, image: MultipartFile): String
 }
@@ -31,17 +33,22 @@ class UserServiceImpl(
         return UserResponse.of(user)
     }
 
-    override fun editProfile(userId: Long, editProfileRequest: EditProfileRequest): UserResponse {
+    override fun editUsername(userId: Long, editUsernameRequest: EditUsernameRequest): UserResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
-        // 유저네임 변경 감지 후 중복 체크
-        if (editProfileRequest.username != user.username &&
-            authService.isDuplicateUsername(editProfileRequest.username!!)
-        ) {
+        if (isModifiedAndDuplicateUsername(editUsernameRequest.username!!, user.username)) {
             throw Exception409("이미 존재하는 유저네임 입니다.")
         }
-        user.username = editProfileRequest.username
-        user.location = editProfileRequest.location!!
-        user.imgUrl = editProfileRequest.imgUrl
+        user.username = editUsernameRequest.username
+        return UserResponse.of(user)
+    }
+
+    private fun isModifiedAndDuplicateUsername(originalName: String, newName: String): Boolean {
+        return originalName != newName && authService.isDuplicateUsername(newName)
+    }
+
+    override fun editLocation(userId: Long, editLocationRequest: EditLocationRequest): UserResponse {
+        val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        user.location = editLocationRequest.location!!
         return UserResponse.of(user)
     }
 
