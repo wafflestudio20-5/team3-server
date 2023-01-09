@@ -1,4 +1,4 @@
-package com.wafflestudio.team03server.core.user.service
+package com.wafflestudio.team03server.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding

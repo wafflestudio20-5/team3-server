@@ -7,7 +7,7 @@ import com.wafflestudio.team03server.core.user.api.request.EditLocationRequest
 import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
 import com.wafflestudio.team03server.core.user.api.request.EditUsernameRequest
 import com.wafflestudio.team03server.core.user.api.response.UserResponse
-import com.wafflestudio.team03server.core.user.service.S3Service
+import com.wafflestudio.team03server.utils.S3Service
 import com.wafflestudio.team03server.core.user.service.UserService
 import org.apache.commons.io.FilenameUtils
 import org.springframework.http.HttpStatus

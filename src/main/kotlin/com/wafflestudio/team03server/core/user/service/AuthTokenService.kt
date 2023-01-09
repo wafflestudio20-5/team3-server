@@ -3,6 +3,7 @@ package com.wafflestudio.team03server.core.user.service
 import com.wafflestudio.team03server.common.Exception401
 import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.core.user.repository.UserRepository
+import com.wafflestudio.team03server.properties.AuthProperties
 import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
 import org.springframework.boot.context.properties.EnableConfigurationProperties
