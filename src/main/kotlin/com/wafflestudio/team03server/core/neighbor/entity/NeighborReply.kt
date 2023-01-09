@@ -17,5 +17,5 @@ class NeighborReply(
     @JoinColumn(name = "neighbor_replyer_id")
     val replyer: User,
 
-    var replying_message: String
+    var replyingMessage: String
 ) : BaseTimeEntity()
