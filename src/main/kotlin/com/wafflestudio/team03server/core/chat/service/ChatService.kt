@@ -1,5 +1,6 @@
 package com.wafflestudio.team03server.core.chat.service
 
+import com.wafflestudio.team03server.common.Exception400
 import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.core.chat.api.response.ChatResponse
 import com.wafflestudio.team03server.core.chat.dto.ChatMessage
@@ -27,6 +28,7 @@ class ChatService(
         val findPost = getPostById(postId)
         val findBuyer = getUserById(buyerId)
         val findSeller = getUserById(findPost.seller.id)
+        checkSellerStartChat(findBuyer, findSeller)
 
         var chatRoom: ChatRoom? = findChatRoom(findBuyer, findSeller, findPost)
         if (isFirstChatting(chatRoom)) {
@@ -36,6 +38,13 @@ class ChatService(
         }
 
         return ChatResponse.of(chatRoom!!) // TODO: 추후 N + 1 해결하기
+    }
+
+    private fun checkSellerStartChat(
+        findBuyer: User,
+        findSeller: User
+    ) {
+        if (findBuyer == findSeller) throw Exception400("판매자는 채팅을 시작할 수 없습니다.")
     }
 
     private fun isFirstChatting(chatRoom: ChatRoom?) = (chatRoom == null)
@@ -51,10 +60,10 @@ class ChatService(
         userRepository.findByIdOrNull(userId) ?: throw Exception404("id: ${userId}에 해당하는 유저가 존재하지 않습니다.")
 
     fun saveMessage(message: ChatMessage) {
-        val _chatRoom = getChatRoomByUUID(message)
-        val _sender = getUserById(message.senderId)
-        val _message = message.message
-        saveChatMessage(_chatRoom, _sender, _message)
+        val chatRoom = getChatRoomByUUID(message)
+        val sender = getUserById(message.senderId)
+        val message = message.message
+        saveChatMessage(chatRoom, sender, message)
     }
 
     private fun saveChatMessage(_chatRoom: ChatRoom, _sender: User, _message: String) {

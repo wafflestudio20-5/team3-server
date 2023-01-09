@@ -5,12 +5,13 @@ import com.wafflestudio.team03server.core.chat.entity.ChatRoom
 import java.time.LocalDateTime
 
 data class ChatResponse(
+    val roomUUID: String,
     val chatHistories: List<ChatHistoryResponse> = mutableListOf()
 ) {
     companion object {
         fun of(chatRoom: ChatRoom): ChatResponse {
             val histories = chatRoom.histories.map { ChatHistoryResponse.of(it) }
-            return ChatResponse(histories)
+            return ChatResponse(chatRoom.roomUUID, histories)
         }
     }
 }

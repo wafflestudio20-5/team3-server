@@ -9,6 +9,8 @@ import javax.persistence.*
 class ChatRoom(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
+
+    @Column(name = "room_uuid")
     val roomUUID: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
