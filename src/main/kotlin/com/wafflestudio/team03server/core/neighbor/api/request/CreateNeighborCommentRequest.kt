@@ -4,5 +4,5 @@ import javax.validation.constraints.NotBlank
 
 data class CreateNeighborCommentRequest(
     @field:NotBlank(message = "내용을 입력해주세요.")
-    val comment: String,
+    val comment: String?,
 )
