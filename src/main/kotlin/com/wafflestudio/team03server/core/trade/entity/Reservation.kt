@@ -13,6 +13,6 @@ class Reservation(
     val post: TradePost,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    val user: User,
+    @JoinColumn(name = "buyer_id")
+    val buyer: User,
 )
