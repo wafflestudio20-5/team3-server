@@ -1,4 +1,4 @@
-package com.wafflestudio.team03server.core.neighbor.api.response
+package com.wafflestudio.team03server.core.neighbor.entity
 
 import com.wafflestudio.team03server.common.BaseTimeEntity
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborComment
