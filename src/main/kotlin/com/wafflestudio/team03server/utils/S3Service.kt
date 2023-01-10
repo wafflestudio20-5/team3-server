@@ -1,4 +1,4 @@
-package com.wafflestudio.team03server.core.user.service
+package com.wafflestudio.team03server.utils
 
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.ObjectMetadata

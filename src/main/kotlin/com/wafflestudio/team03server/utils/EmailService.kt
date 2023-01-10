@@ -1,7 +1,8 @@
-package com.wafflestudio.team03server.core.user.service
+package com.wafflestudio.team03server.utils
 
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import javax.mail.internet.MimeMessage
 
@@ -21,11 +22,12 @@ class EmailService(
         mailSender.send(message)
     }
 
-    fun sendVerificationEmail(email: String, verificationToken: String) {
+    @Async
+    fun sendVerificationEmail(email: String, code: String) {
         sendEmail(
             email,
-            "회원가입 인증 이메일",
-            "http://localhost:8080/auth/verifyEmail?token=$verificationToken",
+            "회원가입 인증 코드",
+            "인증 코드: $code",
         )
     }
 }

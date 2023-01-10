@@ -75,6 +75,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.webjars:stomp-websocket:2.3.3-1")
 
+    // Redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
