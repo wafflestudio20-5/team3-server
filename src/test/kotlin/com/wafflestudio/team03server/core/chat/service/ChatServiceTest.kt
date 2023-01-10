@@ -15,6 +15,7 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @SpringBootTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
@@ -41,8 +42,8 @@ internal class ChatServiceTest @Autowired constructor(
         val chat = chatService.startChat(savedUser2.id, post1.postId)
 
         // then
-        println("chat = $chat")
         assertThat(chat.chatHistories.size).isEqualTo(0)
+        assertThat(tradePostService.getPost(savedUser2.id, post1.postId).reservationCount).isEqualTo(1)
     }
 
     @Test
@@ -69,7 +70,7 @@ internal class ChatServiceTest @Autowired constructor(
         val request = CreatePostRequest("title1", "String1", 10000)
         val post1 = tradePostService.createPost(savedUser1.id, request)
         val chat = chatService.startChat(savedUser2.id, post1.postId)
-        val chatMessage = ChatMessage(chat.roomUUID, savedUser2.id, "안녕하세요!")
+        val chatMessage = ChatMessage(chat.roomUUID, savedUser2.id, "안녕하세요!", LocalDateTime.now())
 
         // when
         chatService.saveMessage(chatMessage)
