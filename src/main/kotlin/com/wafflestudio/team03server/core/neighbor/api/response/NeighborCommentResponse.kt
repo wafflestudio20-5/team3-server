@@ -17,7 +17,7 @@ data class NeighborCommentResponse(
                 commentId = comment.id,
                 commenter = SimpleUserResponse.of(comment.commenter),
                 comment = comment.comment,
-                replies = comment.replies.map {NeighborReplyResponse.of(it)},
+                replies = comment.replies.map { NeighborReplyResponse.of(it) },
                 createdAt = comment.createdAt
             )
         }
