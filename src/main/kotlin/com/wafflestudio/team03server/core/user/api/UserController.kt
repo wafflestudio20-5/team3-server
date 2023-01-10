@@ -3,8 +3,9 @@ package com.wafflestudio.team03server.core.user.api
 import com.wafflestudio.team03server.common.Authenticated
 import com.wafflestudio.team03server.common.Exception400
 import com.wafflestudio.team03server.common.UserContext
+import com.wafflestudio.team03server.core.user.api.request.EditLocationRequest
 import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
-import com.wafflestudio.team03server.core.user.api.request.EditProfileRequest
+import com.wafflestudio.team03server.core.user.api.request.EditUsernameRequest
 import com.wafflestudio.team03server.core.user.api.response.UserResponse
 import com.wafflestudio.team03server.core.user.service.S3Service
 import com.wafflestudio.team03server.core.user.service.UserService
@@ -34,16 +35,25 @@ class UserController(
     }
 
     @Authenticated
-    @PatchMapping("/me")
-    fun editMe(
+    @PatchMapping("/me/username")
+    fun editUsername(
         @UserContext userId: Long,
-        @Valid @RequestBody editProfileRequest: EditProfileRequest
+        @Valid @RequestBody editUsernameRequest: EditUsernameRequest
     ): ResponseEntity<UserResponse> {
-        return ResponseEntity(userService.editProfile(userId, editProfileRequest), HttpStatus.OK)
+        return ResponseEntity(userService.editUsername(userId, editUsernameRequest), HttpStatus.OK)
     }
 
     @Authenticated
-    @PutMapping("/me/password")
+    @PatchMapping("/me/location")
+    fun editLocation(
+        @UserContext userId: Long,
+        @Valid @RequestBody editLocationRequest: EditLocationRequest
+    ): ResponseEntity<UserResponse> {
+        return ResponseEntity(userService.editLocation(userId, editLocationRequest), HttpStatus.OK)
+    }
+
+    @Authenticated
+    @PatchMapping("/me/password")
     fun editPassword(
         @UserContext userId: Long,
         @Valid @RequestBody editPasswordRequest: EditPasswordRequest
@@ -53,7 +63,7 @@ class UserController(
     }
 
     @Authenticated
-    @PutMapping("/me/image")
+    @PatchMapping("/me/image")
     fun uploadProfileImage(@UserContext userId: Long, @RequestParam("image") image: MultipartFile): String {
         if (!isFileAnImage(image)) {
             throw Exception400("허용되지 않는 파일 형식입니다.")
