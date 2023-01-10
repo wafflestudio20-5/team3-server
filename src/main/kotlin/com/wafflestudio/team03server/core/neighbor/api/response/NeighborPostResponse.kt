@@ -23,7 +23,7 @@ data class NeighborPostResponse(
                 publisher = SimpleUserResponse.of(post.publisher),
                 comments = post.comments.map { NeighborCommentResponse.of(it) },
                 viewCount = post.viewCount,
-                likeCount = post.likes.size,
+                likeCount = post.likes.filter { !it.deleteStatus }.size,
                 createdAt = post.createdAt
             )
         }
