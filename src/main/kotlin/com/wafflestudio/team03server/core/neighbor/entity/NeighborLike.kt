@@ -17,9 +17,9 @@ class NeighborLike(
     @JoinColumn(name = "neighbor_post_id")
     val likedPost: NeighborPost,
 
-    var delete: Boolean = false
+    var deleteStatus: Boolean = false
 ) : BaseTimeEntity() {
     fun changeStatus() {
-        this.delete = !this.delete
+        this.deleteStatus = !this.deleteStatus
     }
 }

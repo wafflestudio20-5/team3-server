@@ -5,13 +5,11 @@ import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.core.neighbor.api.request.CreateNeighborPostRequest
 import com.wafflestudio.team03server.core.neighbor.api.request.UpdateNeighborPostRequest
-import com.wafflestudio.team03server.core.neighbor.api.response.NeighborCommentResponse
 import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostResponse
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborLike
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborPost
 import com.wafflestudio.team03server.core.neighbor.repository.NeighborLikeRepository
 import com.wafflestudio.team03server.core.neighbor.repository.NeighborPostRepository
-import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import org.springframework.data.repository.findByIdOrNull

@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface NeighborLikeRepository : JpaRepository<NeighborLike, Long> {
     fun findNeighborLikeByLikedPostAndLiker(likedPost: NeighborPost, liker: User): NeighborLike?
+    fun countAllByDeleteStatusEqualsAndLikedPost(deleteStatus: Boolean = false, likedPost: NeighborPost): Int
 }
