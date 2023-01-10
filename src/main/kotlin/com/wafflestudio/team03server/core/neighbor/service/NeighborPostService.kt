@@ -11,6 +11,7 @@ import com.wafflestudio.team03server.core.neighbor.entity.NeighborPost
 import com.wafflestudio.team03server.core.neighbor.repository.NeighborLikeRepository
 import com.wafflestudio.team03server.core.neighbor.repository.NeighborPostRepository
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
+import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -27,7 +28,7 @@ interface NeighborPostService {
     ): NeighborPostResponse
 
     fun deleteNeighborPost(userId: Long, postId: Long)
-    fun likeNeighborPost(userId: Long, postId: Long)
+    fun likeOrUnlikeNeighborPost(userId: Long, postId: Long)
 }
 
 @Service
@@ -110,10 +111,19 @@ class NeighborPostServiceImpl(
         neighborPostRepository.delete(readPost)
     }
 
-    override fun likeNeighborPost(userId: Long, postId: Long) {
+    private fun getNeighborLikeOrNull(user: User, post: NeighborPost): NeighborLike? {
+        return neighborLikeRepository.findNeighborLikeByLikedPostAndLiker(liker = user, likedPost = post)
+    }
+
+    override fun likeOrUnlikeNeighborPost(userId: Long, postId: Long) {
         val readUser = getUserById(userId)
         val readPost = getNeighborPostById(postId)
-        val newLike = NeighborLike(liker = readUser, likedPost = readPost)
-        neighborLikeRepository.save(newLike)
+        val readLike = getNeighborLikeOrNull(readUser, readPost)
+        if (readLike == null) {
+            val newLike = NeighborLike(liker = readUser, likedPost = readPost)
+            neighborLikeRepository.save(newLike)
+        } else {
+            neighborLikeRepository.delete(readLike)
+        }
     }
 }

@@ -61,7 +61,7 @@ class NeighborController(
         @UserContext userId: Long,
         @PathVariable("postId") postId: Long
     ) {
-        return neighborPostService.likeNeighborPost(userId, postId)
+        return neighborPostService.likeOrUnlikeNeighborPost(userId, postId)
     }
 
     @Authenticated

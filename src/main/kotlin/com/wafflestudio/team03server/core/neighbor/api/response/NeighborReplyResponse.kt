@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 data class NeighborReplyResponse(
     val replyId: Long,
-    val replyer: SimpleUserResponse,
+    val replier: SimpleUserResponse,
     val replyingMessage: String,
     val createdAt: LocalDateTime?
 ) {
@@ -14,7 +14,7 @@ data class NeighborReplyResponse(
         fun of(reply: NeighborReply): NeighborReplyResponse {
             return NeighborReplyResponse(
                 replyId = reply.id,
-                replyer = SimpleUserResponse.of(reply.replyer),
+                replier = SimpleUserResponse.of(reply.replier),
                 replyingMessage = reply.replyingMessage,
                 createdAt = reply.createdAt
             )
