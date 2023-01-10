@@ -2,13 +2,11 @@ package com.wafflestudio.team03server.core.neighbor.api
 
 import com.wafflestudio.team03server.common.Authenticated
 import com.wafflestudio.team03server.common.UserContext
-import com.wafflestudio.team03server.core.neighbor.api.request.CreateNeighborCommentRequest
-import com.wafflestudio.team03server.core.neighbor.api.request.CreateNeighborPostRequest
-import com.wafflestudio.team03server.core.neighbor.api.request.UpdateNeighborCommentRequest
-import com.wafflestudio.team03server.core.neighbor.api.request.UpdateNeighborPostRequest
+import com.wafflestudio.team03server.core.neighbor.api.request.*
 import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostResponse
 import com.wafflestudio.team03server.core.neighbor.service.NeighborCommentService
 import com.wafflestudio.team03server.core.neighbor.service.NeighborPostService
+import com.wafflestudio.team03server.core.neighbor.service.NeighborReplyService
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -16,7 +14,8 @@ import javax.validation.Valid
 @RequestMapping("/neighborhood")
 class NeighborController(
     val neighborPostService: NeighborPostService,
-    val neighborCommentService: NeighborCommentService
+    val neighborCommentService: NeighborCommentService,
+    val neighborReplyService: NeighborReplyService
 ) {
     @GetMapping("")
     fun getAllNeighborPosts(): List<NeighborPostResponse> {
@@ -62,7 +61,7 @@ class NeighborController(
         @UserContext userId: Long,
         @PathVariable("postId") postId: Long
     ) {
-        return neighborPostService.likeNeighborPost(userId, postId)
+        return neighborPostService.likeOrUnlikeNeighborPost(userId, postId)
     }
 
     @Authenticated
@@ -92,5 +91,34 @@ class NeighborController(
         @PathVariable("commentId") commentId: Long
     ) {
         return neighborCommentService.deleteNeighborComment(userId, commentId)
+    }
+
+    @Authenticated
+    @PostMapping("/comment/{commentId}/reply")
+    fun createNeighborReply(
+        @UserContext userId: Long,
+        @PathVariable("commentId") commentId: Long,
+        @Valid @RequestBody createNeighborReplyRequest: CreateNeighborReplyRequest
+    ) {
+        return neighborReplyService.createNeighborReply(userId, commentId, createNeighborReplyRequest)
+    }
+
+    @Authenticated
+    @PatchMapping("/comment/reply/{replyId}")
+    fun updateNeighborReply(
+        @UserContext userId: Long,
+        @PathVariable("replyId") replyId: Long,
+        @Valid @RequestBody updateNeighborReplyRequest: UpdateNeighborReplyRequest
+    ) {
+        return neighborReplyService.updateNeighborReply(userId, replyId, updateNeighborReplyRequest)
+    }
+
+    @Authenticated
+    @DeleteMapping("/comment/reply/{replyId}")
+    fun deleteNeighborReply(
+        @UserContext userId: Long,
+        @PathVariable("replyId") replyId: Long
+    ) {
+        return neighborReplyService.deleteNeighborReply(userId, replyId)
     }
 }

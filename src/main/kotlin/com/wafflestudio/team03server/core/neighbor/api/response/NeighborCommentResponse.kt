@@ -8,6 +8,7 @@ data class NeighborCommentResponse(
     val commentId: Long,
     val commenter: SimpleUserResponse,
     val comment: String,
+    val replies: List<NeighborReplyResponse>,
     val createdAt: LocalDateTime?
 ) {
     companion object {
@@ -16,6 +17,7 @@ data class NeighborCommentResponse(
                 commentId = comment.id,
                 commenter = SimpleUserResponse.of(comment.commenter),
                 comment = comment.comment,
+                replies = comment.replies.map { NeighborReplyResponse.of(it) },
                 createdAt = comment.createdAt
             )
         }

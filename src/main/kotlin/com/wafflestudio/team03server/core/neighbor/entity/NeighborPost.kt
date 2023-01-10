@@ -13,8 +13,11 @@ class NeighborPost(
     @JoinColumn(name = "publisher_id")
     val publisher: User,
 
-    @OneToMany(mappedBy = "neighborPost")
+    @OneToMany(mappedBy = "neighborPost", cascade = [CascadeType.ALL])
     var comments: MutableList<NeighborComment> = mutableListOf(),
+
+    @OneToMany(mappedBy = "likedPost", cascade = [CascadeType.ALL])
+    var likes: MutableList<NeighborLike> = mutableListOf(),
 
     var viewCount: Int = 0
 ) : BaseTimeEntity()

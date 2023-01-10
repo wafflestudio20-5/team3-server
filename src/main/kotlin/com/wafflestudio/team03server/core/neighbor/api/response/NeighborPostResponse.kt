@@ -11,6 +11,7 @@ data class NeighborPostResponse(
     val publisher: SimpleUserResponse,
     val comments: List<NeighborCommentResponse>,
     val viewCount: Int,
+    val likeCount: Int,
     val createdAt: LocalDateTime?
 ) {
     companion object {
@@ -22,6 +23,7 @@ data class NeighborPostResponse(
                 publisher = SimpleUserResponse.of(post.publisher),
                 comments = post.comments.map { NeighborCommentResponse.of(it) },
                 viewCount = post.viewCount,
+                likeCount = post.likes.filter { !it.deleteStatus }.size,
                 createdAt = post.createdAt
             )
         }

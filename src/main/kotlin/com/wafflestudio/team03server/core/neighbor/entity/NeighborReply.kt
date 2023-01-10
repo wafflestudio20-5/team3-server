@@ -8,25 +8,20 @@ import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 
 @Entity
-class NeighborLike(
+class NeighborReply(
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "liker_id")
-    val liker: User,
+    @JoinColumn(name = "neighbor_comment_id")
+    var neighborComment: NeighborComment,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "neighbor_post_id")
-    var likedPost: NeighborPost,
+    @JoinColumn(name = "neighbor_replyer_id")
+    val replier: User,
 
-    var deleteStatus: Boolean = false
+    var replyingMessage: String
 ) : BaseTimeEntity() {
-
-    fun mapLikedPost(post: NeighborPost) {
-        this.likedPost.likes.remove(this)
-        this.likedPost = post
-        this.likedPost.likes.add(this)
-    }
-
-    fun changeStatus() {
-        this.deleteStatus = !this.deleteStatus
+    fun mapNeighborComment(comment: NeighborComment) {
+        this.neighborComment.replies.remove(this)
+        this.neighborComment = comment
+        this.neighborComment.replies.add(this)
     }
 }

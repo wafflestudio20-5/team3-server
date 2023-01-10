@@ -1,16 +1,16 @@
 package com.wafflestudio.team03server.core.neighbor.service
 
+import com.wafflestudio.team03server.common.Exception400
 import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.core.neighbor.api.request.CreateNeighborPostRequest
 import com.wafflestudio.team03server.core.neighbor.api.request.UpdateNeighborPostRequest
-import com.wafflestudio.team03server.core.neighbor.api.response.NeighborCommentResponse
 import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostResponse
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborLike
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborPost
 import com.wafflestudio.team03server.core.neighbor.repository.NeighborLikeRepository
 import com.wafflestudio.team03server.core.neighbor.repository.NeighborPostRepository
-import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
+import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -27,7 +27,7 @@ interface NeighborPostService {
     ): NeighborPostResponse
 
     fun deleteNeighborPost(userId: Long, postId: Long)
-    fun likeNeighborPost(userId: Long, postId: Long)
+    fun likeOrUnlikeNeighborPost(userId: Long, postId: Long)
 }
 
 @Service
@@ -50,17 +50,9 @@ class NeighborPostServiceImpl(
     ): NeighborPostResponse {
         val publisher = getUserById(userId)
         val (title, content) = createNeighborPostRequest
-        val neighborPost = NeighborPost(title = title, content = content, publisher = publisher)
+        val neighborPost = NeighborPost(title = title!!, content = content!!, publisher = publisher)
         neighborPostRepository.save(neighborPost)
-        return NeighborPostResponse(
-            postId = neighborPost.id,
-            title = neighborPost.title,
-            content = neighborPost.content,
-            publisher = SimpleUserResponse.of(neighborPost.publisher),
-            comments = neighborPost.comments.map { NeighborCommentResponse.of(it) },
-            viewCount = neighborPost.viewCount,
-            createdAt = neighborPost.createdAt
-        )
+        return NeighborPostResponse.of(neighborPost)
     }
 
     private fun getNeighborPostById(postId: Long) =
@@ -73,15 +65,7 @@ class NeighborPostServiceImpl(
     override fun getNeighborPost(postId: Long): NeighborPostResponse {
         val readPost = getNeighborPostById(postId)
         updateViewCount(readPost)
-        return NeighborPostResponse(
-            postId = readPost.id,
-            title = readPost.title,
-            content = readPost.content,
-            publisher = SimpleUserResponse.of(readPost.publisher),
-            comments = readPost.comments.map { NeighborCommentResponse.of(it) },
-            viewCount = readPost.viewCount,
-            createdAt = readPost.createdAt
-        )
+        return NeighborPostResponse.of(readPost)
     }
 
     private fun checkPublisher(readPost: NeighborPost, userId: Long) {
@@ -110,10 +94,26 @@ class NeighborPostServiceImpl(
         neighborPostRepository.delete(readPost)
     }
 
-    override fun likeNeighborPost(userId: Long, postId: Long) {
+    private fun getNeighborLikeOrNull(user: User, post: NeighborPost): NeighborLike? {
+        return neighborLikeRepository.findNeighborLikeByLikedPostAndLiker(liker = user, likedPost = post)
+    }
+
+    private fun checkPublisherEqualsLiker(user: User, post: NeighborPost) {
+        if (post.publisher == user) throw Exception400("본인의 글에는 좋아요를 누를 수 없습니다.")
+    }
+
+    override fun likeOrUnlikeNeighborPost(userId: Long, postId: Long) {
         val readUser = getUserById(userId)
         val readPost = getNeighborPostById(postId)
-        val newLike = NeighborLike(liker = readUser, likedPost = readPost)
-        neighborLikeRepository.save(newLike)
+        checkPublisherEqualsLiker(readUser, readPost)
+
+        val readLike = getNeighborLikeOrNull(readUser, readPost)
+        if (readLike == null) {
+            val newLike = NeighborLike(liker = readUser, likedPost = readPost)
+            newLike.mapLikedPost(readPost)
+            neighborLikeRepository.save(newLike)
+        } else {
+            readLike.changeStatus()
+        }
     }
 }
