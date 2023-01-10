@@ -15,5 +15,11 @@ class NeighborLike(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "neighbor_post_id")
-    val likedPost: NeighborPost
-) : BaseTimeEntity()
+    val likedPost: NeighborPost,
+
+    var delete: Boolean = false
+) : BaseTimeEntity() {
+    fun changeStatus() {
+        this.delete = !this.delete
+    }
+}

@@ -1,5 +1,6 @@
 package com.wafflestudio.team03server.core.neighbor.service
 
+import com.wafflestudio.team03server.common.Exception400
 import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.core.neighbor.api.request.CreateNeighborPostRequest
@@ -53,15 +54,7 @@ class NeighborPostServiceImpl(
         val (title, content) = createNeighborPostRequest
         val neighborPost = NeighborPost(title = title!!, content = content!!, publisher = publisher)
         neighborPostRepository.save(neighborPost)
-        return NeighborPostResponse(
-            postId = neighborPost.id,
-            title = neighborPost.title,
-            content = neighborPost.content,
-            publisher = SimpleUserResponse.of(neighborPost.publisher),
-            comments = neighborPost.comments.map { NeighborCommentResponse.of(it) },
-            viewCount = neighborPost.viewCount,
-            createdAt = neighborPost.createdAt
-        )
+        return NeighborPostResponse.of(neighborPost)
     }
 
     private fun getNeighborPostById(postId: Long) =
@@ -74,15 +67,7 @@ class NeighborPostServiceImpl(
     override fun getNeighborPost(postId: Long): NeighborPostResponse {
         val readPost = getNeighborPostById(postId)
         updateViewCount(readPost)
-        return NeighborPostResponse(
-            postId = readPost.id,
-            title = readPost.title,
-            content = readPost.content,
-            publisher = SimpleUserResponse.of(readPost.publisher),
-            comments = readPost.comments.map { NeighborCommentResponse.of(it) },
-            viewCount = readPost.viewCount,
-            createdAt = readPost.createdAt
-        )
+        return NeighborPostResponse.of(readPost)
     }
 
     private fun checkPublisher(readPost: NeighborPost, userId: Long) {
@@ -115,15 +100,21 @@ class NeighborPostServiceImpl(
         return neighborLikeRepository.findNeighborLikeByLikedPostAndLiker(liker = user, likedPost = post)
     }
 
+    private fun checkPublisherEqualsLiker(user: User, post: NeighborPost) {
+        if (post.publisher == user) throw Exception400("본인의 글에는 좋아요를 누를 수 없습니다.")
+    }
+
     override fun likeOrUnlikeNeighborPost(userId: Long, postId: Long) {
         val readUser = getUserById(userId)
         val readPost = getNeighborPostById(postId)
+        checkPublisherEqualsLiker(readUser, readPost)
+
         val readLike = getNeighborLikeOrNull(readUser, readPost)
         if (readLike == null) {
             val newLike = NeighborLike(liker = readUser, likedPost = readPost)
             neighborLikeRepository.save(newLike)
         } else {
-            neighborLikeRepository.delete(readLike)
+            readLike.changeStatus()
         }
     }
 }
