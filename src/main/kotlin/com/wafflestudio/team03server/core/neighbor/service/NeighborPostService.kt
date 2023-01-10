@@ -50,7 +50,7 @@ class NeighborPostServiceImpl(
     ): NeighborPostResponse {
         val publisher = getUserById(userId)
         val (title, content) = createNeighborPostRequest
-        val neighborPost = NeighborPost(title = title, content = content, publisher = publisher)
+        val neighborPost = NeighborPost(title = title!!, content = content!!, publisher = publisher)
         neighborPostRepository.save(neighborPost)
         return NeighborPostResponse(
             postId = neighborPost.id,

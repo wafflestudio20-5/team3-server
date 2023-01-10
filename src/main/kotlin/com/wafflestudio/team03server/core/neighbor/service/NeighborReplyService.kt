@@ -39,7 +39,7 @@ class NeighborReplyServiceImpl(
     ) {
         val replier = getUserById(userId)
         val comment = getNeighborCommentById(commentId)
-        val message = createNeighborReplyRequest.message
+        val message = createNeighborReplyRequest.message!!
         val neighborReply = NeighborReply(neighborComment = comment, replier = replier, replyingMessage = message)
         comment.replies.add(neighborReply)
         neighborReplyRepository.save(neighborReply)

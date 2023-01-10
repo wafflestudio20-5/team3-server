@@ -39,7 +39,7 @@ class NeighborCommentServiceImpl(
     ) {
         val commenter = getUserById(userId)
         val post = getNeighborPostById(postId)
-        val comment = createNeighborCommentRequest.comment
+        val comment = createNeighborCommentRequest.comment!!
         val neighborComment = NeighborComment(neighborPost = post, commenter = commenter, comment = comment)
         neighborCommentRepository.save(neighborComment)
     }
