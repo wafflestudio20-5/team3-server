@@ -41,6 +41,7 @@ class NeighborCommentServiceImpl(
         val post = getNeighborPostById(postId)
         val comment = createNeighborCommentRequest.comment!!
         val neighborComment = NeighborComment(neighborPost = post, commenter = commenter, comment = comment)
+        neighborComment.mapNeighborPost(post)
         neighborCommentRepository.save(neighborComment)
     }
 

@@ -6,7 +6,9 @@ import javax.persistence.*
 
 @Entity
 class NeighborComment(
-    neighborPost: NeighborPost,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "neighbor_post_id")
+    var neighborPost: NeighborPost,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "neighbor_commenter_id")
@@ -18,12 +20,9 @@ class NeighborComment(
     var replies: MutableList<NeighborReply> = mutableListOf()
 
 ) : BaseTimeEntity() {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "neighbor_post_id")
-    var neighborPost = neighborPost
-        set(post) {
-            field.comments.remove(this)
-            field = post
-            field.comments.add(this)
-        }
+    fun mapNeighborPost(post: NeighborPost) {
+        this.neighborPost.comments.remove(this)
+        this.neighborPost = post
+        this.neighborPost.comments.add(this)
+    }
 }

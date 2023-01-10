@@ -9,7 +9,9 @@ import javax.persistence.ManyToOne
 
 @Entity
 class NeighborReply(
-    neighborComment: NeighborComment,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "neighbor_comment_id")
+    var neighborComment: NeighborComment,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "neighbor_replyer_id")
@@ -17,12 +19,9 @@ class NeighborReply(
 
     var replyingMessage: String
 ) : BaseTimeEntity() {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "neighbor_comment_id")
-    var neighborComment = neighborComment
-        set(comment) {
-            field.replies.remove(this)
-            field = comment
-            field.replies.add(this)
-        }
+    fun mapNeighborComment(comment: NeighborComment) {
+        this.neighborComment.replies.remove(this)
+        this.neighborComment = comment
+        this.neighborComment.replies.add(this)
+    }
 }

@@ -110,6 +110,7 @@ class NeighborPostServiceImpl(
         val readLike = getNeighborLikeOrNull(readUser, readPost)
         if (readLike == null) {
             val newLike = NeighborLike(liker = readUser, likedPost = readPost)
+            newLike.mapLikedPost(readPost)
             neighborLikeRepository.save(newLike)
         } else {
             readLike.changeStatus()

@@ -13,18 +13,18 @@ class NeighborLike(
     @JoinColumn(name = "liker_id")
     val liker: User,
 
-    likedPost: NeighborPost,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "neighbor_post_id")
+    var likedPost: NeighborPost,
 
     var deleteStatus: Boolean = false
 ) : BaseTimeEntity() {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "neighbor_post_id")
-    var likedPost = likedPost
-        set(post) {
-            field.likes.remove(this)
-            field = post
-            field.likes.add(this)
-        }
+
+    fun mapLikedPost(post: NeighborPost) {
+        this.likedPost.likes.remove(this)
+        this.likedPost = post
+        this.likedPost.likes.add(this)
+    }
 
     fun changeStatus() {
         this.deleteStatus = !this.deleteStatus
