@@ -1,7 +1,9 @@
 package com.wafflestudio.team03server.core.user.entity
 
 import com.wafflestudio.team03server.common.BaseTimeEntity
+import com.wafflestudio.team03server.core.trade.entity.LikePost
 import com.wafflestudio.team03server.core.trade.entity.TradePost
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.OneToMany
@@ -33,6 +35,9 @@ class User(
 
     @OneToMany(mappedBy = "buyer")
     var buyPosts: MutableList<TradePost> = mutableListOf(),
+
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL])
+    val likeTradePosts: MutableList<LikePost> = mutableListOf(),
 
 //    @OneToMany(mappedBy = "user")
 //    var reservations: MutableList<Reservation> = mutableListOf(),
