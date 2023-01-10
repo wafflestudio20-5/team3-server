@@ -1,11 +1,14 @@
 package com.wafflestudio.team03server.core.chat.entity
 
-import com.wafflestudio.team03server.common.BaseTimeEntity
 import com.wafflestudio.team03server.core.user.entity.User
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
 class ChatHistory(
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0L,
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
     val chatRoom: ChatRoom,
@@ -15,5 +18,5 @@ class ChatHistory(
     val sender: User,
 
     val message: String,
-
-) : BaseTimeEntity()
+    val createdAt: LocalDateTime
+)

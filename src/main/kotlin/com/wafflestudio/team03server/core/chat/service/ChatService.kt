@@ -8,13 +8,16 @@ import com.wafflestudio.team03server.core.chat.entity.ChatHistory
 import com.wafflestudio.team03server.core.chat.entity.ChatRoom
 import com.wafflestudio.team03server.core.chat.repository.ChatHistoryRepository
 import com.wafflestudio.team03server.core.chat.repository.ChatRoomRepository
+import com.wafflestudio.team03server.core.trade.entity.Reservation
 import com.wafflestudio.team03server.core.trade.entity.TradePost
+import com.wafflestudio.team03server.core.trade.repository.ReservationRepository
 import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 @Transactional
@@ -23,6 +26,7 @@ class ChatService(
     val chatHistoryRepository: ChatHistoryRepository,
     val userRepository: UserRepository,
     val tradePostRepository: TradePostRepository,
+    val reservationRepository: ReservationRepository,
 ) {
     fun startChat(buyerId: Long, postId: Long): ChatResponse {
         val findPost = getPostById(postId)
@@ -34,17 +38,19 @@ class ChatService(
         if (isFirstChatting(chatRoom)) {
             chatRoom = ChatRoom.create(findSeller, findBuyer, findPost)
             chatRoomRepository.save(chatRoom)
-            // TODO: 예약기능까지 연동하기
+            makeReservation(findPost, findBuyer) // 채팅방이 생기면 예약 시작
         }
 
         return ChatResponse.of(chatRoom!!) // TODO: 추후 N + 1 해결하기
     }
 
-    private fun checkSellerStartChat(
-        findBuyer: User,
-        findSeller: User
-    ) {
-        if (findBuyer == findSeller) throw Exception400("판매자는 채팅을 시작할 수 없습니다.")
+    private fun makeReservation(findPost: TradePost, findBuyer: User) {
+        val reservation = Reservation.create(findBuyer, findPost)
+        reservationRepository.save(reservation)
+    }
+
+    private fun checkSellerStartChat(buyer: User, seller: User) {
+        if (buyer == seller) throw Exception400("판매자는 채팅을 시작할 수 없습니다.")
     }
 
     private fun isFirstChatting(chatRoom: ChatRoom?) = (chatRoom == null)
@@ -62,15 +68,17 @@ class ChatService(
     fun saveMessage(message: ChatMessage) {
         val chatRoom = getChatRoomByUUID(message)
         val sender = getUserById(message.senderId)
-        val message = message.message
-        saveChatMessage(chatRoom, sender, message)
+        val _message = message.message
+        val createdAt = message.createdAt
+        saveChatMessage(chatRoom, sender, _message, createdAt)
     }
 
-    private fun saveChatMessage(_chatRoom: ChatRoom, _sender: User, _message: String) {
+    private fun saveChatMessage(_chatRoom: ChatRoom, _sender: User, _message: String, _createdAt: LocalDateTime,) {
         val chatHistory = ChatHistory(
             chatRoom = _chatRoom,
             sender = _sender,
             message = _message,
+            createdAt = _createdAt,
         )
         chatHistoryRepository.save(chatHistory)
     }
