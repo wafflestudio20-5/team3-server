@@ -31,29 +31,22 @@ class AuthController(
     fun signUp(
         @Valid @RequestBody
         signUpRequest: SignUpRequest,
-    ): ResponseEntity<Any> {
-        authService.signUp(signUpRequest)
-        return ResponseEntity(HttpStatus.OK)
+    ): ResponseEntity<LoginResponse> {
+        val response = authService.signUp(signUpRequest)
+        return ResponseEntity(response, HttpStatus.OK)
     }
 
     // 인증 이메일 전송
     @GetMapping("/sendVerificationEmail")
     fun sendVerificationEmail(@RequestParam email: String): ResponseEntity<Any> {
-        authService.sendVerificationMail(email)
+        authService.sendVerificationEmail(email)
         return ResponseEntity(HttpStatus.OK)
-    }
-
-    // 이메일 인증 확인
-    @GetMapping("/checkEmailVerified")
-    fun checkEmailVerified(@RequestParam email: String): ResponseEntity<Boolean> {
-        return ResponseEntity(authService.checkEmailVerified(email), HttpStatus.OK)
     }
 
     // 이메일 인증
     @GetMapping("/verifyEmail")
-    fun verifyEmail(@RequestParam("token") token: String): ResponseEntity<Any> {
-        authService.verifyEmail(token)
-        return ResponseEntity(HttpStatus.OK)
+    fun verifyEmail(@RequestParam("code") code: String, @RequestParam("email") email: String): ResponseEntity<Boolean> {
+        return ResponseEntity(authService.verifyEmail(code, email), HttpStatus.OK)
     }
 
     // 로그인

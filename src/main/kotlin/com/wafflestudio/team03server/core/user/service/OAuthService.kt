@@ -1,6 +1,5 @@
 package com.wafflestudio.team03server.core.user.service
 
-import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.common.SocialLoginNotFoundException
 import com.wafflestudio.team03server.core.user.api.response.LoginResponse
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
@@ -35,15 +34,7 @@ class OAuthService(
             NEED_SIGNUP_MESSAGE,
             email,
         )
-        checkVerifiedUser(findUser)
         val jwtToken = authTokenService.generateTokenByEmail(findUser.email).accessToken
         return Pair(findUser, jwtToken)
-    }
-
-    private fun checkVerifiedUser(findUser: User) {
-        if (!findUser.emailVerified) {
-            userRepository.delete(findUser)
-            throw Exception404(NEED_SIGNUP_MESSAGE)
-        }
     }
 }

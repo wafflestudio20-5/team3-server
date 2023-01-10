@@ -6,6 +6,7 @@ import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
 import com.wafflestudio.team03server.core.user.api.request.EditUsernameRequest
 import com.wafflestudio.team03server.core.user.api.response.UserResponse
 import com.wafflestudio.team03server.core.user.repository.UserRepository
+import com.wafflestudio.team03server.utils.S3Service
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service

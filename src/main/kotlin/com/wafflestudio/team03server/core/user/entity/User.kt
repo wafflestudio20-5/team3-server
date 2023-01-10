@@ -25,9 +25,6 @@ class User(
     @NotNull
     val temperature: Double = 36.5,
     var imgUrl: String? = null,
-    @Column(unique = true)
-    var verificationToken: String? = null,
-    var emailVerified: Boolean = false,
 
     @OneToMany(mappedBy = "seller")
     var sellPosts: MutableList<TradePost> = mutableListOf(),
