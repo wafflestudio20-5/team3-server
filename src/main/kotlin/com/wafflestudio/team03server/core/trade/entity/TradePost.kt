@@ -19,8 +19,11 @@ class TradePost(
     @JoinColumn(name = "buyer_id")
     var buyer: User? = null,
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL])
     var reservations: MutableList<Reservation> = mutableListOf(),
+
+    @OneToMany(mappedBy = "likedPost", cascade = [CascadeType.ALL])
+    var likeTradePosts: MutableList<LikePost> = mutableListOf(),
 
     @Enumerated(EnumType.STRING)
     var tradeState: TradeState = TRADING,

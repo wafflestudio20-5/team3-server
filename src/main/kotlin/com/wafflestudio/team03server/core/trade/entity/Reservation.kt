@@ -6,13 +6,22 @@ import javax.persistence.*
 @Entity
 class Reservation(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long = 0L,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    val post: TradePost,
+    var post: TradePost,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    val user: User,
-)
+    @JoinColumn(name = "buyer_id")
+    var buyer: User,
+) {
+
+    companion object {
+        fun create(_buyer: User, _post: TradePost): Reservation {
+            val reservation = Reservation(post = _post, buyer = _buyer)
+            _post.reservations.add(reservation)
+            return reservation
+        }
+    }
+}

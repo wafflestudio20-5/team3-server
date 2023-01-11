@@ -71,6 +71,10 @@ dependencies {
     // Apache IO
     implementation("commons-io:commons-io:2.11.0")
 
+    // Websocket + STOMP
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.webjars:stomp-websocket:2.3.3-1")
+
     // Redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 

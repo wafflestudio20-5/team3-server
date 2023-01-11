@@ -4,6 +4,7 @@ import com.wafflestudio.team03server.core.trade.entity.TradePost
 import com.wafflestudio.team03server.core.trade.entity.TradeState
 import com.wafflestudio.team03server.core.trade.entity.TradeState.*
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
+import com.wafflestudio.team03server.core.user.entity.User
 
 data class PostResponse(
     val postId: Long,
@@ -15,9 +16,12 @@ data class PostResponse(
     val reservationCount: Int = 0,
     val tradeStatus: TradeState = TRADING,
     val viewCount: Int = 0,
+    val likeCount: Int = 0,
+    val isLiked: Boolean = false,
+    val isOwner: Boolean = true,
 ) {
     companion object {
-        fun of(post: TradePost): PostResponse {
+        fun of(post: TradePost, user: User): PostResponse {
             return PostResponse(
                 postId = post.id,
                 title = post.title,
@@ -28,7 +32,18 @@ data class PostResponse(
                 reservationCount = post.reservations.size, // 추후 N + 1 문제 고려해서 리팩토링
                 tradeStatus = post.tradeState,
                 viewCount = post.viewCount,
+                likeCount = post.likeTradePosts.size,
+                isLiked = isLiked(user, post),
+                isOwner = isOwner(user, post),
             )
+        }
+
+        private fun isOwner(user: User, post: TradePost): Boolean {
+            return user.id == post.seller.id
+        }
+
+        private fun isLiked(user: User, post: TradePost): Boolean {
+            return user.likeTradePosts.any { it.likedPost.id == post.id }
         }
     }
 }
