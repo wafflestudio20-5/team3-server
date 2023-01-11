@@ -59,13 +59,13 @@ class TradePostController(
     }
 
     @Authenticated
-    @GetMapping("/reservation/{post-id}")
+    @GetMapping("/{post-id}/reservation")
     fun getReservations(@UserContext userId: Long, @PathVariable(name = "post-id") postId: Long): ReservationResponse {
         return tradePostService.getReservations(userId, postId)
     }
 
     @Authenticated
-    @PostMapping("/reservation/{post-id}/{uid}")
+    @PostMapping("/{post-id}/reservation/{uid}")
     fun changeBuyer(
         @UserContext userId: Long,
         @PathVariable(name = "post-id") postId: Long,
@@ -75,14 +75,14 @@ class TradePostController(
     }
 
     @Authenticated
-    @PostMapping("/cancel/{post-id}")
+    @PostMapping("/{post-id}/cancel")
     fun cancelTrade(@UserContext userId: Long, @PathVariable(name = "post-id") postId: Long) {
         tradePostService.cancelTrade(userId, postId)
     }
 
     // 구매 확정
     @Authenticated
-    @PostMapping("/confirmation/{post-id}")
+    @PostMapping("/{post-id}/confirmation")
     fun confirmTrade(@UserContext userId: Long, @PathVariable(name = "post-id") postId: Long) {
         tradePostService.confirmTrade(userId, postId)
     }
