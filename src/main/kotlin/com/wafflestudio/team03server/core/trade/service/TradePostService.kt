@@ -150,11 +150,11 @@ class TradePostService(
         checkNotPostOwner(user, post)
         val like = likePostRepository.findLikePostByUserAndLikedPost(user, post)
         like?.let {
-            post.likeTradePosts.remove(it)
+            it.removeLike()
             likePostRepository.delete(it)
         } ?: let {
             val likePost = LikePost(user, post)
-            post.likeTradePosts.add(likePost)
+            likePost.addLike()
             likePostRepository.save(likePost)
         }
     }

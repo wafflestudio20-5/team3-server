@@ -17,4 +17,14 @@ class LikePost(
     @JoinColumn(name = "post_id")
     val likedPost: TradePost,
 
-) : BaseTimeEntity()
+) : BaseTimeEntity() {
+    fun removeLike() {
+        this.user.likeTradePosts.remove(this)
+        this.likedPost.likeTradePosts.remove(this)
+    }
+
+    fun addLike() {
+        this.user.likeTradePosts.add(this)
+        this.likedPost.likeTradePosts.add(this)
+    }
+}

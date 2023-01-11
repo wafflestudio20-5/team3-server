@@ -262,12 +262,13 @@ internal class TradePostServiceTest @Autowired constructor(
         // when
         tradePostService.likePost(savedUser2.id, post.postId)
         val findPost = tradePostRepository.findById(post.postId).get()
-        println("findPost.likeTradePosts = ${findPost.likeTradePosts}")
+        val findUser = userRepository.findById(savedUser2.id).get()
 
         // then
         assertThat(findPost.likeTradePosts.size).isEqualTo(1)
         assertThat(findPost.likeTradePosts[0].user.id).isEqualTo(savedUser2.id)
         assertThat(findPost.likeTradePosts[0].likedPost.id).isEqualTo(post.postId)
+        assertThat(findUser.likeTradePosts[0].likedPost.id).isEqualTo(post.postId)
     }
 
     @Test
@@ -284,8 +285,10 @@ internal class TradePostServiceTest @Autowired constructor(
         tradePostService.likePost(savedUser2.id, post.postId)
         tradePostService.likePost(savedUser2.id, post.postId)
         val findPost = tradePostRepository.findById(post.postId).get()
+        val findUser = userRepository.findById(savedUser2.id).get()
 
         // then
         assertThat(findPost.likeTradePosts.size).isEqualTo(0)
+        assertThat(findUser.likeTradePosts.size).isEqualTo(0)
     }
 }

@@ -36,7 +36,4 @@ class User(
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL])
     val likeTradePosts: MutableList<LikePost> = mutableListOf(),
 
-//    @OneToMany(mappedBy = "user")
-//    var reservations: MutableList<Reservation> = mutableListOf(),
-
 ) : BaseTimeEntity()
