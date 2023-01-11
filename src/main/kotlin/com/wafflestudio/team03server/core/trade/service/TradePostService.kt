@@ -9,14 +9,18 @@ import com.wafflestudio.team03server.core.trade.api.response.PostResponse
 import com.wafflestudio.team03server.core.trade.api.response.ReservationResponse
 import com.wafflestudio.team03server.core.trade.entity.LikePost
 import com.wafflestudio.team03server.core.trade.entity.TradePost
+import com.wafflestudio.team03server.core.trade.entity.TradePostImage
 import com.wafflestudio.team03server.core.trade.entity.TradeState
 import com.wafflestudio.team03server.core.trade.repository.LikePostRepository
+import com.wafflestudio.team03server.core.trade.repository.TradePostImageRepository
 import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
-import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
+import com.wafflestudio.team03server.utils.S3Service
+import org.apache.commons.io.FilenameUtils
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 import javax.transaction.Transactional
 
 @Service
@@ -25,18 +29,43 @@ class TradePostService(
     val userRepository: UserRepository,
     val tradePostRepository: TradePostRepository,
     val likePostRepository: LikePostRepository,
+    val tradePostImageRepository: TradePostImageRepository,
+    val s3Service: S3Service,
 ) {
-    fun createPost(userId: Long, request: CreatePostRequest): PostResponse {
+    fun createPost(
+        userId: Long,
+        images: List<MultipartFile>,
+        request: CreatePostRequest
+    ): PostResponse {
         val (user, post) = makePost(userId, request)
-        return PostResponse(
-            postId = post.id,
-            title = post.title,
-            desc = post.description,
-            price = post.price,
-            seller = SimpleUserResponse.of(user),
-            isOwner = true,
-        )
+        checkImageFiles(images)
+        saveImages(images, post)
+        return PostResponse.of(post, user)
     }
+
+    private fun saveImages(images: List<MultipartFile>, post: TradePost) {
+        uploadImagesAndGetImageUrls(images).map { url -> saveImage(post, url) }
+    }
+
+    private fun uploadImagesAndGetImageUrls(images: List<MultipartFile>) =
+        images.map { s3Service.upload(it) }
+
+    private fun saveImage(_post: TradePost, url: String): TradePostImage {
+        val image = TradePostImage(post = _post, imgUrl = url)
+        image.addImage(_post)
+        return tradePostImageRepository.save(image)
+    }
+
+    private fun checkImageFiles(images: List<MultipartFile>) {
+        if (!isImageFiles(images)) throw Exception400("이미지 파일이 아닌 파일이 존재합니다.")
+    }
+
+    private fun isImageFiles(images: List<MultipartFile>): Boolean {
+        return getFileExtentions(images).all { it == "jpg" || it == "jpeg" || it == "png" }
+    }
+
+    private fun getFileExtentions(images: List<MultipartFile>) =
+        images.map { FilenameUtils.getExtension(it.originalFilename).lowercase() }
 
     private fun makePost(userId: Long, request: CreatePostRequest): Pair<User, TradePost> {
         val findUser = getUserById(userId)

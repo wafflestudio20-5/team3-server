@@ -5,12 +5,14 @@ import com.wafflestudio.team03server.core.trade.entity.TradeState
 import com.wafflestudio.team03server.core.trade.entity.TradeState.*
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
 import com.wafflestudio.team03server.core.user.entity.User
+import java.time.LocalDateTime
 
 data class PostResponse(
     val postId: Long,
     val title: String,
     val desc: String,
     val price: Int,
+    val imageUrls: List<String>,
     val seller: SimpleUserResponse,
     val buyer: SimpleUserResponse? = null,
     val reservationCount: Int = 0,
@@ -19,6 +21,8 @@ data class PostResponse(
     val likeCount: Int = 0,
     val isLiked: Boolean = false,
     val isOwner: Boolean = true,
+    val createdAt: LocalDateTime,
+    val modifiedAt: LocalDateTime,
 ) {
     companion object {
         fun of(post: TradePost, user: User): PostResponse {
@@ -27,16 +31,21 @@ data class PostResponse(
                 title = post.title,
                 desc = post.description,
                 price = post.price,
+                imageUrls = getImgUrls(post), // N + 1
                 seller = SimpleUserResponse.of(post.seller),
                 buyer = post.buyer?.let { SimpleUserResponse.of(it) },
                 reservationCount = post.reservations.size, // 추후 N + 1 문제 고려해서 리팩토링
                 tradeStatus = post.tradeState,
                 viewCount = post.viewCount,
-                likeCount = post.likeTradePosts.size,
+                likeCount = post.likeTradePosts.size, // N + 1
                 isLiked = isLiked(user, post),
                 isOwner = isOwner(user, post),
+                createdAt = post.createdAt!!,
+                modifiedAt = post.modifiedAt!!,
             )
         }
+
+        private fun getImgUrls(post: TradePost) = post.images.map { it.imgUrl }
 
         private fun isOwner(user: User, post: TradePost): Boolean {
             return user.id == post.seller.id

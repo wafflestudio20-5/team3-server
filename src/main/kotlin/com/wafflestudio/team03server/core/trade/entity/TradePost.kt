@@ -20,6 +20,9 @@ class TradePost(
     var buyer: User? = null,
 
     @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL])
+    var images: MutableList<TradePostImage> = mutableListOf(),
+
+    @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL])
     var reservations: MutableList<Reservation> = mutableListOf(),
 
     @OneToMany(mappedBy = "likedPost", cascade = [CascadeType.ALL])
