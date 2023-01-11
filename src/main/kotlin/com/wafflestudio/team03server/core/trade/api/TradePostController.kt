@@ -29,7 +29,7 @@ class TradePostController(
     @PostMapping("")
     fun createPost(
         @UserContext userId: Long,
-        @RequestPart(value = "images", required = false) images: List<MultipartFile>,
+        @RequestPart(value = "images", required = false) images: List<MultipartFile>?,
         @Valid @RequestBody request: CreatePostRequest
     ): PostResponse {
         return tradePostService.createPost(userId, images, request)

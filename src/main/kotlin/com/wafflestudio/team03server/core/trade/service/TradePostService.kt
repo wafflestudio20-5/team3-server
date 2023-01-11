@@ -34,12 +34,14 @@ class TradePostService(
 ) {
     fun createPost(
         userId: Long,
-        images: List<MultipartFile>,
+        images: List<MultipartFile>?,
         request: CreatePostRequest
     ): PostResponse {
         val (user, post) = makePost(userId, request)
-        checkImageFiles(images)
-        saveImages(images, post)
+        if (images != null) {
+            checkImageFiles(images)
+            saveImages(images, post)
+        }
         return PostResponse.of(post, user)
     }
 
