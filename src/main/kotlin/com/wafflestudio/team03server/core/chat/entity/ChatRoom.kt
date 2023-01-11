@@ -26,7 +26,7 @@ class ChatRoom(
     val post: TradePost,
 
     @OneToMany(mappedBy = "chatRoom")
-    val histories: List<ChatHistory> = mutableListOf()
+    val histories: MutableList<ChatHistory> = mutableListOf()
 
 ) {
     companion object {

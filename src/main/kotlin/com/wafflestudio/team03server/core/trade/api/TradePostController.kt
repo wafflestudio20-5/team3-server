@@ -30,8 +30,8 @@ class TradePostController(
     }
 
     @Authenticated
-    @GetMapping("/{pid}")
-    fun getPost(@UserContext userId: Long, @PathVariable(name = "pid") postId: Long): PostResponse {
+    @GetMapping("/{post-id}")
+    fun getPost(@UserContext userId: Long, @PathVariable(name = "post-id") postId: Long): PostResponse {
         return tradePostService.getPost(userId, postId)
     }
 
@@ -43,54 +43,54 @@ class TradePostController(
     }
 
     @Authenticated
-    @PatchMapping("/{pid}")
+    @PatchMapping("/{post-id}")
     fun updatePost(
         @UserContext userId: Long,
-        @PathVariable(name = "pid") postId: Long,
+        @PathVariable(name = "post-id") postId: Long,
         @Valid @RequestBody request: UpdatePostRequest
     ): PostResponse {
         return tradePostService.updatePost(userId, postId, request)
     }
 
     @Authenticated
-    @DeleteMapping("/{pid}")
-    fun deletePost(@UserContext userId: Long, @PathVariable(name = "pid") postId: Long) {
+    @DeleteMapping("/{post-id}")
+    fun deletePost(@UserContext userId: Long, @PathVariable(name = "post-id") postId: Long) {
         return tradePostService.removePost(userId, postId)
     }
 
     @Authenticated
-    @GetMapping("/reservation/{pid}")
-    fun getReservations(@UserContext userId: Long, @PathVariable(name = "pid") postId: Long): ReservationResponse {
+    @GetMapping("/reservation/{post-id}")
+    fun getReservations(@UserContext userId: Long, @PathVariable(name = "post-id") postId: Long): ReservationResponse {
         return tradePostService.getReservations(userId, postId)
     }
 
     @Authenticated
-    @GetMapping("/reservation/{pid}/{uid}")
+    @PostMapping("/reservation/{post-id}/{uid}")
     fun changeBuyer(
         @UserContext userId: Long,
-        @PathVariable(name = "pid") postId: Long,
+        @PathVariable(name = "post-id") postId: Long,
         @PathVariable(name = "uid") buyerId: Long,
     ) {
         tradePostService.changeBuyer(userId, buyerId, postId)
     }
 
     @Authenticated
-    @GetMapping("/cancel/{pid}")
-    fun cancelTrade(@UserContext userId: Long, @PathVariable(name = "pid") postId: Long) {
+    @PostMapping("/cancel/{post-id}")
+    fun cancelTrade(@UserContext userId: Long, @PathVariable(name = "post-id") postId: Long) {
         tradePostService.cancelTrade(userId, postId)
     }
 
     // 구매 확정
     @Authenticated
-    @GetMapping("/confirmation/{pid}")
-    fun confirmTrade(@UserContext userId: Long, @PathVariable(name = "pid") postId: Long) {
+    @PostMapping("/confirmation/{post-id}")
+    fun confirmTrade(@UserContext userId: Long, @PathVariable(name = "post-id") postId: Long) {
         tradePostService.confirmTrade(userId, postId)
     }
 
     // 찜처리
     @Authenticated
-    @GetMapping("/{pid}/like")
-    fun likeTradePost(@UserContext userId: Long, @PathVariable(name = "pid") postId: Long) {
+    @PostMapping("/{post-id}/like")
+    fun likeTradePost(@UserContext userId: Long, @PathVariable(name = "post-id") postId: Long) {
         tradePostService.likePost(userId, postId)
     }
 }

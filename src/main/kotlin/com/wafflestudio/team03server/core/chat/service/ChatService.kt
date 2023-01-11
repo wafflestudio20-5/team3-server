@@ -80,7 +80,8 @@ class ChatService(
             message = _message,
             createdAt = _createdAt,
         )
-        chatHistoryRepository.save(chatHistory)
+        val savedChatHistory = chatHistoryRepository.save(chatHistory)
+        savedChatHistory.chatRoom.histories.add(savedChatHistory)
     }
 
     private fun getChatRoomByUUID(message: ChatMessage) =
