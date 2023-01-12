@@ -11,12 +11,32 @@ class Review(
     @JoinColumn(name = "trade_post_id")
     val tradePost: TradePost,
 
-    @NotNull
-    val score: Double,
-    var content: String? = null,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reviewer_id")
+    val reviewer: User,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reviewee_id")
+    val reviewee: User,
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    val reviewer: Reviewer
+    val score: Double,
+    var content: String? = null
 ) : BaseTimeEntity() {
+
+    companion object {
+        fun create(tradePost: TradePost, reviewer: User, reviewee: User, score: Double, content: String?): Review {
+            val review = Review(
+                tradePost = tradePost,
+                reviewer = reviewer,
+                reviewee = reviewee,
+                score = score,
+                content = content
+            )
+            reviewer.reviewsIWrote.add(review)
+            reviewee.reviewsIGot.add(review)
+            tradePost.reviews.add(review)
+            return review
+        }
+    }
 }
