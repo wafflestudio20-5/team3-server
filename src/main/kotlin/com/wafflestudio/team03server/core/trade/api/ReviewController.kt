@@ -36,8 +36,9 @@ class ReviewController(
     }
 
     @Authenticated
-    @DeleteMapping("/users/me/review")
-    fun deleteReview() {
-        TODO()
+    @DeleteMapping("/reviews/{review-id}")
+    fun deleteReview(@UserContext userId: Long, @PathVariable("review-id") reviewId: Long): ResponseEntity<Any> {
+        reviewService.deleteReview(userId, reviewId)
+        return ResponseEntity(HttpStatus.OK)
     }
 }
