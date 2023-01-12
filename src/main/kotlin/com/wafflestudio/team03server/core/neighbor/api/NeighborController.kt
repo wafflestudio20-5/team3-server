@@ -17,9 +17,10 @@ class NeighborController(
     val neighborCommentService: NeighborCommentService,
     val neighborReplyService: NeighborReplyService
 ) {
+    @Authenticated
     @GetMapping("")
-    fun getAllNeighborPosts(): List<NeighborPostResponse> {
-        return neighborPostService.getAllNeighborPosts()
+    fun getAllNeighborPosts(@UserContext userId: Long): List<NeighborPostResponse> {
+        return neighborPostService.getAllNeighborPosts(userId)
     }
 
     @Authenticated
@@ -31,9 +32,13 @@ class NeighborController(
         return neighborPostService.createNeighborPost(userId, createNeighborPostRequest)
     }
 
+    @Authenticated
     @GetMapping("/{postId}")
-    fun getNeighborPost(@PathVariable("postId") postId: Long): NeighborPostResponse {
-        return neighborPostService.getNeighborPost(postId)
+    fun getNeighborPost(
+        @PathVariable("postId") postId: Long,
+        @UserContext userId: Long
+    ): NeighborPostResponse {
+        return neighborPostService.getNeighborPost(userId, postId)
     }
 
     @Authenticated
