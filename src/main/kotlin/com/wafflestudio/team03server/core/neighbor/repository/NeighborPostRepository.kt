@@ -19,7 +19,7 @@ interface NeighborPostSupport {
 @Component
 class NeighborPostSupportImpl(
     private val queryFactory: JPAQueryFactory
-): NeighborPostSupport {
+) : NeighborPostSupport {
     override fun findAllByQuerydsl(pageable: Pageable): List<NeighborPost> {
         return queryFactory
             .selectFrom(neighborPost)
