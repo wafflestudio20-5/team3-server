@@ -12,12 +12,14 @@ import com.wafflestudio.team03server.core.neighbor.repository.NeighborLikeReposi
 import com.wafflestudio.team03server.core.neighbor.repository.NeighborPostRepository
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 interface NeighborPostService {
-    fun getAllNeighborPosts(userId: Long): List<NeighborPostResponse>
+    fun getAllNeighborPosts(userId: Long, neighborPostName: String?, pageable: Pageable): Page<NeighborPostResponse>
     fun createNeighborPost(userId: Long, createNeighborPostRequest: CreateNeighborPostRequest): NeighborPostResponse
     fun getNeighborPost(userId: Long, postId: Long): NeighborPostResponse
     fun updateNeighborPost(
@@ -25,7 +27,6 @@ interface NeighborPostService {
         postId: Long,
         updateNeighborPostRequest: UpdateNeighborPostRequest
     ): NeighborPostResponse
-
     fun deleteNeighborPost(userId: Long, postId: Long)
     fun likeOrUnlikeNeighborPost(userId: Long, postId: Long)
 }
@@ -38,8 +39,10 @@ class NeighborPostServiceImpl(
     val neighborLikeRepository: NeighborLikeRepository
 ) : NeighborPostService {
 
-    override fun getAllNeighborPosts(userId: Long): List<NeighborPostResponse> {
-        return neighborPostRepository.findAll().map { NeighborPostResponse.of(it, userId) }
+    override fun getAllNeighborPosts(userId: Long, neighborPostName: String?, pageable: Pageable): Page<NeighborPostResponse> {
+        neighborPostName?.let {
+            return neighborPostRepository.findAllByTitleContains(neighborPostName, pageable).map { NeighborPostResponse.of(it, userId) }
+        } ?: return neighborPostRepository.findAll(pageable).map { NeighborPostResponse.of(it, userId) }
     }
 
     private fun getUserById(userId: Long) = userRepository.findByIdOrNull(userId) ?: throw Exception404("유효한 회원이 아닙니다.")
