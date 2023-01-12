@@ -25,7 +25,7 @@ class NeighborController(
         @UserContext userId: Long,
         @RequestParam("name") neighborPostName: String?,
         @RequestParam("page", required = false, defaultValue = "1") page: Int?
-    ): Page<NeighborPostResponse> {
+    ): List<NeighborPostResponse> {
         val pageable = PageRequest.of(page!! -1, 50)
         return neighborPostService.getAllNeighborPosts(userId, neighborPostName, pageable)
     }

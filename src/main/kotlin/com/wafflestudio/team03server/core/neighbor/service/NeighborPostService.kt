@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 interface NeighborPostService {
-    fun getAllNeighborPosts(userId: Long, neighborPostName: String?, pageable: Pageable): Page<NeighborPostResponse>
+    fun getAllNeighborPosts(userId: Long, neighborPostName: String?, pageable: Pageable): List<NeighborPostResponse>
     fun createNeighborPost(userId: Long, createNeighborPostRequest: CreateNeighborPostRequest): NeighborPostResponse
     fun getNeighborPost(userId: Long, postId: Long): NeighborPostResponse
     fun updateNeighborPost(
@@ -39,10 +39,11 @@ class NeighborPostServiceImpl(
     val neighborLikeRepository: NeighborLikeRepository
 ) : NeighborPostService {
 
-    override fun getAllNeighborPosts(userId: Long, neighborPostName: String?, pageable: Pageable): Page<NeighborPostResponse> {
+    override fun getAllNeighborPosts(userId: Long, neighborPostName: String?, pageable: Pageable): List<NeighborPostResponse> {
         neighborPostName?.let {
-            return neighborPostRepository.findAllByTitleContains(neighborPostName, pageable).map { NeighborPostResponse.of(it, userId) }
-        } ?: return neighborPostRepository.findAll(pageable).map { NeighborPostResponse.of(it, userId) }
+            return neighborPostRepository.findAllByTitleContains(neighborPostName, pageable)
+                .map { NeighborPostResponse.of(it, userId) }
+        } ?: return neighborPostRepository.findAllByQuerydsl(pageable).map { NeighborPostResponse.of(it, userId)}
     }
 
     private fun getUserById(userId: Long) = userRepository.findByIdOrNull(userId) ?: throw Exception404("유효한 회원이 아닙니다.")
