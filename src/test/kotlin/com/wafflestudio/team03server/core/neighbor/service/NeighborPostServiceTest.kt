@@ -40,10 +40,10 @@ internal class NeighborPostServiceTest @Autowired constructor(
     fun getAllNeighborPosts() {
         // given
         val user1 = createUser("user1", "user1@me.com", "abcd!1234")
-        (1..10).map { createPost("제목${it}", "내용", user1) }
+        (1..10).map { createPost("제목$it", "내용", user1) }
 
         // when
-        val pageable = PageRequest.of( 0, 50)
+        val pageable = PageRequest.of(0, 50)
         val neighborPosts = neighborPostService.getAllNeighborPosts(user1.id, null, pageable)
 
         // then
@@ -55,16 +55,15 @@ internal class NeighborPostServiceTest @Autowired constructor(
     fun searchNeighborPosts() {
         // given
         val user1 = createUser("user1", "user1@me.com", "abcd!1234")
-        (1..10).map { createPost("제목${it}", "내용", user1) }
+        (1..10).map { createPost("제목$it", "내용", user1) }
         val targetPost = createPost("삼겹살", "맛있다", user1)
 
         // when
-        val pageable = PageRequest.of( 0, 50)
+        val pageable = PageRequest.of(0, 50)
         val neighborPosts = neighborPostService.getAllNeighborPosts(user1.id, "삼겹살", pageable)
 
         // then
         assertThat(neighborPosts.size).isEqualTo(1)
-
     }
 
     @Test
@@ -91,7 +90,7 @@ internal class NeighborPostServiceTest @Autowired constructor(
     fun getNeighborPost() {
         // given
         val user1 = createUser("user1", "user1@me.com", "abcd!1234")
-        (1..10).map { createPost("제목${it}", "내용", user1) }
+        (1..10).map { createPost("제목$it", "내용", user1) }
         val targetPost = createPost("삼겹살", "맛있다", user1)
 
         // when
@@ -112,7 +111,7 @@ internal class NeighborPostServiceTest @Autowired constructor(
     fun updateNeighborPost() {
         // given
         val user1 = createUser("user1", "user1@me.com", "abcd!1234")
-        (1..10).map { createPost("제목${it}", "내용", user1) }
+        (1..10).map { createPost("제목$it", "내용", user1) }
         val targetPost = createPost("삼겹살", "맛있다", user1)
 
         // when
@@ -130,7 +129,7 @@ internal class NeighborPostServiceTest @Autowired constructor(
     fun deleteNeighborPost() {
         // given
         val user1 = createUser("user1", "user1@me.com", "abcd!1234")
-        (1..10).map { createPost("제목${it}", "내용", user1) }
+        (1..10).map { createPost("제목$it", "내용", user1) }
         val targetPost = createPost("삼겹살", "맛있다", user1)
 
         // when
