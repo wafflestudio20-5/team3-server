@@ -4,6 +4,7 @@ import com.wafflestudio.team03server.common.BaseTimeEntity
 import com.wafflestudio.team03server.core.trade.entity.LikePost
 import com.wafflestudio.team03server.core.trade.entity.TradePost
 import javax.persistence.CascadeType
+import com.wafflestudio.team03server.core.trade.entity.Review
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.OneToMany
@@ -24,7 +25,7 @@ class User(
     @NotNull
     var location: String,
     @NotNull
-    val temperature: Double = 36.5,
+    var temperature: Double = 36.5,
     var imgUrl: String? = null,
 
     @OneToMany(mappedBy = "seller")
@@ -35,5 +36,11 @@ class User(
 
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL])
     val likeTradePosts: MutableList<LikePost> = mutableListOf(),
+
+    @OneToMany(mappedBy = "reviewer")
+    var reviewsIWrote: MutableList<Review> = mutableListOf(),
+
+    @OneToMany(mappedBy = "reviewee")
+    var reviewsIGot: MutableList<Review> = mutableListOf()
 
 ) : BaseTimeEntity()
