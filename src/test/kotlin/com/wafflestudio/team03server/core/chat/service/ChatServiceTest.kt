@@ -36,7 +36,7 @@ internal class ChatServiceTest @Autowired constructor(
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val request = CreatePostRequest("title1", "String1", 10000)
-        val post1 = tradePostService.createPost(savedUser1.id, request)
+        val post1 = tradePostService.createPost(savedUser1.id, null, request)
 
         // when
         val chat = chatService.startChat(savedUser2.id, post1.postId)
@@ -54,7 +54,7 @@ internal class ChatServiceTest @Autowired constructor(
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val request = CreatePostRequest("title1", "String1", 10000)
-        val post1 = tradePostService.createPost(savedUser1.id, request)
+        val post1 = tradePostService.createPost(savedUser1.id, null, request)
 
         // when
         org.junit.jupiter.api.assertThrows<Exception400> { chatService.startChat(savedUser1.id, post1.postId) }
@@ -68,7 +68,7 @@ internal class ChatServiceTest @Autowired constructor(
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val request = CreatePostRequest("title1", "String1", 10000)
-        val post1 = tradePostService.createPost(savedUser1.id, request)
+        val post1 = tradePostService.createPost(savedUser1.id, null, request)
         val chat = chatService.startChat(savedUser2.id, post1.postId)
         val chatMessage = ChatMessage(chat.roomUUID, savedUser2.id, "안녕하세요!", LocalDateTime.now())
 

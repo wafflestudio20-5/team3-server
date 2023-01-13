@@ -12,10 +12,11 @@ data class NeighborPostResponse(
     val comments: List<NeighborCommentResponse>,
     val viewCount: Int,
     val likeCount: Int,
+    val isLiked: Boolean? = false,
     val createdAt: LocalDateTime?
 ) {
     companion object {
-        fun of(post: NeighborPost): NeighborPostResponse {
+        fun of(post: NeighborPost, userId: Long): NeighborPostResponse {
             return NeighborPostResponse(
                 postId = post.id,
                 title = post.title,
@@ -24,6 +25,7 @@ data class NeighborPostResponse(
                 comments = post.comments.map { NeighborCommentResponse.of(it) },
                 viewCount = post.viewCount,
                 likeCount = post.likes.filter { !it.deleteStatus }.size,
+                isLiked = post.likes.any { !it.deleteStatus && it.liker.id == userId },
                 createdAt = post.createdAt
             )
         }
