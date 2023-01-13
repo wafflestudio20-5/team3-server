@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageRequest
 import javax.transaction.Transactional
 
 @SpringBootTest
@@ -82,7 +83,7 @@ internal class TradePostServiceTest @Autowired constructor(
         tradePostService.createPost(savedUser.id, null, request2)
 
         // when
-        val posts = tradePostService.getPosts(savedUser.id)
+        val posts = tradePostService.getAllPosts(savedUser.id, null, PageRequest.of(0, 10))
 
         // then
         assertThat(posts.size).isEqualTo(2)
@@ -118,7 +119,7 @@ internal class TradePostServiceTest @Autowired constructor(
         tradePostService.removePost(savedUser.id, createdPost.postId)
 
         //then
-        val posts = tradePostService.getPosts(savedUser.id)
+        val posts = tradePostService.getAllPosts(savedUser.id, null, PageRequest.of(0, 10))
         assertThat(posts.size).isEqualTo(0)
     }
 
