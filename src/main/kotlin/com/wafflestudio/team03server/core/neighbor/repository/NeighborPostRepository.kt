@@ -29,6 +29,7 @@ class NeighborPostSupportImpl(
             .fetchJoin()
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
+            .distinct()
             .fetch()
     }
 
@@ -42,6 +43,7 @@ class NeighborPostSupportImpl(
             .fetchJoin()
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
+            .distinct()
             .fetch()
     }
 }
