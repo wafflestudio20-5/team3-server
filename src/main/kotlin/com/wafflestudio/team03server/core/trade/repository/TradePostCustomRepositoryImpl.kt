@@ -26,6 +26,7 @@ class TradePostCustomRepositoryImpl(
             .where(eqKeyword(keyword))
             .innerJoin(tradePost.seller).fetchJoin()
             .leftJoin(tradePost.buyer).fetchJoin()
+            .orderBy(tradePost.createdAt.desc())
             .offset(pagable.offset)
             .limit(pagable.pageSize.toLong())
             .fetch()
