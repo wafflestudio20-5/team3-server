@@ -32,4 +32,7 @@ class TradePost(
     var tradeState: TradeState = TRADING,
     var viewCount: Int = 0,
 
+    @OneToMany(mappedBy = "tradePost")
+    var reviews: MutableList<Review> = mutableListOf()
+
 ) : BaseTimeEntity()
