@@ -12,14 +12,15 @@ import com.wafflestudio.team03server.core.neighbor.repository.NeighborLikeReposi
 import com.wafflestudio.team03server.core.neighbor.repository.NeighborPostRepository
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 interface NeighborPostService {
-    fun getAllNeighborPosts(): List<NeighborPostResponse>
+    fun getAllNeighborPosts(userId: Long, neighborPostName: String?, pageable: Pageable): List<NeighborPostResponse>
     fun createNeighborPost(userId: Long, createNeighborPostRequest: CreateNeighborPostRequest): NeighborPostResponse
-    fun getNeighborPost(postId: Long): NeighborPostResponse
+    fun getNeighborPost(userId: Long, postId: Long): NeighborPostResponse
     fun updateNeighborPost(
         userId: Long,
         postId: Long,
@@ -38,8 +39,15 @@ class NeighborPostServiceImpl(
     val neighborLikeRepository: NeighborLikeRepository
 ) : NeighborPostService {
 
-    override fun getAllNeighborPosts(): List<NeighborPostResponse> {
-        return neighborPostRepository.findAll().map { NeighborPostResponse.of(it) }
+    override fun getAllNeighborPosts(
+        userId: Long,
+        neighborPostName: String?,
+        pageable: Pageable
+    ): List<NeighborPostResponse> {
+        neighborPostName?.let {
+            return neighborPostRepository.findAllByTitleContains(neighborPostName, pageable)
+                .map { NeighborPostResponse.of(it, userId) }
+        } ?: return neighborPostRepository.findAllByQuerydsl(pageable).map { NeighborPostResponse.of(it, userId) }
     }
 
     private fun getUserById(userId: Long) = userRepository.findByIdOrNull(userId) ?: throw Exception404("유효한 회원이 아닙니다.")
@@ -52,7 +60,7 @@ class NeighborPostServiceImpl(
         val (title, content) = createNeighborPostRequest
         val neighborPost = NeighborPost(title = title!!, content = content!!, publisher = publisher)
         neighborPostRepository.save(neighborPost)
-        return NeighborPostResponse.of(neighborPost)
+        return NeighborPostResponse.of(neighborPost, userId)
     }
 
     private fun getNeighborPostById(postId: Long) =
@@ -62,10 +70,10 @@ class NeighborPostServiceImpl(
         post.viewCount += 1
     }
 
-    override fun getNeighborPost(postId: Long): NeighborPostResponse {
+    override fun getNeighborPost(userId: Long, postId: Long): NeighborPostResponse {
         val readPost = getNeighborPostById(postId)
         updateViewCount(readPost)
-        return NeighborPostResponse.of(readPost)
+        return NeighborPostResponse.of(readPost, userId)
     }
 
     private fun checkPublisher(readPost: NeighborPost, userId: Long) {
@@ -85,7 +93,7 @@ class NeighborPostServiceImpl(
         val readPost = getNeighborPostById(postId)
         checkPublisher(readPost, userId)
         updateNeighborPostByRequest(readPost, updateNeighborPostRequest)
-        return NeighborPostResponse.of(readPost)
+        return NeighborPostResponse.of(readPost, userId)
     }
 
     override fun deleteNeighborPost(userId: Long, postId: Long) {

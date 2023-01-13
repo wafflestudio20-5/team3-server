@@ -7,6 +7,7 @@ import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostResp
 import com.wafflestudio.team03server.core.neighbor.service.NeighborCommentService
 import com.wafflestudio.team03server.core.neighbor.service.NeighborPostService
 import com.wafflestudio.team03server.core.neighbor.service.NeighborReplyService
+import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -17,9 +18,15 @@ class NeighborController(
     val neighborCommentService: NeighborCommentService,
     val neighborReplyService: NeighborReplyService
 ) {
+    @Authenticated
     @GetMapping("")
-    fun getAllNeighborPosts(): List<NeighborPostResponse> {
-        return neighborPostService.getAllNeighborPosts()
+    fun getAllNeighborPosts(
+        @UserContext userId: Long,
+        @RequestParam("name") neighborPostName: String?,
+        @RequestParam("page", required = false, defaultValue = "1") page: Int?
+    ): List<NeighborPostResponse> {
+        val pageable = PageRequest.of(page!! - 1, 50)
+        return neighborPostService.getAllNeighborPosts(userId, neighborPostName, pageable)
     }
 
     @Authenticated
@@ -31,9 +38,13 @@ class NeighborController(
         return neighborPostService.createNeighborPost(userId, createNeighborPostRequest)
     }
 
+    @Authenticated
     @GetMapping("/{postId}")
-    fun getNeighborPost(@PathVariable("postId") postId: Long): NeighborPostResponse {
-        return neighborPostService.getNeighborPost(postId)
+    fun getNeighborPost(
+        @PathVariable("postId") postId: Long,
+        @UserContext userId: Long
+    ): NeighborPostResponse {
+        return neighborPostService.getNeighborPost(userId, postId)
     }
 
     @Authenticated
