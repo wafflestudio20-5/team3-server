@@ -31,12 +31,15 @@ class ChatRoom(
 ) {
     companion object {
         fun create(_seller: User, _buyer: User, _post: TradePost): ChatRoom {
-            return ChatRoom(
+            val chatRoom = ChatRoom(
                 roomUUID = UUID.randomUUID().toString(),
                 seller = _seller,
                 buyer = _buyer,
                 post = _post,
             )
+            _buyer.buyChatRooms.add(chatRoom)
+            _seller.sellChatRooms.add(chatRoom)
+            return chatRoom
         }
     }
 }

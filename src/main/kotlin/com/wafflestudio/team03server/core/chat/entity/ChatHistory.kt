@@ -19,4 +19,17 @@ class ChatHistory(
 
     val message: String,
     val createdAt: LocalDateTime
-)
+) {
+    companion object {
+        fun create(_chatRoom: ChatRoom, _sender: User, _message: String, _createdAt: LocalDateTime): ChatHistory {
+            val chatHistory = ChatHistory(
+                chatRoom = _chatRoom,
+                sender = _sender,
+                message = _message,
+                createdAt = _createdAt,
+            )
+            _chatRoom.histories.add(chatHistory)
+            return chatHistory
+        }
+    }
+}

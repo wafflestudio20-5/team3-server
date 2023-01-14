@@ -2,31 +2,36 @@ package com.wafflestudio.team03server.core.chat.api.response
 
 import com.wafflestudio.team03server.core.chat.entity.ChatHistory
 import com.wafflestudio.team03server.core.chat.entity.ChatRoom
+import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
+import com.wafflestudio.team03server.core.user.entity.User
 import java.time.LocalDateTime
 
-data class ChatResponse(
-    val roomUUID: String,
+data class MessagesResponse(
+    val you: SimpleUserResponse,
     val chatHistories: List<ChatHistoryResponse> = mutableListOf()
 ) {
+
     companion object {
-        fun of(chatRoom: ChatRoom): ChatResponse {
-            val histories = chatRoom.histories.map { ChatHistoryResponse.of(it) }
-            return ChatResponse(chatRoom.roomUUID, histories)
+        fun of(you: User, chatRoom: ChatRoom): MessagesResponse {
+            return MessagesResponse(
+                you = SimpleUserResponse.of(you),
+                chatHistories = chatRoom.histories.map { ChatHistoryResponse.of(it) }
+            )
         }
     }
 }
 
 data class ChatHistoryResponse(
-    val sender: String,
+    val senderId: Long,
     val message: String,
     val createdAt: LocalDateTime,
 ) {
     companion object {
         fun of(chatHistory: ChatHistory): ChatHistoryResponse {
             return ChatHistoryResponse(
-                sender = chatHistory.sender.username,
+                senderId = chatHistory.sender.id,
                 message = chatHistory.message,
-                createdAt = chatHistory.createdAt!!,
+                createdAt = chatHistory.createdAt,
             )
         }
     }
