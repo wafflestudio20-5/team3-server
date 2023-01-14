@@ -19,7 +19,7 @@ class ChatController(
     val chatService: ChatService,
 ) {
 
-    // "/pub/chat/message"로 오는 채팅을 처리
+    // "/pub/message"로 오는 채팅을 처리
     @MessageMapping("/message")
     fun handleMessage(message: ChatMessage) {
         chatService.saveMessage(message)
