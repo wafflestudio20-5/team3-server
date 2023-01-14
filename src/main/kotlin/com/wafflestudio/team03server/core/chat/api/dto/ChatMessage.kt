@@ -1,4 +1,4 @@
-package com.wafflestudio.team03server.core.chat.dto
+package com.wafflestudio.team03server.core.chat.api.dto
 
 import java.time.LocalDateTime
 
