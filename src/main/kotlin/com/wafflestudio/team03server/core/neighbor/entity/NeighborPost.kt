@@ -14,11 +14,11 @@ class NeighborPost(
     @JoinColumn(name = "publisher_id")
     val publisher: User,
 
-    @BatchSize(size=100)
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "neighborPost", cascade = [CascadeType.ALL])
     var comments: MutableList<NeighborComment> = mutableListOf(),
 
-    @BatchSize(size=100)
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "likedPost", cascade = [CascadeType.ALL])
     var likes: MutableList<NeighborLike> = mutableListOf(),
 
