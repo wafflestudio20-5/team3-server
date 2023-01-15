@@ -6,7 +6,7 @@ import com.wafflestudio.team03server.core.trade.api.request.CreateReviewRequest
 import com.wafflestudio.team03server.core.trade.api.response.ReviewResponse
 import com.wafflestudio.team03server.core.trade.entity.Review
 import com.wafflestudio.team03server.core.trade.entity.TradePost
-import com.wafflestudio.team03server.core.trade.entity.TradeState
+import com.wafflestudio.team03server.core.trade.entity.TradeStatus
 import com.wafflestudio.team03server.core.trade.repository.ReviewRepository
 import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
 import com.wafflestudio.team03server.core.user.entity.User
@@ -65,7 +65,7 @@ class ReviewService(
     }
 
     private fun checkTradeFinished(post: TradePost) {
-        if (post.tradeState != TradeState.COMPLETED) {
+        if (post.tradeStatus != TradeStatus.COMPLETED) {
             throw Exception403("거래 완료 상태에서만 후기를 작성할 수 있습니다.")
         }
     }

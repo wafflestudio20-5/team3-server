@@ -2,8 +2,8 @@ package com.wafflestudio.team03server.core.trade.api.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.wafflestudio.team03server.core.trade.entity.TradePost
-import com.wafflestudio.team03server.core.trade.entity.TradeState
-import com.wafflestudio.team03server.core.trade.entity.TradeState.*
+import com.wafflestudio.team03server.core.trade.entity.TradeStatus
+import com.wafflestudio.team03server.core.trade.entity.TradeStatus.*
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
 import com.wafflestudio.team03server.core.user.entity.User
 import java.time.LocalDateTime
@@ -17,7 +17,7 @@ data class PostResponse(
     val seller: SimpleUserResponse,
     val buyer: SimpleUserResponse? = null,
     val reservationCount: Int = 0,
-    val tradeStatus: TradeState = TRADING,
+    val tradeStatus: TradeStatus = TRADING,
     val viewCount: Int = 0,
     val likeCount: Int = 0,
     val isLiked: Boolean = false,
@@ -38,7 +38,7 @@ data class PostResponse(
                 seller = SimpleUserResponse.of(post.seller),
                 buyer = post.buyer?.let { SimpleUserResponse.of(it) },
                 reservationCount = post.reservations.size,
-                tradeStatus = post.tradeState,
+                tradeStatus = post.tradeStatus,
                 viewCount = post.viewCount,
                 likeCount = post.likeTradePosts.size,
                 isLiked = isLiked(user, post),
