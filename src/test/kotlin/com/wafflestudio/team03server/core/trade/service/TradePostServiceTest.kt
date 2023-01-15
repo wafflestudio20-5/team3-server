@@ -3,7 +3,7 @@ package com.wafflestudio.team03server.core.trade.service
 import com.wafflestudio.team03server.core.chat.service.ChatService
 import com.wafflestudio.team03server.core.trade.api.request.CreatePostRequest
 import com.wafflestudio.team03server.core.trade.api.request.UpdatePostRequest
-import com.wafflestudio.team03server.core.trade.entity.TradeState
+import com.wafflestudio.team03server.core.trade.entity.TradeStatus
 import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
@@ -47,7 +47,7 @@ internal class TradePostServiceTest @Autowired constructor(
         assertThat(response.likeCount).isEqualTo(0)
         assertThat(response.isLiked).isFalse
         assertThat(response.isOwner).isTrue
-        assertThat(response.tradeStatus).isEqualTo(TradeState.TRADING)
+        assertThat(response.tradeStatus).isEqualTo(TradeStatus.TRADING)
     }
 
     @Test
@@ -69,7 +69,7 @@ internal class TradePostServiceTest @Autowired constructor(
         assertThat(createPost.buyer).isNull()
         assertThat(findPost.isOwner).isTrue
         assertThat(findPost.viewCount).isEqualTo(1)
-        assertThat(createPost.tradeStatus).isEqualTo(TradeState.TRADING)
+        assertThat(createPost.tradeStatus).isEqualTo(TradeStatus.TRADING)
     }
 
     @Test
@@ -142,7 +142,7 @@ internal class TradePostServiceTest @Autowired constructor(
         val reservations = tradePostService.getReservations(savedUser1.id, post.postId)
 
         // then
-        assertThat(reservations.tradeState).isEqualTo(TradeState.TRADING)
+        assertThat(reservations.tradeStatus).isEqualTo(TradeStatus.TRADING)
         assertThat(reservations.buyer).isNull()
         assertThat(reservations.candidates.size).isEqualTo(2)
     }
@@ -170,7 +170,7 @@ internal class TradePostServiceTest @Autowired constructor(
         assertThat(findPost.isOwner).isTrue
         assertThat(findPost.reservationCount).isEqualTo(2)
         assertThat(findPost.buyer!!.email).isEqualTo(savedUser2.email)
-        assertThat(findPost.tradeStatus).isEqualTo(TradeState.RESERVATION)
+        assertThat(findPost.tradeStatus).isEqualTo(TradeStatus.RESERVATION)
     }
 
     @Test
@@ -197,7 +197,7 @@ internal class TradePostServiceTest @Autowired constructor(
         assertThat(findPost.isOwner).isTrue
         assertThat(findPost.reservationCount).isEqualTo(2)
         assertThat(findPost.buyer!!.email).isEqualTo(savedUser3.email)
-        assertThat(findPost.tradeStatus).isEqualTo(TradeState.RESERVATION)
+        assertThat(findPost.tradeStatus).isEqualTo(TradeStatus.RESERVATION)
     }
 
     @Test
@@ -222,7 +222,7 @@ internal class TradePostServiceTest @Autowired constructor(
 
         // then
         assertThat(findPost.isOwner).isTrue
-        assertThat(findPost.tradeStatus).isEqualTo(TradeState.COMPLETED)
+        assertThat(findPost.tradeStatus).isEqualTo(TradeStatus.COMPLETED)
     }
 
     @Test
@@ -246,7 +246,7 @@ internal class TradePostServiceTest @Autowired constructor(
         val findPost = tradePostService.getPost(savedUser1.id, post.postId)
 
         // then
-        assertThat(findPost.tradeStatus).isEqualTo(TradeState.TRADING)
+        assertThat(findPost.tradeStatus).isEqualTo(TradeStatus.TRADING)
         assertThat(findPost.buyer).isNull()
     }
 

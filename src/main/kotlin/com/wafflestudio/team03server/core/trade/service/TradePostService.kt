@@ -10,7 +10,7 @@ import com.wafflestudio.team03server.core.trade.api.response.ReservationResponse
 import com.wafflestudio.team03server.core.trade.entity.LikePost
 import com.wafflestudio.team03server.core.trade.entity.TradePost
 import com.wafflestudio.team03server.core.trade.entity.TradePostImage
-import com.wafflestudio.team03server.core.trade.entity.TradeState
+import com.wafflestudio.team03server.core.trade.entity.TradeStatus
 import com.wafflestudio.team03server.core.trade.repository.LikePostRepository
 import com.wafflestudio.team03server.core.trade.repository.TradePostImageRepository
 import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
@@ -144,7 +144,7 @@ class TradePostService(
         val post = getPostById(postId)
         checkPostOwner(post, sellerId)
         post.buyer = buyer
-        post.tradeState = TradeState.RESERVATION
+        post.tradeStatus = TradeStatus.RESERVATION
         return ReservationResponse.of(post)
     }
 
@@ -152,7 +152,7 @@ class TradePostService(
         val seller = getUserById(sellerId)
         val post = getPostById(postId)
         checkValidConfirm(post, seller)
-        post.tradeState = TradeState.COMPLETED
+        post.tradeStatus = TradeStatus.COMPLETED
         return ReservationResponse.of(post)
     }
 
@@ -164,7 +164,7 @@ class TradePostService(
     }
 
     private fun makeTradeStatus(post: TradePost) {
-        post.tradeState = TradeState.TRADING
+        post.tradeStatus = TradeStatus.TRADING
         post.buyer = null
     }
 
@@ -174,7 +174,7 @@ class TradePostService(
     }
 
     private fun notReservationState(post: TradePost) =
-        post.tradeState != TradeState.RESERVATION
+        post.tradeStatus != TradeStatus.RESERVATION
 
     private fun checkValidConfirm(post: TradePost, seller: User) {
         checkPostOwner(post, seller.id)
@@ -182,7 +182,7 @@ class TradePostService(
     }
 
     private fun canNotConfirmTrade(post: TradePost) =
-        post.tradeState == TradeState.TRADING || post.buyer == null
+        post.tradeStatus == TradeStatus.TRADING || post.buyer == null
 
     fun likePost(userId: Long, postId: Long) {
         val user = getUserById(userId)
