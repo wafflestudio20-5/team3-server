@@ -59,6 +59,6 @@ class AuthController(
 
     @PostMapping("/refresh")
     fun refresh(@RequestBody @Valid refreshRequest: RefreshRequest) {
-        authService.refresh(refreshRequest.refreshToken)
+        authService.refresh(refreshRequest.refreshToken!!)
     }
 }
