@@ -39,6 +39,7 @@ class ChatRoom(
             )
             _buyer.buyChatRooms.add(chatRoom)
             _seller.sellChatRooms.add(chatRoom)
+            _post.chatRooms.add(chatRoom)
             return chatRoom
         }
     }

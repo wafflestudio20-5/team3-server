@@ -1,6 +1,7 @@
 package com.wafflestudio.team03server.core.trade.entity
 
 import com.wafflestudio.team03server.common.BaseTimeEntity
+import com.wafflestudio.team03server.core.chat.entity.ChatRoom
 import com.wafflestudio.team03server.core.trade.entity.TradeStatus.*
 import com.wafflestudio.team03server.core.user.entity.User
 import javax.persistence.*
@@ -24,6 +25,9 @@ class TradePost(
 
     @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL])
     var reservations: MutableList<Reservation> = mutableListOf(),
+
+    @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL])
+    val chatRooms: MutableList<ChatRoom> = mutableListOf(),
 
     @OneToMany(mappedBy = "likedPost", cascade = [CascadeType.ALL])
     var likeTradePosts: MutableList<LikePost> = mutableListOf(),
