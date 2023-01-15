@@ -2,6 +2,7 @@ package com.wafflestudio.team03server.core.neighbor.entity
 
 import com.wafflestudio.team03server.common.BaseTimeEntity
 import com.wafflestudio.team03server.core.user.entity.User
+import org.hibernate.annotations.BatchSize
 import javax.persistence.*
 
 @Entity
@@ -16,6 +17,7 @@ class NeighborComment(
 
     var comment: String,
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "neighborComment", cascade = [CascadeType.ALL])
     var replies: MutableList<NeighborReply> = mutableListOf()
 
