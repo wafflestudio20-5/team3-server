@@ -20,6 +20,7 @@ interface AuthService {
     fun isDuplicateUsername(username: String): Boolean
     fun verifyEmail(code: String, email: String): Boolean
     fun login(email: String, password: String): LoginResponse
+    fun refresh(refreshToken: String): AuthToken
 }
 
 @Service
@@ -42,8 +43,8 @@ class AuthServiceImpl(
         val user = signUpRequest.toUser()
         user.password = passwordEncoder.encode(user.password)
         userRepository.save(user)
-        val accessToken = authTokenService.generateTokenByEmail(signUpRequest.email).accessToken
-        return LoginResponse(accessToken, SimpleUserResponse.of(user))
+        val (accessToken, refreshToken) = authTokenService.generateAccessTokenAndRefreshToken(signUpRequest.email)
+        return LoginResponse(accessToken, refreshToken, SimpleUserResponse.of(user))
     }
 
     override fun sendVerificationEmail(email: String) {
@@ -69,12 +70,18 @@ class AuthServiceImpl(
         if (!passwordEncoder.matches(password, findUser.password)) {
             throw Exception403("이메일 또는 비밀번호가 잘못되었습니다.")
         }
-        val accessToken = authTokenService.generateTokenByEmail(email).accessToken
-        return LoginResponse(accessToken, SimpleUserResponse.of(findUser))
+        val (accessToken, refreshToken) = authTokenService.generateAccessTokenAndRefreshToken(email)
+        return LoginResponse(accessToken, refreshToken, SimpleUserResponse.of(findUser))
     }
 
     private fun generateRandomKey(): Int {
         val random = Random()
         return random.nextInt(900000) + 100000
+    }
+
+    override fun refresh(refreshToken: String): AuthToken {
+        authTokenService.verifyToken(refreshToken, isRefreshToken = true)
+        val email = authTokenService.getCurrentUserEmail(refreshToken)
+        return authTokenService.generateAccessTokenAndRefreshToken(email)
     }
 }

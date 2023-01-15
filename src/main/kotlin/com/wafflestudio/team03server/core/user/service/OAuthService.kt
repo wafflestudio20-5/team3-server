@@ -19,22 +19,22 @@ class OAuthService(
 
     fun googleLogin(email: String): LoginResponse {
         val (findUser, jwtToken) = getUserAndJwtTokenByEmail(email)
-        return LoginResponse(jwtToken, SimpleUserResponse.of(findUser))
+        return LoginResponse(jwtToken.accessToken, jwtToken.refreshToken, SimpleUserResponse.of(findUser))
     }
 
     fun kakaoLogin(code: String): LoginResponse {
         val accessToken: String = kakaoOAuth.getKaKaoAccessToken(code)
         val (connected_at, _, kakaoUserAccount) = kakaoOAuth.getKakaoUserInfo(accessToken)
         val (findUser, jwtToken) = getUserAndJwtTokenByEmail(kakaoUserAccount.email)
-        return LoginResponse(jwtToken, SimpleUserResponse.of(findUser))
+        return LoginResponse(jwtToken.accessToken, jwtToken.refreshToken, SimpleUserResponse.of(findUser))
     }
 
-    private fun getUserAndJwtTokenByEmail(email: String): Pair<User, String> {
+    private fun getUserAndJwtTokenByEmail(email: String): Pair<User, AuthToken> {
         val findUser = userRepository.findByEmail(email) ?: throw SocialLoginNotFoundException(
             NEED_SIGNUP_MESSAGE,
             email,
         )
-        val jwtToken = authTokenService.generateTokenByEmail(findUser.email).accessToken
-        return Pair(findUser, jwtToken)
+        val authToken = authTokenService.generateAccessTokenAndRefreshToken(findUser.email)
+        return Pair(findUser, authToken)
     }
 }
