@@ -138,20 +138,22 @@ class TradePostService(
         return ReservationResponse.of(findPost)
     }
 
-    fun changeBuyer(sellerId: Long, buyerId: Long, postId: Long) {
+    fun changeBuyer(sellerId: Long, buyerId: Long, postId: Long): ReservationResponse {
         val seller = getUserById(sellerId)
         val buyer = getUserById(buyerId)
         val post = getPostById(postId)
         checkPostOwner(post, sellerId)
         post.buyer = buyer
         post.tradeState = TradeState.RESERVATION
+        return ReservationResponse.of(post)
     }
 
-    fun confirmTrade(sellerId: Long, postId: Long) {
+    fun confirmTrade(sellerId: Long, postId: Long): ReservationResponse {
         val seller = getUserById(sellerId)
         val post = getPostById(postId)
         checkValidConfirm(post, seller)
         post.tradeState = TradeState.COMPLETED
+        return ReservationResponse.of(post)
     }
 
     fun cancelTrade(sellerId: Long, postId: Long) {
