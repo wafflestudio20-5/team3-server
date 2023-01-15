@@ -34,13 +34,13 @@ data class PostResponse(
                 title = post.title,
                 desc = post.description,
                 price = post.price,
-                imageUrls = getImgUrls(post), // N + 1
+                imageUrls = getImgUrls(post),
                 seller = SimpleUserResponse.of(post.seller),
                 buyer = post.buyer?.let { SimpleUserResponse.of(it) },
-                reservationCount = post.reservations.size, // 추후 N + 1 문제 고려해서 리팩토링
+                reservationCount = post.reservations.size,
                 tradeStatus = post.tradeState,
                 viewCount = post.viewCount,
-                likeCount = post.likeTradePosts.size, // N + 1
+                likeCount = post.likeTradePosts.size,
                 isLiked = isLiked(user, post),
                 isOwner = isOwner(user, post),
                 createdAt = post.createdAt!!,
