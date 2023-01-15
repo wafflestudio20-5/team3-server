@@ -34,7 +34,7 @@ class OAuthService(
             NEED_SIGNUP_MESSAGE,
             email,
         )
-        val authToken = authTokenService.generateAccessTokenAndRefreshToken(findUser.email)
+        val authToken = authTokenService.generateAccessTokenAndRefreshToken(findUser.email, findUser)
         return Pair(findUser, authToken)
     }
 }
