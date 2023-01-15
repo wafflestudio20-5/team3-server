@@ -76,8 +76,8 @@ class TradePostController(
         @UserContext userId: Long,
         @PathVariable(name = "post-id") postId: Long,
         @PathVariable(name = "uid") buyerId: Long,
-    ) {
-        tradePostService.changeBuyer(userId, buyerId, postId)
+    ): ReservationResponse {
+        return tradePostService.changeBuyer(userId, buyerId, postId)
     }
 
     @Authenticated
@@ -89,8 +89,11 @@ class TradePostController(
     // 구매 확정
     @Authenticated
     @PostMapping("/{post-id}/confirmation")
-    fun confirmTrade(@UserContext userId: Long, @PathVariable(name = "post-id") postId: Long) {
-        tradePostService.confirmTrade(userId, postId)
+    fun confirmTrade(
+        @UserContext userId: Long,
+        @PathVariable(name = "post-id") postId: Long
+    ): ReservationResponse {
+        return tradePostService.confirmTrade(userId, postId)
     }
 
     // 찜처리
