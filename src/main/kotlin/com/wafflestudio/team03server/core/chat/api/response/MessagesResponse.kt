@@ -1,6 +1,5 @@
 package com.wafflestudio.team03server.core.chat.api.response
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.wafflestudio.team03server.core.chat.entity.ChatHistory
 import com.wafflestudio.team03server.core.chat.entity.ChatRoom
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse

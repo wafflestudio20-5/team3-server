@@ -1,6 +1,5 @@
 package com.wafflestudio.team03server.core.trade.api.response
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.wafflestudio.team03server.core.trade.entity.Review
 import java.time.LocalDateTime
 

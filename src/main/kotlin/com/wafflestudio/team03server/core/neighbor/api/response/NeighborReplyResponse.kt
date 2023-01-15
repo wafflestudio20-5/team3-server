@@ -1,6 +1,5 @@
 package com.wafflestudio.team03server.core.neighbor.api.response
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborReply
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
 import java.time.LocalDateTime

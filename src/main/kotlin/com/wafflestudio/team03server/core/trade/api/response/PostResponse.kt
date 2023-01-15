@@ -1,6 +1,5 @@
 package com.wafflestudio.team03server.core.trade.api.response
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.wafflestudio.team03server.core.trade.entity.TradePost
 import com.wafflestudio.team03server.core.trade.entity.TradeState
 import com.wafflestudio.team03server.core.trade.entity.TradeState.*

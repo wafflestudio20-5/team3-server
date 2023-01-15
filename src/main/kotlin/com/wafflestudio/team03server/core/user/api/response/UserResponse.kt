@@ -1,6 +1,5 @@
 package com.wafflestudio.team03server.core.user.api.response
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.wafflestudio.team03server.core.user.entity.User
 import java.time.LocalDateTime
 
