@@ -1,5 +1,6 @@
 package com.wafflestudio.team03server.core.chat.entity
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.wafflestudio.team03server.core.user.entity.User
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -18,6 +19,7 @@ class ChatHistory(
     val sender: User,
 
     val message: String,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val createdAt: LocalDateTime
 ) {
     companion object {

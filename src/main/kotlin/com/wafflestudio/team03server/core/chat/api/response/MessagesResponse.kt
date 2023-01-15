@@ -1,5 +1,6 @@
 package com.wafflestudio.team03server.core.chat.api.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.wafflestudio.team03server.core.chat.entity.ChatHistory
 import com.wafflestudio.team03server.core.chat.entity.ChatRoom
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
@@ -24,6 +25,7 @@ data class MessagesResponse(
 data class ChatHistoryResponse(
     val senderId: Long,
     val message: String,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val createdAt: LocalDateTime,
 ) {
     companion object {

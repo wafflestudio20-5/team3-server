@@ -1,5 +1,6 @@
 package com.wafflestudio.team03server.core.trade.api.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.wafflestudio.team03server.core.trade.entity.TradePost
 import com.wafflestudio.team03server.core.trade.entity.TradeState
 import com.wafflestudio.team03server.core.trade.entity.TradeState.*
@@ -21,7 +22,9 @@ data class PostResponse(
     val likeCount: Int = 0,
     val isLiked: Boolean = false,
     val isOwner: Boolean = true,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val createdAt: LocalDateTime,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val modifiedAt: LocalDateTime,
 ) {
     companion object {
