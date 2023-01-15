@@ -10,7 +10,7 @@ import com.wafflestudio.team03server.core.trade.api.response.ReservationResponse
 import com.wafflestudio.team03server.core.trade.entity.LikePost
 import com.wafflestudio.team03server.core.trade.entity.TradePost
 import com.wafflestudio.team03server.core.trade.entity.TradePostImage
-import com.wafflestudio.team03server.core.trade.entity.TradeState
+import com.wafflestudio.team03server.core.trade.entity.TradeStatus
 import com.wafflestudio.team03server.core.trade.repository.LikePostRepository
 import com.wafflestudio.team03server.core.trade.repository.TradePostImageRepository
 import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
@@ -18,6 +18,7 @@ import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import com.wafflestudio.team03server.utils.S3Service
 import org.apache.commons.io.FilenameUtils
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -78,11 +79,12 @@ class TradePostService(
         return Pair(findUser, savedPost)
     }
 
-    private fun getUserById(userId: Long) = userRepository.findByIdOrNull(userId) ?: throw Exception404("유효한 회원이 아닙니다.")
+    private fun getUserById(userId: Long) = userRepository.findByIdOrNull(userId)
+        ?: throw Exception404("유효한 회원이 아닙니다.")
 
     fun getPost(userId: Long, postId: Long): PostResponse {
         val findUser = getUserById(userId)
-        val findPost = getPostById(postId)
+        val findPost = getPostByIdWithSellerAndBuyer(postId)
         findPost.viewCount++
         return PostResponse.of(findPost, findUser)
     }
@@ -90,18 +92,23 @@ class TradePostService(
     private fun getPostById(postId: Long) =
         tradePostRepository.findByIdOrNull(postId) ?: throw Exception404("ID: ${postId}에 해당하는 글이 없습니다.")
 
-    fun getPosts(userId: Long): List<PostResponse> {
+    fun getAllPosts(userId: Long, keyword: String?, pageable: Pageable): List<PostResponse> {
         val findUser = getUserById(userId)
-        return tradePostRepository.findAll() // TODO: 추후 N + 1, Paging 적용하기
+        return tradePostRepository.findAllPostWithSellerAndBuyer(keyword, pageable)
             .map { PostResponse.of(it, findUser) }
     }
 
     fun updatePost(userId: Long, postId: Long, request: UpdatePostRequest): PostResponse {
         val findUser = getUserById(userId)
-        val findPost = getPostById(postId)
+        val findPost = getPostByIdWithSellerAndBuyer(postId)
         checkPostOwner(findPost, userId)
         updatePostByRequest(findPost, request)
         return PostResponse.of(findPost, findUser)
+    }
+
+    private fun getPostByIdWithSellerAndBuyer(postId: Long): TradePost {
+        return tradePostRepository.findPostByIdWithSellerAndBuyer(postId)
+            ?: throw Exception404("ID: ${postId}에 해당하는 글이 없습니다.")
     }
 
     private fun updatePostByRequest(
@@ -131,20 +138,22 @@ class TradePostService(
         return ReservationResponse.of(findPost)
     }
 
-    fun changeBuyer(sellerId: Long, buyerId: Long, postId: Long) {
+    fun changeBuyer(sellerId: Long, buyerId: Long, postId: Long): ReservationResponse {
         val seller = getUserById(sellerId)
         val buyer = getUserById(buyerId)
         val post = getPostById(postId)
         checkPostOwner(post, sellerId)
         post.buyer = buyer
-        post.tradeState = TradeState.RESERVATION
+        post.tradeStatus = TradeStatus.RESERVATION
+        return ReservationResponse.of(post)
     }
 
-    fun confirmTrade(sellerId: Long, postId: Long) {
+    fun confirmTrade(sellerId: Long, postId: Long): ReservationResponse {
         val seller = getUserById(sellerId)
         val post = getPostById(postId)
         checkValidConfirm(post, seller)
-        post.tradeState = TradeState.COMPLETED
+        post.tradeStatus = TradeStatus.COMPLETED
+        return ReservationResponse.of(post)
     }
 
     fun cancelTrade(sellerId: Long, postId: Long) {
@@ -155,7 +164,7 @@ class TradePostService(
     }
 
     private fun makeTradeStatus(post: TradePost) {
-        post.tradeState = TradeState.TRADING
+        post.tradeStatus = TradeStatus.TRADING
         post.buyer = null
     }
 
@@ -165,7 +174,7 @@ class TradePostService(
     }
 
     private fun notReservationState(post: TradePost) =
-        post.tradeState != TradeState.RESERVATION
+        post.tradeStatus != TradeStatus.RESERVATION
 
     private fun checkValidConfirm(post: TradePost, seller: User) {
         checkPostOwner(post, seller.id)
@@ -173,7 +182,7 @@ class TradePostService(
     }
 
     private fun canNotConfirmTrade(post: TradePost) =
-        post.tradeState == TradeState.TRADING || post.buyer == null
+        post.tradeStatus == TradeStatus.TRADING || post.buyer == null
 
     fun likePost(userId: Long, postId: Long) {
         val user = getUserById(userId)

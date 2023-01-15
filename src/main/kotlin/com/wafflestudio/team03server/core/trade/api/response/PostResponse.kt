@@ -1,8 +1,9 @@
 package com.wafflestudio.team03server.core.trade.api.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.wafflestudio.team03server.core.trade.entity.TradePost
-import com.wafflestudio.team03server.core.trade.entity.TradeState
-import com.wafflestudio.team03server.core.trade.entity.TradeState.*
+import com.wafflestudio.team03server.core.trade.entity.TradeStatus
+import com.wafflestudio.team03server.core.trade.entity.TradeStatus.*
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
 import com.wafflestudio.team03server.core.user.entity.User
 import java.time.LocalDateTime
@@ -16,12 +17,14 @@ data class PostResponse(
     val seller: SimpleUserResponse,
     val buyer: SimpleUserResponse? = null,
     val reservationCount: Int = 0,
-    val tradeStatus: TradeState = TRADING,
+    val tradeStatus: TradeStatus = TRADING,
     val viewCount: Int = 0,
     val likeCount: Int = 0,
     val isLiked: Boolean = false,
     val isOwner: Boolean = true,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val createdAt: LocalDateTime,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val modifiedAt: LocalDateTime,
 ) {
     companion object {
@@ -31,13 +34,13 @@ data class PostResponse(
                 title = post.title,
                 desc = post.description,
                 price = post.price,
-                imageUrls = getImgUrls(post), // N + 1
+                imageUrls = getImgUrls(post),
                 seller = SimpleUserResponse.of(post.seller),
                 buyer = post.buyer?.let { SimpleUserResponse.of(it) },
-                reservationCount = post.reservations.size, // 추후 N + 1 문제 고려해서 리팩토링
-                tradeStatus = post.tradeState,
+                reservationCount = post.reservations.size,
+                tradeStatus = post.tradeStatus,
                 viewCount = post.viewCount,
-                likeCount = post.likeTradePosts.size, // N + 1
+                likeCount = post.likeTradePosts.size,
                 isLiked = isLiked(user, post),
                 isOwner = isOwner(user, post),
                 createdAt = post.createdAt!!,
