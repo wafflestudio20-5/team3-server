@@ -1,6 +1,7 @@
 package com.wafflestudio.team03server.core.user.service
 
 import com.wafflestudio.team03server.common.Exception403
+import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.common.Exception409
 import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
 import com.wafflestudio.team03server.core.user.api.response.LoginResponse
@@ -42,8 +43,8 @@ class AuthServiceImpl(
         }
         val user = signUpRequest.toUser()
         user.password = passwordEncoder.encode(user.password)
+        val (accessToken, refreshToken) = authTokenService.generateAccessTokenAndRefreshToken(signUpRequest.email, user)
         userRepository.save(user)
-        val (accessToken, refreshToken) = authTokenService.generateAccessTokenAndRefreshToken(signUpRequest.email)
         return LoginResponse(accessToken, refreshToken, SimpleUserResponse.of(user))
     }
 
@@ -70,7 +71,7 @@ class AuthServiceImpl(
         if (!passwordEncoder.matches(password, findUser.password)) {
             throw Exception403("이메일 또는 비밀번호가 잘못되었습니다.")
         }
-        val (accessToken, refreshToken) = authTokenService.generateAccessTokenAndRefreshToken(email)
+        val (accessToken, refreshToken) = authTokenService.generateAccessTokenAndRefreshToken(email, findUser)
         return LoginResponse(accessToken, refreshToken, SimpleUserResponse.of(findUser))
     }
 
@@ -82,6 +83,7 @@ class AuthServiceImpl(
     override fun refresh(refreshToken: String): AuthToken {
         authTokenService.verifyToken(refreshToken, isRefreshToken = true)
         val email = authTokenService.getCurrentUserEmail(refreshToken)
-        return authTokenService.generateAccessTokenAndRefreshToken(email)
+        val user = userRepository.findByEmail(email) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        return authTokenService.generateAccessTokenAndRefreshToken(email, user)
     }
 }

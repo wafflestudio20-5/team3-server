@@ -3,6 +3,7 @@ package com.wafflestudio.team03server.core.user.service
 import com.wafflestudio.team03server.common.Exception401
 import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.common.Exception404
+import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import com.wafflestudio.team03server.properties.AuthProperties
 import io.jsonwebtoken.*
@@ -34,12 +35,11 @@ class AuthTokenService(
             .setIssuedAt(Date())
     }
 
-    fun generateAccessTokenAndRefreshToken(email: String): AuthToken {
-        val user = userRepository.findByEmail(email) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+    fun generateAccessTokenAndRefreshToken(email: String, user: User): AuthToken {
         val accessTokenBuilder = generateTokenBuilderByEmailAndExpiration(email, authProperties.atExpiration)
         val refreshTokenBuilder = generateTokenBuilderByEmailAndExpiration(email, authProperties.rtExpiration)
-        val accessToken = accessTokenBuilder.setAudience(user.username).compact()
-        val refreshToken = refreshTokenBuilder.setAudience(user.username).compact()
+        val accessToken = accessTokenBuilder.setAudience(user.username).claim("type", "access").compact()
+        val refreshToken = refreshTokenBuilder.setAudience(user.username).claim("type", "refresh").compact()
         user.refreshToken = refreshToken
         return AuthToken(accessToken, refreshToken)
     }
@@ -53,6 +53,10 @@ class AuthTokenService(
                 if (savedToken == null || savedToken != authToken) {
                     savedToken = null
                     throw Exception403("접근이 거부되었습니다.")
+                }
+            } else {
+                if (claims["type"] != "access") {
+                    throw Exception401("JWT 토큰 타입이 잘못되었습니다.")
                 }
             }
         } catch (e: MalformedJwtException) {
