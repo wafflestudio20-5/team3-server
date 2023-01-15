@@ -10,7 +10,6 @@ data class NeighborCommentResponse(
     val commenter: SimpleUserResponse,
     val comment: String,
     val replies: List<NeighborReplyResponse>,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val createdAt: LocalDateTime?
 ) {
     companion object {

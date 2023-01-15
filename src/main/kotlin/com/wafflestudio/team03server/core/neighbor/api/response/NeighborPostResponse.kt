@@ -14,7 +14,6 @@ data class NeighborPostResponse(
     val viewCount: Int,
     val likeCount: Int,
     val isLiked: Boolean? = false,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val createdAt: LocalDateTime?
 ) {
     companion object {

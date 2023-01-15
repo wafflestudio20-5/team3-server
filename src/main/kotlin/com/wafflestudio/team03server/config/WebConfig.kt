@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Configuration
-@EnableWebMvc
 class WebConfig(
     private val authInterceptor: AuthInterceptor,
     private val authArgumentResolver: AuthArgumentResolver,

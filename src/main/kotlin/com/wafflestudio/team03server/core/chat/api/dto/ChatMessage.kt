@@ -7,6 +7,5 @@ data class ChatMessage(
     val roomUUID: String,
     val senderId: Long,
     val message: String,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val createdAt: LocalDateTime,
 )

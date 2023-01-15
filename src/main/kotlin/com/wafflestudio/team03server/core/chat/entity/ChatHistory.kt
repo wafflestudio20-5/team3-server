@@ -19,7 +19,6 @@ class ChatHistory(
     val sender: User,
 
     val message: String,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val createdAt: LocalDateTime
 ) {
     companion object {
