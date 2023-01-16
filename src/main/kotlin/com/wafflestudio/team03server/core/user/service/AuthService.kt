@@ -1,6 +1,7 @@
 package com.wafflestudio.team03server.core.user.service
 
 import com.wafflestudio.team03server.common.Exception403
+import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.common.Exception409
 import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
 import com.wafflestudio.team03server.core.user.api.response.LoginResponse
@@ -20,6 +21,7 @@ interface AuthService {
     fun isDuplicateUsername(username: String): Boolean
     fun verifyEmail(code: String, email: String): Boolean
     fun login(email: String, password: String): LoginResponse
+    fun refresh(refreshToken: String): AuthToken
 }
 
 @Service
@@ -41,9 +43,9 @@ class AuthServiceImpl(
         }
         val user = signUpRequest.toUser()
         user.password = passwordEncoder.encode(user.password)
+        val (accessToken, refreshToken) = authTokenService.generateAccessTokenAndRefreshToken(signUpRequest.email, user)
         userRepository.save(user)
-        val accessToken = authTokenService.generateTokenByEmail(signUpRequest.email).accessToken
-        return LoginResponse(accessToken, SimpleUserResponse.of(user))
+        return LoginResponse(accessToken, refreshToken, SimpleUserResponse.of(user))
     }
 
     override fun sendVerificationEmail(email: String) {
@@ -69,12 +71,19 @@ class AuthServiceImpl(
         if (!passwordEncoder.matches(password, findUser.password)) {
             throw Exception403("이메일 또는 비밀번호가 잘못되었습니다.")
         }
-        val accessToken = authTokenService.generateTokenByEmail(email).accessToken
-        return LoginResponse(accessToken, SimpleUserResponse.of(findUser))
+        val (accessToken, refreshToken) = authTokenService.generateAccessTokenAndRefreshToken(email, findUser)
+        return LoginResponse(accessToken, refreshToken, SimpleUserResponse.of(findUser))
     }
 
     private fun generateRandomKey(): Int {
         val random = Random()
         return random.nextInt(900000) + 100000
+    }
+
+    override fun refresh(refreshToken: String): AuthToken {
+        authTokenService.verifyToken(refreshToken, isRefreshToken = true)
+        val email = authTokenService.getCurrentUserEmail(refreshToken)
+        val user = userRepository.findByEmail(email) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        return authTokenService.generateAccessTokenAndRefreshToken(email, user)
     }
 }

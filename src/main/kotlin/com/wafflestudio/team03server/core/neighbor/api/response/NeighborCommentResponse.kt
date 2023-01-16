@@ -1,6 +1,5 @@
 package com.wafflestudio.team03server.core.neighbor.api.response
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborComment
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
 import java.time.LocalDateTime
@@ -10,7 +9,6 @@ data class NeighborCommentResponse(
     val commenter: SimpleUserResponse,
     val comment: String,
     val replies: List<NeighborReplyResponse>,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val createdAt: LocalDateTime?
 ) {
     companion object {

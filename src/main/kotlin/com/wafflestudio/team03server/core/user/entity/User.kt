@@ -48,6 +48,8 @@ class User(
     var reviewsIWrote: MutableList<Review> = mutableListOf(),
 
     @OneToMany(mappedBy = "reviewee")
-    var reviewsIGot: MutableList<Review> = mutableListOf()
+    var reviewsIGot: MutableList<Review> = mutableListOf(),
+
+    var refreshToken: String? = null
 
 ) : BaseTimeEntity()
