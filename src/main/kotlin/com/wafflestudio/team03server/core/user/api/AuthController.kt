@@ -1,9 +1,11 @@
 package com.wafflestudio.team03server.core.user.api
 
 import com.wafflestudio.team03server.core.user.api.request.LoginRequest
+import com.wafflestudio.team03server.core.user.api.request.RefreshRequest
 import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
 import com.wafflestudio.team03server.core.user.api.response.LoginResponse
 import com.wafflestudio.team03server.core.user.service.AuthService
+import com.wafflestudio.team03server.core.user.service.AuthToken
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -54,5 +56,11 @@ class AuthController(
     fun login(@RequestBody @Valid loginRequest: LoginRequest): ResponseEntity<LoginResponse> {
         val response = authService.login(loginRequest.email, loginRequest.password)
         return ResponseEntity(response, HttpStatus.OK)
+    }
+
+    @PostMapping("/refresh")
+    fun refresh(@RequestBody @Valid refreshRequest: RefreshRequest): ResponseEntity<AuthToken> {
+        val authToken = authService.refresh(refreshRequest.refreshToken!!)
+        return ResponseEntity(authToken, HttpStatus.OK)
     }
 }

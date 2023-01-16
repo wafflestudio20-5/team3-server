@@ -1,3 +1,6 @@
 package com.wafflestudio.team03server.core.user.service
 
-data class AuthToken(val accessToken: String)
+data class AuthToken(
+    val accessToken: String,
+    val refreshToken: String
+)
