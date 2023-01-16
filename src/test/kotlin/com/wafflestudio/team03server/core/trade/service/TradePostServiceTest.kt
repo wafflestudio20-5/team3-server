@@ -164,6 +164,8 @@ internal class TradePostServiceTest @Autowired constructor(
         assertThat(reservations.tradeStatus).isEqualTo(TradeStatus.TRADING)
         assertThat(reservations.buyer).isNull()
         assertThat(reservations.candidates.size).isEqualTo(2)
+        assertThat(reservations.candidates[0].email).isEqualTo(savedUser2.email)
+        assertThat(reservations.candidates[0].roomUUID).isEqualTo(chat1_1.roomUUID)
     }
 
     @Test
