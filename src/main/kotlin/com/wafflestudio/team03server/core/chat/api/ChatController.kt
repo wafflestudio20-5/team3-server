@@ -10,7 +10,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -38,8 +37,7 @@ class ChatController(
         @UserContext userId: Long,
         @PathVariable UUID: String,
         @PathVariable("you-id") youId: Long,
-        @RequestParam(name = "buyer") isBuyer: Boolean,
     ): MessagesResponse {
-        return chatService.getMessages(userId, UUID, youId, isBuyer)
+        return chatService.getMessages(userId, UUID, youId)
     }
 }

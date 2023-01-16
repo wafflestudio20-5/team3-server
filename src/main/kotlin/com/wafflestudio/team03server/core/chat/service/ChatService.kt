@@ -87,10 +87,8 @@ class ChatService(
     private fun getChatRoomByUUID(roomUUID: String) =
         chatRoomRepository.findChatRoomByRoomUUID(roomUUID) ?: throw Exception404("잘못된 채팅방 UUID입니다.")
 
-    fun getMessages(userId: Long, roomUUID: String, youId: Long, isBuyer: Boolean): MessagesResponse {
-        val buyer = if (isBuyer) getUserById(userId) else getUserById(youId)
-        val seller = if (isBuyer) getUserById(youId) else getUserById(userId)
-        val you = if (isBuyer) seller else buyer
+    fun getMessages(userId: Long, roomUUID: String, youId: Long): MessagesResponse {
+        val you = getUserById(youId)
         val chatRoom = getChatRoomByUUID(roomUUID)
         return MessagesResponse.of(you, chatRoom)
     }
