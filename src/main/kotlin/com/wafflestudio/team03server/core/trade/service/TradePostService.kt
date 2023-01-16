@@ -5,6 +5,7 @@ import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.core.trade.api.request.CreatePostRequest
 import com.wafflestudio.team03server.core.trade.api.request.UpdatePostRequest
+import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
 import com.wafflestudio.team03server.core.trade.api.response.PostResponse
 import com.wafflestudio.team03server.core.trade.api.response.ReservationResponse
 import com.wafflestudio.team03server.core.trade.entity.LikePost
@@ -92,10 +93,10 @@ class TradePostService(
     private fun getPostById(postId: Long) =
         tradePostRepository.findByIdOrNull(postId) ?: throw Exception404("ID: ${postId}에 해당하는 글이 없습니다.")
 
-    fun getAllPosts(userId: Long, keyword: String?, pageable: Pageable): List<PostResponse> {
+    fun getAllPosts(userId: Long, keyword: String?, pageable: Pageable): PostListResponse {
         val findUser = getUserById(userId)
-        return tradePostRepository.findAllPostWithSellerAndBuyer(keyword, pageable)
-            .map { PostResponse.of(it, findUser) }
+        val queryPostResults = tradePostRepository.findAllPostWithSellerAndBuyer(keyword, pageable)
+        return PostListResponse.of(queryPostResults, findUser)
     }
 
     fun updatePost(userId: Long, postId: Long, request: UpdatePostRequest): PostResponse {

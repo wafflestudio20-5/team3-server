@@ -4,6 +4,7 @@ import com.wafflestudio.team03server.common.Authenticated
 import com.wafflestudio.team03server.common.UserContext
 import com.wafflestudio.team03server.core.trade.api.request.CreatePostRequest
 import com.wafflestudio.team03server.core.trade.api.request.UpdatePostRequest
+import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
 import com.wafflestudio.team03server.core.trade.api.response.PostResponse
 import com.wafflestudio.team03server.core.trade.api.response.ReservationResponse
 import com.wafflestudio.team03server.core.trade.service.TradePostService
@@ -36,14 +37,13 @@ class TradePostController(
         return tradePostService.getPost(userId, postId)
     }
 
-    // TODO: 스펙 확인해서 추후 수정하기
     @Authenticated
     @GetMapping("")
     fun getAllPosts(
         @UserContext userId: Long,
         @RequestParam("keyword") keyword: String?,
         @RequestParam("page", required = false, defaultValue = "1") page: Int?
-    ): List<PostResponse> {
+    ): PostListResponse {
         val pageable = PageRequest.of(page!! - 1, DEFAULT_PAGE_SIZE)
         return tradePostService.getAllPosts(userId, keyword, pageable)
     }

@@ -1,5 +1,6 @@
 package com.wafflestudio.team03server.core.trade.repository
 
+import com.querydsl.core.QueryResults
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.wafflestudio.team03server.core.trade.entity.QTradePost.*
@@ -20,7 +21,7 @@ class TradePostCustomRepositoryImpl(
             .fetchOne()
     }
 
-    override fun findAllPostWithSellerAndBuyer(keyword: String?, pagable: Pageable): List<TradePost> {
+    override fun findAllPostWithSellerAndBuyer(keyword: String?, pagable: Pageable): QueryResults<TradePost> {
         return jpaQueryFactory
             .selectFrom(tradePost)
             .where(eqKeyword(keyword))
@@ -29,7 +30,8 @@ class TradePostCustomRepositoryImpl(
             .orderBy(tradePost.createdAt.desc())
             .offset(pagable.offset)
             .limit(pagable.pageSize.toLong())
-            .fetch()
+            .fetchResults()
+//        return PageImpl(fetch.results, pagable, fetch.total)
     }
 
     private fun eqKeyword(keyword: String?): BooleanExpression? {

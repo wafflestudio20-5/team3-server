@@ -86,7 +86,26 @@ internal class TradePostServiceTest @Autowired constructor(
         val posts = tradePostService.getAllPosts(savedUser.id, null, PageRequest.of(0, 10))
 
         // then
-        assertThat(posts.size).isEqualTo(2)
+        assertThat(posts.posts.size).isEqualTo(2)
+    }
+
+    @Test
+    fun 글_페이지네이션_조회_성공() {
+        val user = User("user1", "abc@naver.com", "1234", "관악구")
+        val savedUser = userRepository.save(user)
+        for (i in 0..99) {
+            val request = CreatePostRequest("title$i", "String$i", i)
+            tradePostService.createPost(savedUser.id, null, request)
+        }
+
+        val allPosts = tradePostService.getAllPosts(savedUser.id, null, PageRequest.of(0, 10))
+
+        assertThat(allPosts.posts.size).isEqualTo(10)
+        assertThat(allPosts.posts[0].title).isEqualTo("title99")
+        assertThat(allPosts.posts[0].title).isEqualTo("title99")
+        assertThat(allPosts.paging.limit).isEqualTo(10)
+        assertThat(allPosts.paging.offset).isEqualTo(0)
+        assertThat(allPosts.paging.total).isEqualTo(100)
     }
 
     @Test
@@ -120,7 +139,7 @@ internal class TradePostServiceTest @Autowired constructor(
 
         //then
         val posts = tradePostService.getAllPosts(savedUser.id, null, PageRequest.of(0, 10))
-        assertThat(posts.size).isEqualTo(0)
+        assertThat(posts.posts.size).isEqualTo(0)
     }
 
     @Test
