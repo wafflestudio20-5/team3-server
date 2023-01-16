@@ -26,6 +26,8 @@ data class PagingResponse(
     val limit: Long,
     val offset: Long,
     val total: Long,
+    val count: Long,
+    val hasNext: Boolean,
 ) {
     companion object {
         fun of(queryResult: QueryResults<TradePost>): PagingResponse {
@@ -33,7 +35,15 @@ data class PagingResponse(
                 limit = queryResult.limit,
                 offset = queryResult.offset,
                 total = queryResult.total,
+                count = calcPage(queryResult),
+                hasNext = hasNext(queryResult)
             )
         }
+
+        private fun calcPage(queryResult: QueryResults<TradePost>) =
+            queryResult.offset / queryResult.limit
+
+        private fun hasNext(queryResult: QueryResults<TradePost>) =
+            (queryResult.limit + queryResult.offset) < queryResult.total
     }
 }

@@ -31,7 +31,6 @@ class TradePostCustomRepositoryImpl(
             .offset(pagable.offset)
             .limit(pagable.pageSize.toLong())
             .fetchResults()
-//        return PageImpl(fetch.results, pagable, fetch.total)
     }
 
     private fun eqKeyword(keyword: String?): BooleanExpression? {
