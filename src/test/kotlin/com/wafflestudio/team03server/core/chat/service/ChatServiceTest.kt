@@ -101,7 +101,7 @@ internal class ChatServiceTest @Autowired constructor(
         chatService.saveMessage(chatMessage2)
 
         // when
-        val messages = chatService.getMessages(savedUser1.id, chat.roomUUID, savedUser2.id, true)
+        val messages = chatService.getMessages(savedUser1.id, chat.roomUUID, savedUser2.id)
 
         // then
         assertThat(messages.you.id).isEqualTo(savedUser2.id)
