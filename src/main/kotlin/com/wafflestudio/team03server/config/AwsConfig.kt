@@ -5,12 +5,15 @@ import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.wafflestudio.team03server.properties.S3Properties
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.cloud.aws.autoconfigure.context.ContextInstanceDataAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 @EnableConfigurationProperties(S3Properties::class)
+@EnableAutoConfiguration(exclude = [ContextInstanceDataAutoConfiguration::class])
 class AwsConfig(
     private val s3Properties: S3Properties
 ) {
