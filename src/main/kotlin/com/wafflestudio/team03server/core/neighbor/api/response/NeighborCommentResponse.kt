@@ -9,16 +9,20 @@ data class NeighborCommentResponse(
     val commenter: SimpleUserResponse,
     val comment: String,
     val replies: List<NeighborReplyResponse>,
-    val createdAt: LocalDateTime?
+    val isOwner: Boolean,
+    val createdAt: LocalDateTime?,
+    val modifiedAt: LocalDateTime?
 ) {
     companion object {
-        fun of(comment: NeighborComment): NeighborCommentResponse {
+        fun of(comment: NeighborComment, userId: Long): NeighborCommentResponse {
             return NeighborCommentResponse(
                 commentId = comment.id,
                 commenter = SimpleUserResponse.of(comment.commenter),
                 comment = comment.comment,
-                replies = comment.replies.map { NeighborReplyResponse.of(it) },
-                createdAt = comment.createdAt
+                replies = comment.replies.map { NeighborReplyResponse.of(it, userId) },
+                isOwner = comment.commenter.id == userId,
+                createdAt = comment.createdAt,
+                modifiedAt = comment.modifiedAt
             )
         }
     }
