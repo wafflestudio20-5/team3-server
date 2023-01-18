@@ -11,7 +11,8 @@ data class NeighborCommentResponse(
     val replies: List<NeighborReplyResponse>,
     val isOwner: Boolean,
     val createdAt: LocalDateTime?,
-    val modifiedAt: LocalDateTime?
+    val modifiedAt: LocalDateTime?,
+    val isHidden: Boolean
 ) {
     companion object {
         fun of(comment: NeighborComment, userId: Long): NeighborCommentResponse {
@@ -22,7 +23,8 @@ data class NeighborCommentResponse(
                 replies = comment.replies.map { NeighborReplyResponse.of(it, userId) },
                 isOwner = comment.commenter.id == userId,
                 createdAt = comment.createdAt,
-                modifiedAt = comment.modifiedAt
+                modifiedAt = comment.modifiedAt,
+                isHidden = comment.isHidden
             )
         }
     }

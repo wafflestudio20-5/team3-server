@@ -17,7 +17,9 @@ class NeighborComment(
     var comment: String,
 
     @OneToMany(mappedBy = "neighborComment", cascade = [CascadeType.ALL])
-    var replies: MutableList<NeighborReply> = mutableListOf()
+    var replies: MutableList<NeighborReply> = mutableListOf(),
+
+    val isHidden: Boolean
 
 ) : BaseTimeEntity() {
     fun mapNeighborPost(post: NeighborPost) {
