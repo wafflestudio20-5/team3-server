@@ -40,7 +40,8 @@ class NeighborCommentServiceImpl(
         val commenter = getUserById(userId)
         val post = getNeighborPostById(postId)
         val (comment, isHidden) = createNeighborCommentRequest
-        val neighborComment = NeighborComment(neighborPost = post, commenter = commenter, comment = comment!!, isHidden = isHidden)
+        val neighborComment =
+            NeighborComment(neighborPost = post, commenter = commenter, comment = comment!!, isHidden = isHidden)
         neighborComment.mapNeighborPost(post)
         neighborCommentRepository.save(neighborComment)
     }
