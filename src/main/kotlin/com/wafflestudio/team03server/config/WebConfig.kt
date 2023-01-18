@@ -34,7 +34,7 @@ class WebConfig(
 
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
-            .allowedOrigins("http://waffle-market-03.s3-website-ap-northeast-1.amazonaws.com", "http://localhost:3000")
+            .allowedOrigins("*")
             .allowedMethods("*")
             .allowCredentials(false)
             .maxAge(3000)
