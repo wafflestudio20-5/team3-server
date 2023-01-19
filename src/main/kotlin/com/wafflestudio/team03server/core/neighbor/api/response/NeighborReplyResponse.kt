@@ -8,15 +8,19 @@ data class NeighborReplyResponse(
     val replyId: Long,
     val replier: SimpleUserResponse,
     val replyingMessage: String,
-    val createdAt: LocalDateTime?
+    val isOwner: Boolean,
+    val createdAt: LocalDateTime?,
+    val modifiedAt: LocalDateTime?
 ) {
     companion object {
-        fun of(reply: NeighborReply): NeighborReplyResponse {
+        fun of(reply: NeighborReply, userId: Long): NeighborReplyResponse {
             return NeighborReplyResponse(
                 replyId = reply.id,
                 replier = SimpleUserResponse.of(reply.replier),
                 replyingMessage = reply.replyingMessage,
-                createdAt = reply.createdAt
+                isOwner = reply.replier.id == userId,
+                createdAt = reply.createdAt,
+                modifiedAt = reply.modifiedAt
             )
         }
     }

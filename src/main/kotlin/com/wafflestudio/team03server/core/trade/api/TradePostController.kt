@@ -42,10 +42,10 @@ class TradePostController(
     fun getAllPosts(
         @UserContext userId: Long,
         @RequestParam("keyword") keyword: String?,
-        @RequestParam("offset", required = false, defaultValue = "1") offset: Int?,
+        @RequestParam("page", required = false, defaultValue = "1") page: Int?,
         @RequestParam("limit", required = false, defaultValue = "10") limit: Int?
     ): PostListResponse {
-        val pageable = PageRequest.of(offset!! - 1, limit!!)
+        val pageable = PageRequest.of(page!! - 1, limit!!)
         return tradePostService.getAllPosts(userId, keyword, pageable)
     }
 
