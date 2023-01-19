@@ -39,96 +39,96 @@ class NeighborController(
     }
 
     @Authenticated
-    @GetMapping("/{postId}")
+    @GetMapping("/{post-id}")
     fun getNeighborPost(
-        @PathVariable("postId") postId: Long,
+        @PathVariable("post-id") postId: Long,
         @UserContext userId: Long
     ): NeighborPostResponse {
         return neighborPostService.getNeighborPost(userId, postId)
     }
 
     @Authenticated
-    @PatchMapping("/{postId}")
+    @PatchMapping("/{post-id}")
     fun updateNeighborPost(
         @UserContext userId: Long,
-        @PathVariable("postId") postId: Long,
+        @PathVariable("post-id") postId: Long,
         @Valid @RequestBody updateNeighborPostRequest: UpdateNeighborPostRequest
     ): NeighborPostResponse {
         return neighborPostService.updateNeighborPost(userId, postId, updateNeighborPostRequest)
     }
 
     @Authenticated
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("/{post-id}")
     fun deleteNeighborPost(
         @UserContext userId: Long,
-        @PathVariable("postId") postId: Long
+        @PathVariable("post-id") postId: Long
     ) {
         return neighborPostService.deleteNeighborPost(userId, postId)
     }
 
     @Authenticated
-    @PostMapping("/{postId}/like")
+    @PostMapping("/{post-id}/like")
     fun likeNeighborPost(
         @UserContext userId: Long,
-        @PathVariable("postId") postId: Long
+        @PathVariable("post-id") postId: Long
     ) {
         return neighborPostService.likeOrUnlikeNeighborPost(userId, postId)
     }
 
     @Authenticated
-    @PostMapping("/{postId}/comment")
+    @PostMapping("/{post-id}/comment")
     fun createNeighborComment(
         @UserContext userId: Long,
-        @PathVariable("postId") postId: Long,
+        @PathVariable("post-id") postId: Long,
         @Valid @RequestBody createNeighborCommentRequest: CreateNeighborCommentRequest
     ) {
         return neighborCommentService.createNeighborComment(userId, postId, createNeighborCommentRequest)
     }
 
     @Authenticated
-    @PatchMapping("/comment/{commentId}")
+    @PatchMapping("/comment/{comment-id}")
     fun updateNeighborComment(
         @UserContext userId: Long,
-        @PathVariable("commentId") commentId: Long,
+        @PathVariable("comment-id") commentId: Long,
         @Valid @RequestBody updateNeighborCommentRequest: UpdateNeighborCommentRequest
     ) {
         return neighborCommentService.updateNeighborComment(userId, commentId, updateNeighborCommentRequest)
     }
 
     @Authenticated
-    @DeleteMapping("/comment/{commentId}")
+    @DeleteMapping("/comment/{comment-id}")
     fun deleteNeighborComment(
         @UserContext userId: Long,
-        @PathVariable("commentId") commentId: Long
+        @PathVariable("comment-id") commentId: Long
     ) {
         return neighborCommentService.deleteNeighborComment(userId, commentId)
     }
 
     @Authenticated
-    @PostMapping("/comment/{commentId}/reply")
+    @PostMapping("/comment/{comment-id}/reply")
     fun createNeighborReply(
         @UserContext userId: Long,
-        @PathVariable("commentId") commentId: Long,
+        @PathVariable("comment-id") commentId: Long,
         @Valid @RequestBody createNeighborReplyRequest: CreateNeighborReplyRequest
     ) {
         return neighborReplyService.createNeighborReply(userId, commentId, createNeighborReplyRequest)
     }
 
     @Authenticated
-    @PatchMapping("/comment/reply/{replyId}")
+    @PatchMapping("/comment/reply/{reply-id}")
     fun updateNeighborReply(
         @UserContext userId: Long,
-        @PathVariable("replyId") replyId: Long,
+        @PathVariable("reply-id") replyId: Long,
         @Valid @RequestBody updateNeighborReplyRequest: UpdateNeighborReplyRequest
     ) {
         return neighborReplyService.updateNeighborReply(userId, replyId, updateNeighborReplyRequest)
     }
 
     @Authenticated
-    @DeleteMapping("/comment/reply/{replyId}")
+    @DeleteMapping("/comment/reply/{reply-id}")
     fun deleteNeighborReply(
         @UserContext userId: Long,
-        @PathVariable("replyId") replyId: Long
+        @PathVariable("reply-id") replyId: Long
     ) {
         return neighborReplyService.deleteNeighborReply(userId, replyId)
     }
