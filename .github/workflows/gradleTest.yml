@@ -5,11 +5,11 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Java CI with Gradle
+name: Java CI with Gradle for test server
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "dev" ]
 
 permissions:
   contents: read
@@ -39,7 +39,7 @@ jobs:
         touch ./application.yml
 
         # GitHub-Actions 에서 설정한 값을 application.yml 파일에 쓰기
-        echo "${{ secrets.DATABASE }}" >> ./application.yml
+        echo "${{ secrets.TEST_DATABASE }}" >> ./application.yml
 
       shell: bash
         
@@ -50,8 +50,8 @@ jobs:
     - name: web docker build and push
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker build -t ${{ secrets.DOCKER_REPO }} .
-        docker push ${{ secrets.DOCKER_REPO }}
+        docker build -t ${{ secrets.DOCKER_TEST_REPO }} .
+        docker push ${{ secrets.DOCKER_TEST_REPO }}
         
     ## docker pull and run
     - name: executing remote ssh commands using password
@@ -62,8 +62,8 @@ jobs:
         key: ${{ secrets.KEY }}
         port: 22
         script: |
-          sudo docker stop prod-server
-          sudo docker rm prod-server
-          sudo docker image rm ${{ secrets.DOCKER_REPO }}
-          sudo docker pull ${{ secrets.DOCKER_REPO }}
-          sudo docker run -d -p 80:8080 --name prod-server ${{ secrets.DOCKER_REPO }}
+          sudo docker stop test-server
+          sudo docker rm test-server
+          sudo docker image rm ${{ secrets.DOCKER_TEST_REPO }}
+          sudo docker pull ${{ secrets.DOCKER_TEST_REPO }}
+          sudo docker run -d -p 81:8080 --name test-server ${{ secrets.DOCKER_TEST_REPO }}
