@@ -8,6 +8,7 @@ import com.wafflestudio.team03server.core.trade.service.ReviewService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 class ReviewController(
@@ -19,7 +20,7 @@ class ReviewController(
     fun createReview(
         @UserContext userId: Long,
         @PathVariable("post-id") postId: Long,
-        @RequestBody createReviewRequest: CreateReviewRequest
+        @Valid @RequestBody createReviewRequest: CreateReviewRequest
     ): ResponseEntity<Any> {
         reviewService.createReview(userId, postId, createReviewRequest)
         return ResponseEntity(HttpStatus.OK)
