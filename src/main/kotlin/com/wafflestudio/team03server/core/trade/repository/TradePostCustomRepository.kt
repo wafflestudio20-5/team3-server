@@ -7,4 +7,5 @@ import org.springframework.data.domain.Pageable
 interface TradePostCustomRepository {
     fun findPostByIdWithSellerAndBuyer(postId: Long): TradePost?
     fun findAllPostWithSellerAndBuyer(keyword: String?, pageable: Pageable): QueryResults<TradePost>
+    fun findTopThreeLikePosts(): List<TradePost>
 }
