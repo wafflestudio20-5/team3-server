@@ -30,7 +30,7 @@ class ReviewService(
         checkReviewerBuyerOrSeller(reviewer, post)
         val reviewee = if (reviewer == post.seller) post.buyer else post.seller
         val (score, content) = createReviewRequest
-        val review = Review.create(post, reviewer, reviewee!!, score, content)
+        val review = Review.create(post, reviewer, reviewee!!, score!!, content)
         reviewee.temperature = round((reviewee.temperature + score) * 10) / 10
         reviewRepository.save(review)
     }
