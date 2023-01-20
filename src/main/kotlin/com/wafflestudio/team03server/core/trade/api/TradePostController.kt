@@ -5,6 +5,7 @@ import com.wafflestudio.team03server.common.UserContext
 import com.wafflestudio.team03server.core.trade.api.request.CreatePostRequest
 import com.wafflestudio.team03server.core.trade.api.request.UpdatePostRequest
 import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
+import com.wafflestudio.team03server.core.trade.api.response.PostPageResonse
 import com.wafflestudio.team03server.core.trade.api.response.PostResponse
 import com.wafflestudio.team03server.core.trade.api.response.ReservationResponse
 import com.wafflestudio.team03server.core.trade.service.TradePostService
@@ -12,8 +13,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import javax.validation.Valid
-
-private const val DEFAULT_PAGE_SIZE = 10
 
 @RestController
 @RequestMapping("/tradepost")
@@ -44,7 +43,7 @@ class TradePostController(
         @RequestParam("keyword") keyword: String?,
         @RequestParam("page", required = false, defaultValue = "1") page: Int?,
         @RequestParam("limit", required = false, defaultValue = "10") limit: Int?
-    ): PostListResponse {
+    ): PostPageResonse {
         val pageable = PageRequest.of(page!! - 1, limit!!)
         return tradePostService.getAllPosts(userId, keyword, pageable)
     }
@@ -102,5 +101,12 @@ class TradePostController(
     @PostMapping("/{post-id}/like")
     fun likeTradePost(@UserContext userId: Long, @PathVariable(name = "post-id") postId: Long) {
         tradePostService.likePost(userId, postId)
+    }
+
+    // 탑3 포스트
+    @Authenticated
+    @GetMapping("/top3")
+    fun getTopThreePosts(@UserContext userId: Long): PostListResponse {
+        return tradePostService.getTopThreePosts(userId)
     }
 }

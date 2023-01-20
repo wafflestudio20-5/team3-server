@@ -313,4 +313,58 @@ internal class TradePostServiceTest @Autowired constructor(
         assertThat(findPost.likeTradePosts.size).isEqualTo(0)
         assertThat(findUser.likeTradePosts.size).isEqualTo(0)
     }
+
+    @Test
+    fun 인기_탑3_글_조회_성공() {
+        // given
+        // 유저 생성
+        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
+        val user3 = User("user3", "abc3@naver.com", "1234", "관악구")
+        val user4 = User("user4", "abc4@naver.com", "1234", "관악구")
+        val user5 = User("user5", "abc5@naver.com", "1234", "관악구")
+        val savedUser1 = userRepository.save(user1)
+        val savedUser2 = userRepository.save(user2)
+        val savedUser3 = userRepository.save(user3)
+        val savedUser4 = userRepository.save(user4)
+        val savedUser5 = userRepository.save(user5)
+
+        // 글 생성
+        val request1 = CreatePostRequest("title1", "String1", 10000)
+        val request2 = CreatePostRequest("title2", "String2", 10000)
+        val request3 = CreatePostRequest("title3", "String3", 10000)
+        val request4 = CreatePostRequest("title4", "String4", 10000)
+        val request5 = CreatePostRequest("title5", "String5", 10000)
+        val post1 = tradePostService.createPost(savedUser1.id, null, request1)
+        val post2 = tradePostService.createPost(savedUser2.id, null, request2)
+        val post3 = tradePostService.createPost(savedUser2.id, null, request3)
+        val post4 = tradePostService.createPost(savedUser3.id, null, request4)
+        val post5 = tradePostService.createPost(savedUser4.id, null, request5)
+
+        // when
+        // 글 찜 누르기
+        tradePostService.likePost(savedUser1.id, post3.postId)
+        tradePostService.likePost(savedUser3.id, post3.postId)
+        tradePostService.likePost(savedUser4.id, post3.postId)
+        tradePostService.likePost(savedUser5.id, post3.postId)
+
+        tradePostService.likePost(savedUser1.id, post2.postId)
+        tradePostService.likePost(savedUser3.id, post2.postId)
+        tradePostService.likePost(savedUser4.id, post2.postId)
+
+        tradePostService.likePost(savedUser1.id, post4.postId)
+        tradePostService.likePost(savedUser2.id, post4.postId)
+        tradePostService.likePost(savedUser4.id, post4.postId)
+
+        tradePostService.likePost(savedUser1.id, post5.postId)
+        tradePostService.likePost(savedUser2.id, post1.postId)
+
+        val topThreePosts = tradePostService.getTopThreePosts(savedUser1.id)
+
+        // then
+        assertThat(topThreePosts.posts.size).isEqualTo(3)
+        assertThat(topThreePosts.posts[0].postId).isEqualTo(post3.postId)
+        assertThat(topThreePosts.posts[0].title).isEqualTo(post3.title)
+        assertThat(topThreePosts.posts[0].likeCount).isGreaterThan(topThreePosts.posts[1].likeCount)
+    }
 }

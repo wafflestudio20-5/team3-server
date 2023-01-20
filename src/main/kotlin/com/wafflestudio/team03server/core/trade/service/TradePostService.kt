@@ -6,6 +6,7 @@ import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.core.trade.api.request.CreatePostRequest
 import com.wafflestudio.team03server.core.trade.api.request.UpdatePostRequest
 import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
+import com.wafflestudio.team03server.core.trade.api.response.PostPageResonse
 import com.wafflestudio.team03server.core.trade.api.response.PostResponse
 import com.wafflestudio.team03server.core.trade.api.response.ReservationResponse
 import com.wafflestudio.team03server.core.trade.entity.LikePost
@@ -93,10 +94,10 @@ class TradePostService(
     private fun getPostById(postId: Long) =
         tradePostRepository.findByIdOrNull(postId) ?: throw Exception404("ID: ${postId}에 해당하는 글이 없습니다.")
 
-    fun getAllPosts(userId: Long, keyword: String?, pageable: Pageable): PostListResponse {
+    fun getAllPosts(userId: Long, keyword: String?, pageable: Pageable): PostPageResonse {
         val findUser = getUserById(userId)
         val queryPostResults = tradePostRepository.findAllPostWithSellerAndBuyer(keyword, pageable)
-        return PostListResponse.of(queryPostResults, findUser)
+        return PostPageResonse.of(queryPostResults, findUser)
     }
 
     fun updatePost(userId: Long, postId: Long, request: UpdatePostRequest): PostResponse {
@@ -202,5 +203,11 @@ class TradePostService(
 
     private fun checkNotPostOwner(user: User, post: TradePost) {
         if (user.id == post.seller.id) throw Exception400("자신의 거래글은 찜할수없습니다.")
+    }
+
+    fun getTopThreePosts(userId: Long): PostListResponse {
+        val user = getUserById(userId)
+        val findTopThreeLikePosts = tradePostRepository.findTopThreeLikePosts()
+        return PostListResponse.of(user, findTopThreeLikePosts)
     }
 }
