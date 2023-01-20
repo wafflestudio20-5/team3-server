@@ -3,6 +3,7 @@ package com.wafflestudio.team03server.core.user.api
 import com.wafflestudio.team03server.common.Authenticated
 import com.wafflestudio.team03server.common.Exception400
 import com.wafflestudio.team03server.common.UserContext
+import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
 import com.wafflestudio.team03server.core.user.api.request.EditLocationRequest
 import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
 import com.wafflestudio.team03server.core.user.api.request.EditUsernameRequest
@@ -72,5 +73,16 @@ class UserController(
     private fun isFileAnImage(file: MultipartFile): Boolean {
         val fileExtension = FilenameUtils.getExtension(file.originalFilename).lowercase()
         return fileExtension == "jpg" || fileExtension == "jpeg" || fileExtension == "png"
+    }
+
+    @Authenticated
+    @GetMapping("/buy-trade")
+    fun getBuyTradePosts(@UserContext userId: Long): PostListResponse {
+        return userService.getBuyTradePosts(userId)
+    }
+
+    @GetMapping("/{user-id}/sell-trade")
+    fun getSellTradePosts(@UserContext userId: Long, @PathVariable(name = "user-id") sellerId: Long): PostListResponse {
+        return userService.getSellTradePosts(userId, sellerId)
     }
 }
