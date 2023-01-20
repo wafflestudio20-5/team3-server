@@ -81,6 +81,7 @@ class UserController(
         return userService.getBuyTradePosts(userId)
     }
 
+    @Authenticated
     @GetMapping("/{user-id}/sell-trade")
     fun getSellTradePosts(@UserContext userId: Long, @PathVariable(name = "user-id") sellerId: Long): PostListResponse {
         return userService.getSellTradePosts(userId, sellerId)
