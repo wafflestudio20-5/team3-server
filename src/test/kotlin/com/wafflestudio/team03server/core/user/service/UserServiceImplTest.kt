@@ -26,7 +26,61 @@ internal class UserServiceImplTest @Autowired constructor(
 ) {
 
     @Test
-    fun login() {
+    fun 유저_정보_조회_성공() {
+        //given
+        val user = User("user1", "a@naver.com", "1234", "송도동")
+        val savedUser = userRepository.save(user)
+        //when
+        val userResponse = userService.getProfile(savedUser.id)
+        //then
+        assertThat(user.username).isEqualTo(userResponse.username)
+        assertThat(user.email).isEqualTo(userResponse.email)
+        assertThat(user.location).isEqualTo(userResponse.location)
+        assertThat(user.temperature).isEqualTo(userResponse.temperature)
+        assertThat(user.imgUrl).isEqualTo(userResponse.imgUrl)
+        assertThat(user.createdAt).isEqualTo(userResponse.createdAt)
+        assertThat(user.modifiedAt).isEqualTo(userResponse.modifiedAt)
+    }
+
+    @Test
+    fun 유저_정보_조회_실패() {
+        //given
+
+        //when
+        val userResponse = userService.getProfile(1)
+        //then
+
+    }
+
+    @Test
+    fun editUsername() {
+        //given
+
+        //when
+
+        //then
+    }
+
+    @Test
+    fun editLocation() {
+        //given
+
+        //when
+
+        //then
+    }
+
+    @Test
+    fun editPassword() {
+        //given
+
+        //when
+
+        //then
+    }
+
+    @Test
+    fun uploadImage() {
         //given
 
         //when
