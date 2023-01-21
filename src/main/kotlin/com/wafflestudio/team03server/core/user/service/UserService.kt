@@ -1,6 +1,9 @@
 package com.wafflestudio.team03server.core.user.service
 
 import com.wafflestudio.team03server.common.*
+import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
+import com.wafflestudio.team03server.core.trade.entity.TradeStatus
+import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
 import com.wafflestudio.team03server.core.user.api.request.EditLocationRequest
 import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
 import com.wafflestudio.team03server.core.user.api.request.EditUsernameRequest
@@ -19,6 +22,8 @@ interface UserService {
     fun editLocation(userId: Long, editLocationRequest: EditLocationRequest): UserResponse
     fun editPassword(userId: Long, editPasswordRequest: EditPasswordRequest)
     fun uploadImage(userId: Long, image: MultipartFile): String
+    fun getBuyTradePosts(userId: Long): PostListResponse
+    fun getSellTradePosts(userId: Long, sellerId: Long): PostListResponse
 }
 
 @Service
@@ -27,7 +32,8 @@ class UserServiceImpl(
     private val userRepository: UserRepository,
     private val authService: AuthService,
     private val passwordEncoder: PasswordEncoder,
-    private val s3Service: S3Service
+    private val s3Service: S3Service,
+    private val tradePostRepository: TradePostRepository,
 ) : UserService {
     override fun getProfile(userId: Long): UserResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
@@ -69,5 +75,18 @@ class UserServiceImpl(
         val imgUrl = s3Service.upload(image)
         user.imgUrl = imgUrl
         return imgUrl
+    }
+
+    override fun getBuyTradePosts(userId: Long): PostListResponse {
+        val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        val buyTradePosts = tradePostRepository.findAllByBuyerAndTradeStatus(user, TradeStatus.COMPLETED)
+        return PostListResponse.of(user, buyTradePosts)
+    }
+
+    override fun getSellTradePosts(userId: Long, sellerId: Long): PostListResponse {
+        val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        val seller = userRepository.findByIdOrNull(sellerId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        val sellTradePosts = tradePostRepository.findAllBySeller(seller)
+        return PostListResponse.of(user, sellTradePosts)
     }
 }
