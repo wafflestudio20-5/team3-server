@@ -7,6 +7,7 @@ import com.wafflestudio.team03server.core.trade.api.response.ReviewResponse
 import com.wafflestudio.team03server.core.trade.entity.Review
 import com.wafflestudio.team03server.core.trade.entity.TradePost
 import com.wafflestudio.team03server.core.trade.entity.TradeStatus
+import com.wafflestudio.team03server.core.trade.repository.ReviewCustomRepository
 import com.wafflestudio.team03server.core.trade.repository.ReviewRepository
 import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
 import com.wafflestudio.team03server.core.user.entity.User
@@ -21,7 +22,8 @@ import kotlin.math.round
 class ReviewService(
     private val tradePostRepository: TradePostRepository,
     private val userRepository: UserRepository,
-    private val reviewRepository: ReviewRepository
+    private val reviewRepository: ReviewRepository,
+    private val reviewCustomRepository: ReviewCustomRepository
 ) {
     fun createReview(reviewerId: Long, postId: Long, createReviewRequest: CreateReviewRequest) {
         val post = getPostById(postId)
@@ -37,7 +39,7 @@ class ReviewService(
 
     fun getReviews(userId: Long): List<ReviewResponse> {
         getUserById(userId)
-        val reviewEntities = reviewRepository.findByRevieweeIdAndContentIsNotNull(userId)
+        val reviewEntities = reviewCustomRepository.findByRevieweeIdAndContentIsNotNull(userId)
         val reviews = mutableListOf<ReviewResponse>()
         for (reviewEntity in reviewEntities) {
             reviews.add(ReviewResponse.of(reviewEntity))
