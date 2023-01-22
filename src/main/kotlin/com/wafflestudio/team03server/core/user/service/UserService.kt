@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
+import java.net.URLDecoder
 
 interface UserService {
     fun getProfile(userId: Long): UserResponse
@@ -73,8 +74,17 @@ class UserServiceImpl(
     override fun uploadImage(userId: Long, image: MultipartFile): String {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
         val imgUrl = s3Service.upload(image)
+        if (user.imgUrl != null) {
+            deleteImage(user.imgUrl!!)
+        }
         user.imgUrl = imgUrl
         return imgUrl
+    }
+
+    private fun deleteImage(imgUrl: String) {
+        val key = imgUrl.substringAfterLast("/")
+        val decodedKey = URLDecoder.decode(key, "UTF-8")
+        s3Service.delete(decodedKey)
     }
 
     override fun getBuyTradePosts(userId: Long): PostListResponse {

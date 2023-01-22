@@ -23,4 +23,8 @@ class S3Service(private val amazonS3: AmazonS3) {
 
         return amazonS3.getUrl(bucket, s3FileName).toString()
     }
+
+    fun delete(key: String) {
+        amazonS3.deleteObject(bucket, key)
+    }
 }
