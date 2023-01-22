@@ -42,7 +42,7 @@ class UserServiceImpl(
 
     override fun editUsername(userId: Long, editUsernameRequest: EditUsernameRequest): UserResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
-        if (isModifiedAndDuplicateUsername(editUsernameRequest.username!!, user.username)) {
+        if (isModifiedAndDuplicateUsername(user.username, editUsernameRequest.username!!)) {
             throw Exception409("이미 존재하는 유저네임 입니다.")
         }
         user.username = editUsernameRequest.username
