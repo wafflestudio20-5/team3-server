@@ -6,7 +6,6 @@ import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.common.Exception409
 import com.wafflestudio.team03server.core.chat.service.ChatService
 import com.wafflestudio.team03server.core.trade.api.request.CreatePostRequest
-import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
 import com.wafflestudio.team03server.core.trade.service.TradePostService
 import com.wafflestudio.team03server.core.user.api.request.EditLocationRequest
 import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
@@ -153,7 +152,7 @@ internal class UserServiceImplTest @Autowired constructor(
         //then
         assertThat(exception.message).isEqualTo("비밀번호가 일치하지 않습니다.")
     }
-    
+
     @Test
     fun 글_구매_내역_조회_성공() {
         // given
