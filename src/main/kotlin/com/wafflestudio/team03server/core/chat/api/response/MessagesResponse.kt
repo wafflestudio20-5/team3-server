@@ -15,7 +15,7 @@ data class MessagesResponse(
         fun of(you: User, chatRoom: ChatRoom): MessagesResponse {
             return MessagesResponse(
                 you = SimpleUserResponse.of(you),
-                chatHistories = chatRoom.histories.map { ChatHistoryResponse.of(it) }
+                chatHistories = chatRoom.histories.map { ChatHistoryResponse.of(it) }.sortedBy { it.createdAt }
             )
         }
     }
