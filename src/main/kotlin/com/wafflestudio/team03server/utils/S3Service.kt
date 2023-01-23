@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.net.URLDecoder
 import java.util.*
 
 @Service
@@ -22,5 +23,15 @@ class S3Service(private val amazonS3: AmazonS3) {
         amazonS3.putObject(bucket, s3FileName, multipartFile.inputStream, objMeta)
 
         return amazonS3.getUrl(bucket, s3FileName).toString()
+    }
+
+    fun delete(key: String) {
+        amazonS3.deleteObject(bucket, key)
+    }
+
+    fun deleteImage(imgUrl: String) {
+        val key = imgUrl.substringAfterLast("/")
+        val decodedKey = URLDecoder.decode(key, "UTF-8")
+        delete(decodedKey)
     }
 }
