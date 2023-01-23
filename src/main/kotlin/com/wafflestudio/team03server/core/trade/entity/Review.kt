@@ -21,7 +21,11 @@ class Review(
 
     @NotNull
     val score: Double,
-    var content: String? = null
+    var content: String? = null,
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    val reviewerType: ReviewerType
 ) : BaseTimeEntity() {
 
     companion object {
@@ -31,7 +35,8 @@ class Review(
                 reviewer = reviewer,
                 reviewee = reviewee,
                 score = score,
-                content = content
+                content = content,
+                reviewerType = if (tradePost.seller == reviewer) ReviewerType.SELLER else ReviewerType.BUYER
             )
             reviewer.reviewsIWrote.add(review)
             reviewee.reviewsIGot.add(review)
