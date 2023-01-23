@@ -116,7 +116,7 @@ internal class UserServiceImplTest @Autowired constructor(
         )
         //then
         val findUser = userRepository.findByIdOrNull(savedUser.id) ?: throw Exception404("")
-        passwordEncoder.matches("Edited123!", findUser.password)
+        assertThat(passwordEncoder.matches("Edited123!", findUser.password)).isTrue
     }
 
     @Test
