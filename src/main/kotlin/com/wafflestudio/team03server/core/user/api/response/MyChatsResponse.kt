@@ -28,8 +28,8 @@ data class DetailChatResponse(
                 roomUUID = chatRoom.roomUUID,
                 buyer = SimpleUserResponse.of(chatRoom.buyer),
                 post = PostResponse.of(chatRoom.post, chatRoom.seller),
-                // OneToMany 관계인데 그 중 하나만 가져오고싶지만.. 다 가져온뒤 정렬..ㅜ
-                lastChat = ChatHistoryResponse.of(chatRoom.histories.sortedByDescending { it.createdAt }[0]),
+                // OneToMany 관계인데 그 중 하나만 가져오고싶지만.. 다 가져온뒤 하나 선택
+                lastChat = ChatHistoryResponse.of(chatRoom.histories[chatRoom.histories.size - 1]),
             )
         }
     }
