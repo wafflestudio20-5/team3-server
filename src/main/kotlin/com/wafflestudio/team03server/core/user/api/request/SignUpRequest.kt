@@ -2,6 +2,8 @@ package com.wafflestudio.team03server.core.user.api.request
 
 import com.wafflestudio.team03server.core.user.entity.Coordinate
 import com.wafflestudio.team03server.core.user.entity.User
+import org.locationtech.jts.geom.Point
+import org.locationtech.jts.io.WKTReader
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
@@ -31,6 +33,14 @@ data class SignUpRequest(
     val isEmailAuthed: Boolean?
 ) {
     fun toUser(): User {
-        return User(username!!, email!!, password!!, location!!, coordinate!!)
+        val pointWKT = "POINT(${coordinate!!.lng} ${coordinate.lat})"
+        val point = WKTReader().read(pointWKT) as Point
+        return User(
+            username = username!!,
+            email = email!!,
+            password = password!!,
+            location = location!!,
+            coordinate = point
+        )
     }
 }
