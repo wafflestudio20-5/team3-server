@@ -5,6 +5,6 @@ import com.wafflestudio.team03server.core.trade.entity.TradePost
 import com.wafflestudio.team03server.core.user.entity.User
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface LikePostRepository : JpaRepository<LikePost, Long> {
+interface LikePostRepository : JpaRepository<LikePost, Long>, LikePostCustomRepository {
     fun findLikePostByUserAndLikedPost(user: User, likedPost: TradePost): LikePost?
 }
