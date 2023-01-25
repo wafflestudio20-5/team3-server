@@ -89,6 +89,12 @@ class UserController(
     }
 
     @Authenticated
+    @GetMapping("/like-trade")
+    fun getLikeTradePosts(@UserContext userId: Long): PostListResponse {
+        return userService.getLikeTradePosts(userId)
+    }
+
+    @Authenticated
     @GetMapping("/chats")
     fun getMyChats(@UserContext userId: Long): MyChatsResponse {
         return userService.getMyChats(userId)

@@ -215,6 +215,36 @@ internal class UserServiceImplTest @Autowired constructor(
     }
 
     @Test
+    fun 찜한_채팅목록_내역_조회_성공() {
+        // given
+        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
+        val user3 = User("user3", "abc3@naver.com", "1234", "관악구")
+        val savedUser1 = userRepository.save(user1)
+        val savedUser2 = userRepository.save(user2)
+        val savedUser3 = userRepository.save(user3)
+
+        val request1 = CreatePostRequest("title1", "String1", 10000)
+        val request2 = CreatePostRequest("title2", "String2", 20000)
+        val request3 = CreatePostRequest("title3", "String3", 30000)
+        val post1 = tradePostService.createPost(savedUser2.id, null, request1)
+        val post2 = tradePostService.createPost(savedUser2.id, null, request2)
+        val post3 = tradePostService.createPost(savedUser3.id, null, request3)
+
+        tradePostService.likePost(savedUser1.id, post1.postId)
+        tradePostService.likePost(savedUser1.id, post2.postId)
+
+        // when
+        val likeTradePosts = userService.getLikeTradePosts(savedUser1.id)
+
+        // then
+        assertThat(likeTradePosts.posts.size).isEqualTo(2)
+        assertThat(likeTradePosts.posts[0].title).isEqualTo(post1.title)
+        assertThat(likeTradePosts.posts[0].isLiked).isTrue
+        assertThat(likeTradePosts.posts[1].isLiked).isTrue
+    }
+
+    @Test
     fun 내_채팅목록_내역_조회_성공() {
         // given
         val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
