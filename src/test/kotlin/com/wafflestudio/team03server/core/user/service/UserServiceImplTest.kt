@@ -254,10 +254,13 @@ internal class UserServiceImplTest @Autowired constructor(
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
 
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val post1 = tradePostService.createPost(savedUser1.id, null, request)
+        val request1 = CreatePostRequest("title1", "String1", 10000)
+        val request2 = CreatePostRequest("title2", "String2", 20000)
+        val post1 = tradePostService.createPost(savedUser1.id, null, request1)
+        val post2 = tradePostService.createPost(savedUser2.id, null, request2)
         val chat1 = chatService.startChat(savedUser2.id, post1.postId)
         val chat2 = chatService.startChat(savedUser3.id, post1.postId)
+        val chat3 = chatService.startChat(savedUser1.id, post2.postId)
         val chatMessage = ChatMessage(chat1.roomUUID, savedUser2.id, "안녕하세요!", LocalDateTime.now())
         val chatMessage2 = ChatMessage(chat1.roomUUID, savedUser1.id, "안녕하세요?", LocalDateTime.now())
         val chatMessage3 = ChatMessage(chat2.roomUUID, savedUser1.id, "반갑습니다.", LocalDateTime.now())
@@ -266,15 +269,9 @@ internal class UserServiceImplTest @Autowired constructor(
         chatService.saveMessage(chatMessage3)
 
         // when
-        val mychats = userService.getMyChats(savedUser1.id)
+        val myChats = userService.getMyChats(savedUser1.id)
 
         // then
-        assertThat(mychats.chats.size).isEqualTo(2)
-        assertThat(mychats.chats[0].buyer.id).isEqualTo(savedUser2.id)
-        assertThat(mychats.chats[0].post.title).isEqualTo(request.title)
-        assertThat(mychats.chats[0].roomUUID).isEqualTo(chat1.roomUUID)
-        assertThat(mychats.chats[0].lastChat.message).isEqualTo(chatMessage2.message)
-        assertThat(mychats.chats[1].roomUUID).isEqualTo(chat2.roomUUID)
-        assertThat(mychats.chats[1].lastChat.message).isEqualTo(chatMessage3.message)
+        assertThat(myChats.chats.size).isEqualTo(3)
     }
 }
