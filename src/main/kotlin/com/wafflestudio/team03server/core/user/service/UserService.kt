@@ -103,7 +103,7 @@ class UserServiceImpl(
     override fun getMyChats(userId: Long): MyChatsResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
         val chatRooms = chatRoomRepository.findChatRoomsWithAllByUserId(userId)
-        return MyChatsResponse.of(chatRooms)
+        return MyChatsResponse.of(user, chatRooms)
     }
 
     override fun getLikeTradePosts(userId: Long): PostListResponse {
