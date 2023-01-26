@@ -20,7 +20,7 @@ data class DetailChatResponse(
     val roomUUID: String,
     val buyer: SimpleUserResponse,
     val post: PostResponse,
-    val lastChat: ChatHistoryResponse,
+    val lastChat: ChatHistoryResponse?,
 ) {
     companion object {
         fun of(chatRoom: ChatRoom): DetailChatResponse {
@@ -29,8 +29,13 @@ data class DetailChatResponse(
                 buyer = SimpleUserResponse.of(chatRoom.buyer),
                 post = PostResponse.of(chatRoom.post, chatRoom.seller),
                 // OneToMany 관계인데 그 중 하나만 가져오고싶지만.. 다 가져온뒤 하나 선택
-                lastChat = ChatHistoryResponse.of(chatRoom.histories[chatRoom.histories.size - 1]),
+                lastChat = getLastChatResponseOrNull(chatRoom),
             )
+        }
+
+        private fun getLastChatResponseOrNull(chatRoom: ChatRoom): ChatHistoryResponse? {
+            return if (chatRoom.histories.size == 0) null
+            else ChatHistoryResponse.of(chatRoom.histories[chatRoom.histories.size - 1])
         }
     }
 }
