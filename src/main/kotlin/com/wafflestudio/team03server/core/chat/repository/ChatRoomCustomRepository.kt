@@ -5,19 +5,21 @@ import com.wafflestudio.team03server.core.chat.entity.ChatRoom
 import com.wafflestudio.team03server.core.chat.entity.QChatRoom.chatRoom
 
 interface ChatRoomCustomRepository {
-    fun findChatRoomsWithSellerAndBuyerAndPostBySellerId(sellerId: Long): List<ChatRoom>
+    fun findChatRoomsWithAllByUserId(userId: Long): List<ChatRoom>
 }
 
 class ChatRoomCustomRepositoryImpl(
     private val jpaQueryFactory: JPAQueryFactory,
 ) : ChatRoomCustomRepository {
-    override fun findChatRoomsWithSellerAndBuyerAndPostBySellerId(sellerId: Long): List<ChatRoom> {
+    override fun findChatRoomsWithAllByUserId(userId: Long): List<ChatRoom> {
         return jpaQueryFactory
-            .selectFrom(chatRoom)
+            .select(chatRoom).distinct()
+            .from(chatRoom)
             .innerJoin(chatRoom.buyer).fetchJoin()
             .innerJoin(chatRoom.seller).fetchJoin()
             .innerJoin(chatRoom.post).fetchJoin()
-            .where(chatRoom.seller.id.eq(sellerId))
+            .leftJoin(chatRoom.histories).fetchJoin()
+            .where(chatRoom.seller.id.eq(userId).or(chatRoom.buyer.id.eq(userId)))
             .fetch()
     }
 }
