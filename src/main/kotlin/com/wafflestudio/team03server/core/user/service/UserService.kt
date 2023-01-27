@@ -32,6 +32,7 @@ interface UserService {
     fun getMyChats(userId: Long): MyChatsResponse
     fun getLikeTradePosts(userId: Long): PostListResponse
     fun getMyNeighborhoodPosts(userId: Long): List<NeighborPostResponse>
+    fun getLikeNeighborhoodPosts(userId: Long): List<NeighborPostResponse>
 }
 
 @Service
@@ -119,5 +120,10 @@ class UserServiceImpl(
     override fun getMyNeighborhoodPosts(userId: Long): List<NeighborPostResponse> {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
         return neighborPostRepository.findAllByPublisherId(userId).map { NeighborPostResponse.of(it, userId) }
+    }
+
+    override fun getLikeNeighborhoodPosts(userId: Long): List<NeighborPostResponse> {
+        val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        return neighborPostRepository.findAllByLikerId(userId).map { NeighborPostResponse.of(it, userId) }
     }
 }

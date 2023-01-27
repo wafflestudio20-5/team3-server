@@ -106,4 +106,10 @@ class UserController(
     fun getMyNeighborhoodPosts(@UserContext userId: Long): List<NeighborPostResponse> {
         return userService.getMyNeighborhoodPosts(userId)
     }
+
+    @Authenticated
+    @GetMapping("/like-neighborhood")
+    fun getLikeNeighborhoodPosts(@UserContext userId: Long): List<NeighborPostResponse> {
+        return userService.getLikeNeighborhoodPosts(userId)
+    }
 }
