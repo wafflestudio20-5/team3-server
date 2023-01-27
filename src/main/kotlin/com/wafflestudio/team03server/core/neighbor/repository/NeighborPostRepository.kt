@@ -13,6 +13,7 @@ interface NeighborPostRepository : JpaRepository<NeighborPost, Long>, NeighborPo
 interface NeighborPostSupport {
     fun findAllByQuerydsl(pageable: Pageable): List<NeighborPost>
     fun findAllByTitleContains(neighborPostName: String, pageable: Pageable): List<NeighborPost>
+    fun findAllByPublisherId(publisherId: Long): List<NeighborPost>
 }
 
 @Component
@@ -38,6 +39,16 @@ class NeighborPostSupportImpl(
             .fetchJoin()
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
+            .distinct()
+            .fetch()
+    }
+
+    override fun findAllByPublisherId(publisherId: Long): List<NeighborPost> {
+        return queryFactory
+            .selectFrom(neighborPost)
+            .leftJoin(neighborPost.publisher, user)
+            .fetchJoin()
+            .where(neighborPost.publisher.id.eq(publisherId))
             .distinct()
             .fetch()
     }
