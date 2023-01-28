@@ -6,6 +6,7 @@ import com.wafflestudio.team03server.core.trade.entity.LikePost
 import com.wafflestudio.team03server.core.trade.entity.TradePost
 import javax.persistence.CascadeType
 import com.wafflestudio.team03server.core.trade.entity.Review
+import org.locationtech.jts.geom.Point
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.OneToMany
@@ -25,6 +26,9 @@ class User(
     var password: String,
     @NotNull
     var location: String,
+
+    var coordinate: Point,
+
     @NotNull
     var temperature: Double = 36.5,
     var imgUrl: String? = null,

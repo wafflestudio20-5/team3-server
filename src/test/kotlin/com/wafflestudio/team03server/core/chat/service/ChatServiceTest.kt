@@ -10,15 +10,14 @@ import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.locationtech.jts.geom.Point
+import org.locationtech.jts.io.WKTReader
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @SpringBootTest
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @Transactional
 internal class ChatServiceTest @Autowired constructor(
     val userRepository: UserRepository,
@@ -31,8 +30,8 @@ internal class ChatServiceTest @Autowired constructor(
     @Test
     fun 채팅_시작_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val request = CreatePostRequest("title1", "String1", 10000)
@@ -49,8 +48,8 @@ internal class ChatServiceTest @Autowired constructor(
     @Test
     fun 채팅_시작_실패_판매자가_채팅시작() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val request = CreatePostRequest("title1", "String1", 10000)
@@ -63,8 +62,8 @@ internal class ChatServiceTest @Autowired constructor(
     @Test
     fun 채팅_저장_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val request = CreatePostRequest("title1", "String1", 10000)
@@ -88,8 +87,8 @@ internal class ChatServiceTest @Autowired constructor(
     @Test
     fun 메시지_가져오기_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val request = CreatePostRequest("title1", "String1", 10000)
@@ -110,5 +109,9 @@ internal class ChatServiceTest @Autowired constructor(
         assertThat(messages.chatHistories.size).isEqualTo(2)
         assertThat(messages.chatHistories[0].message).isEqualTo("안녕하세요!")
         assertThat(messages.chatHistories[0].senderId).isEqualTo(savedUser2.id)
+    }
+
+    private fun createUser(username: String, email: String, password: String, location: String): User {
+        return User(username, email, password, location, WKTReader().read("POINT(1.0 1.0)") as Point)
     }
 }

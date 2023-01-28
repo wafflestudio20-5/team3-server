@@ -84,6 +84,10 @@ dependencies {
     kapt("com.querydsl:querydsl-apt:5.0.0:jpa")
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
+    // hibernate-spatial
+    implementation("org.hibernate:hibernate-spatial")
+    implementation("org.hibernate:hibernate-core")
+
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
