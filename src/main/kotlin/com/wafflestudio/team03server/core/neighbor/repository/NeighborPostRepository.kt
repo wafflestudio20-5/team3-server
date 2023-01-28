@@ -4,7 +4,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborPost
 import com.wafflestudio.team03server.core.neighbor.entity.QNeighborLike.neighborLike
 import com.wafflestudio.team03server.core.neighbor.entity.QNeighborPost.neighborPost
-import com.wafflestudio.team03server.core.trade.entity.TradePost
 import com.wafflestudio.team03server.core.user.entity.QUser.user
 import org.locationtech.jts.geom.Point
 import org.springframework.data.domain.Pageable
