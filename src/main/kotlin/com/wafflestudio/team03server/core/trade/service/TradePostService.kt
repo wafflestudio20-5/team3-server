@@ -101,11 +101,7 @@ class TradePostService(
         if (keyword != "") {
             queryKeyword = "%$keyword%"
         }
-        val distance = when (findUser.searchScope) {
-            SearchScope.NARROW -> 35000.0
-            SearchScope.NORMAL -> 200000.0
-            SearchScope.WIDE -> 400000.0
-        }
+        val distance = findUser.searchScope.distance
         val tradePosts = tradePostRepository.findByKeywordAndDistance(
             findUser.coordinate, queryKeyword, distance, pageable.pageSize, pageable.offset
         )
