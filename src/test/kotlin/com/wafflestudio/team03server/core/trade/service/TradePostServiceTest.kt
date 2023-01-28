@@ -9,15 +9,14 @@ import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.locationtech.jts.geom.Point
+import org.locationtech.jts.io.WKTReader
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import javax.transaction.Transactional
 
 @SpringBootTest
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @Transactional
 internal class TradePostServiceTest @Autowired constructor(
     val userRepository: UserRepository,
@@ -29,7 +28,7 @@ internal class TradePostServiceTest @Autowired constructor(
     @Test
     fun 글_생성_성공() {
         // given
-        val user = User("user1", "abc@naver.com", "1234", "관악구")
+        val user = createUser("user1", "abc@naver.com", "1234", "관악구")
         val savedUser = userRepository.save(user)
         val request = CreatePostRequest("title1", "String1", 10000)
 
@@ -53,7 +52,7 @@ internal class TradePostServiceTest @Autowired constructor(
     @Test
     fun 글_단건_조회_성공() {
         // given
-        val user = User("user1", "abc@naver.com", "1234", "관악구")
+        val user = createUser("user1", "abc@naver.com", "1234", "관악구")
         val savedUser = userRepository.save(user)
         val request = CreatePostRequest("title1", "String1", 10000)
         val createPost = tradePostService.createPost(savedUser.id, null, request)
@@ -75,7 +74,7 @@ internal class TradePostServiceTest @Autowired constructor(
     @Test
     fun 글_전부_조회_성공() {
         // given
-        val user = User("user1", "abc@naver.com", "1234", "관악구")
+        val user = createUser("user1", "abc@naver.com", "1234", "관악구")
         val savedUser = userRepository.save(user)
         val request = CreatePostRequest("title1", "String1", 10000)
         val request2 = CreatePostRequest("title2", "String2", 20000)
@@ -91,7 +90,7 @@ internal class TradePostServiceTest @Autowired constructor(
 
     @Test
     fun 글_페이지네이션_조회_성공() {
-        val user = User("user1", "abc@naver.com", "1234", "관악구")
+        val user = createUser("user1", "abc@naver.com", "1234", "관악구")
         val savedUser = userRepository.save(user)
         for (i in 0..99) {
             val request = CreatePostRequest("title$i", "String$i", i)
@@ -111,7 +110,7 @@ internal class TradePostServiceTest @Autowired constructor(
     @Test
     fun 글_수정_성공() {
         // given
-        val user = User("user1", "abc@naver.com", "1234", "관악구")
+        val user = createUser("user1", "abc@naver.com", "1234", "관악구")
         val savedUser = userRepository.save(user)
         val request = CreatePostRequest("title1", "desc1", 10000)
         val createdPost = tradePostService.createPost(savedUser.id, null, request)
@@ -129,7 +128,7 @@ internal class TradePostServiceTest @Autowired constructor(
     @Test
     fun 글_삭제_성공() {
         // given
-        val user = User("user1", "abc@naver.com", "1234", "관악구")
+        val user = createUser("user1", "abc@naver.com", "1234", "관악구")
         val savedUser = userRepository.save(user)
         val request = CreatePostRequest("title1", "desc1", 10000)
         val createdPost = tradePostService.createPost(savedUser.id, null, request)
@@ -145,9 +144,9 @@ internal class TradePostServiceTest @Autowired constructor(
     @Test
     fun 글_예약자_가져오기_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
-        val user3 = User("user3", "abc3@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
+        val user3 = createUser("user3", "abc3@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
@@ -171,9 +170,9 @@ internal class TradePostServiceTest @Autowired constructor(
     @Test
     fun 글_예약자_선정하기_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
-        val user3 = User("user3", "abc3@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
+        val user3 = createUser("user3", "abc3@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
@@ -197,9 +196,9 @@ internal class TradePostServiceTest @Autowired constructor(
     @Test
     fun 글_예약자_변경하기_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
-        val user3 = User("user3", "abc3@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
+        val user3 = createUser("user3", "abc3@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
@@ -224,9 +223,9 @@ internal class TradePostServiceTest @Autowired constructor(
     @Test
     fun 글_거래_확정_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
-        val user3 = User("user3", "abc3@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
+        val user3 = createUser("user3", "abc3@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
@@ -249,9 +248,9 @@ internal class TradePostServiceTest @Autowired constructor(
     @Test
     fun 글_예약_취소_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
-        val user3 = User("user3", "abc3@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
+        val user3 = createUser("user3", "abc3@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
@@ -274,8 +273,8 @@ internal class TradePostServiceTest @Autowired constructor(
     @Test
     fun 글_찜_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val request = CreatePostRequest("title1", "String1", 10000)
@@ -296,8 +295,8 @@ internal class TradePostServiceTest @Autowired constructor(
     @Test
     fun 글_찜_취소_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val request = CreatePostRequest("title1", "String1", 10000)
@@ -318,11 +317,11 @@ internal class TradePostServiceTest @Autowired constructor(
     fun 인기_탑3_글_조회_성공() {
         // given
         // 유저 생성
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
-        val user3 = User("user3", "abc3@naver.com", "1234", "관악구")
-        val user4 = User("user4", "abc4@naver.com", "1234", "관악구")
-        val user5 = User("user5", "abc5@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
+        val user3 = createUser("user3", "abc3@naver.com", "1234", "관악구")
+        val user4 = createUser("user4", "abc4@naver.com", "1234", "관악구")
+        val user5 = createUser("user5", "abc5@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
@@ -366,5 +365,9 @@ internal class TradePostServiceTest @Autowired constructor(
         assertThat(topThreePosts.posts[0].postId).isEqualTo(post3.postId)
         assertThat(topThreePosts.posts[0].title).isEqualTo(post3.title)
         assertThat(topThreePosts.posts[0].likeCount).isGreaterThan(topThreePosts.posts[1].likeCount)
+    }
+
+    private fun createUser(username: String, email: String, password: String, location: String): User {
+        return User(username, email, password, location, WKTReader().read("POINT(1.0 1.0)") as Point)
     }
 }

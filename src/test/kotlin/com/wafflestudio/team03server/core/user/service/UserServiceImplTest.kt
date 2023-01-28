@@ -16,16 +16,15 @@ import com.wafflestudio.team03server.core.user.repository.UserRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import org.locationtech.jts.geom.Point
+import org.locationtech.jts.io.WKTReader
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @Transactional
 @SpringBootTest
 internal class UserServiceImplTest @Autowired constructor(
@@ -39,7 +38,7 @@ internal class UserServiceImplTest @Autowired constructor(
     @Test
     fun 유저_정보_조회_성공() {
         //given
-        val user = User("user1", "a@naver.com", "1234", "송도동")
+        val user = createUser("user1", "a@naver.com", "1234", "송도동")
         val savedUser = userRepository.save(user)
         //when
         val userResponse = userService.getProfile(savedUser.id)
@@ -60,7 +59,7 @@ internal class UserServiceImplTest @Autowired constructor(
 
         //when
         val exception = assertThrows(Exception404::class.java) {
-            userService.getProfile(1)
+            userService.getProfile(12108)
         }
         //then
         assertThat(exception.message).isEqualTo("사용자를 찾을 수 없습니다.")
@@ -69,7 +68,7 @@ internal class UserServiceImplTest @Autowired constructor(
     @Test
     fun 유저네임_수정_성공() {
         //given
-        val user = User("user1", "a@naver.com", "1234", "송도동")
+        val user = createUser("user1", "a@naver.com", "1234", "송도동")
         val savedUser = userRepository.save(user)
         //when
         userService.editUsername(savedUser.id, EditUsernameRequest("Edited"))
@@ -81,8 +80,8 @@ internal class UserServiceImplTest @Autowired constructor(
     @Test
     fun 유저네임_수정_실패() {
         //given
-        val user1 = User("user1", "a@naver.com", "1234", "송도동")
-        val user2 = User("user2", "b@naver.com", "1234", "송도동")
+        val user1 = createUser("user1", "a@naver.com", "1234", "송도동")
+        val user2 = createUser("user2", "b@naver.com", "1234", "송도동")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         //when
@@ -96,7 +95,7 @@ internal class UserServiceImplTest @Autowired constructor(
     @Test
     fun 주소_수정_성공() {
         //given
-        val user = User("user1", "a@naver.com", "1234", "송도동")
+        val user = createUser("user1", "a@naver.com", "1234", "송도동")
         val savedUser = userRepository.save(user)
         //when
         userService.editLocation(savedUser.id, EditLocationRequest("Edited"))
@@ -108,7 +107,7 @@ internal class UserServiceImplTest @Autowired constructor(
     @Test
     fun 비밀번호_수정_성공() {
         //given
-        val user = User("user1", "a@naver.com", "1234", "송도동")
+        val user = createUser("user1", "a@naver.com", "1234", "송도동")
         user.password = passwordEncoder.encode(user.password)
         val savedUser = userRepository.save(user)
         //when
@@ -124,7 +123,7 @@ internal class UserServiceImplTest @Autowired constructor(
     @Test
     fun 비밀번호_수정_실패_비밀번호_틀림() {
         //given
-        val user = User("user1", "a@naver.com", "1234", "송도동")
+        val user = createUser("user1", "a@naver.com", "1234", "송도동")
         user.password = passwordEncoder.encode(user.password)
         val savedUser = userRepository.save(user)
         //when
@@ -141,7 +140,7 @@ internal class UserServiceImplTest @Autowired constructor(
     @Test
     fun 비밀번호_수정_실패_새비밀번호_불일치() {
         //given
-        val user = User("user1", "a@naver.com", "1234", "송도동")
+        val user = createUser("user1", "a@naver.com", "1234", "송도동")
         user.password = passwordEncoder.encode(user.password)
         val savedUser = userRepository.save(user)
         //when
@@ -158,9 +157,9 @@ internal class UserServiceImplTest @Autowired constructor(
     @Test
     fun 글_구매_내역_조회_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
-        val user3 = User("user3", "abc3@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
+        val user3 = createUser("user3", "abc3@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
@@ -194,8 +193,8 @@ internal class UserServiceImplTest @Autowired constructor(
     @Test
     fun 글_판매_내역_조회_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
 
@@ -247,9 +246,9 @@ internal class UserServiceImplTest @Autowired constructor(
     @Test
     fun 내_채팅목록_내역_조회_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
-        val user3 = User("user3", "abc3@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
+        val user3 = createUser("user3", "abc3@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
@@ -273,5 +272,9 @@ internal class UserServiceImplTest @Autowired constructor(
 
         // then
         assertThat(myChats.chats.size).isEqualTo(3)
+    }
+
+    private fun createUser(username: String, email: String, password: String, location: String): User {
+        return User(username, email, password, location, WKTReader().read("POINT(1.0 1.0)") as Point)
     }
 }
