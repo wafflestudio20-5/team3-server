@@ -57,7 +57,8 @@ class UserController(
     @Authenticated
     @PatchMapping("/me/search-scope")
     fun editSearchScope(
-        @UserContext userId: Long, @Valid @RequestBody editSearchScopeRequest: EditSearchScopeRequest
+        @UserContext userId: Long,
+        @Valid @RequestBody editSearchScopeRequest: EditSearchScopeRequest
     ): ResponseEntity<Any> {
         userService.editSearchScope(userId, editSearchScopeRequest.searchScope!!)
         return ResponseEntity(HttpStatus.OK)
