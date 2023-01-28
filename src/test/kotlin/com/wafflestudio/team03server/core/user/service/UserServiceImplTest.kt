@@ -1,6 +1,6 @@
 package com.wafflestudio.team03server.core.user.service
 
-import com.wafflestudio.team03server.core.chat.api.dto.ChatMessage
+import com.wafflestudio.team03server.core.chat.api.dto.ReceivedChatMessage
 import com.wafflestudio.team03server.common.Exception400
 import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.common.Exception404
@@ -260,9 +260,9 @@ internal class UserServiceImplTest @Autowired constructor(
         val chat1 = chatService.startChat(savedUser2.id, post1.postId)
         val chat2 = chatService.startChat(savedUser3.id, post1.postId)
         val chat3 = chatService.startChat(savedUser1.id, post2.postId)
-        val chatMessage = ChatMessage(chat1.roomUUID, savedUser2.id, "안녕하세요!", LocalDateTime.now())
-        val chatMessage2 = ChatMessage(chat1.roomUUID, savedUser1.id, "안녕하세요?", LocalDateTime.now())
-        val chatMessage3 = ChatMessage(chat2.roomUUID, savedUser1.id, "반갑습니다.", LocalDateTime.now())
+        val chatMessage = ReceivedChatMessage(chat1.roomUUID, savedUser2.id, "안녕하세요!", LocalDateTime.now())
+        val chatMessage2 = ReceivedChatMessage(chat1.roomUUID, savedUser1.id, "안녕하세요?", LocalDateTime.now())
+        val chatMessage3 = ReceivedChatMessage(chat2.roomUUID, savedUser1.id, "반갑습니다.", LocalDateTime.now())
         chatService.saveMessage(chatMessage)
         chatService.saveMessage(chatMessage2)
         chatService.saveMessage(chatMessage3)
