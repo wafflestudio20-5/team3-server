@@ -3,7 +3,8 @@ package com.wafflestudio.team03server.core.chat.api
 import com.wafflestudio.team03server.common.Authenticated
 import com.wafflestudio.team03server.common.UserContext
 import com.wafflestudio.team03server.core.chat.api.response.RoomUUIDResponse
-import com.wafflestudio.team03server.core.chat.api.dto.ChatMessage
+import com.wafflestudio.team03server.core.chat.api.dto.ReceivedChatMessage
+import com.wafflestudio.team03server.core.chat.api.dto.SendChatMessage
 import com.wafflestudio.team03server.core.chat.api.response.MessagesResponse
 import com.wafflestudio.team03server.core.chat.service.ChatService
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -20,9 +21,14 @@ class ChatController(
 
     // "/pub/message"로 오는 채팅을 처리
     @MessageMapping("/message")
-    fun handleMessage(message: ChatMessage) {
-        chatService.saveMessage(message)
-        messagingTemplate.convertAndSend("/sub/room/${message.roomUUID}", message)
+    fun handleMessage(message: ReceivedChatMessage) {
+        val chatId = chatService.saveMessage(message)
+        messagingTemplate.convertAndSend("/sub/room/${message.roomUUID}", SendChatMessage.of(chatId, message))
+    }
+
+    @GetMapping("/chat/{chat-id}")
+    fun readMessage(@PathVariable(name = "chat-id") chatId: Long) {
+        chatService.readChat(chatId)
     }
 
     @Authenticated
