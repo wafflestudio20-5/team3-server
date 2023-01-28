@@ -20,7 +20,7 @@ class TradePost(
     @JoinColumn(name = "buyer_id")
     var buyer: User? = null,
 
-    @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL], orphanRemoval = true)
     var images: MutableList<TradePostImage> = mutableListOf(),
 
     @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL])

@@ -11,7 +11,6 @@ import com.wafflestudio.team03server.core.trade.api.response.ReservationResponse
 import com.wafflestudio.team03server.core.trade.service.TradePostService
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.multipart.MultipartFile
 import javax.validation.Valid
 
 @RestController
@@ -24,10 +23,9 @@ class TradePostController(
     @PostMapping("")
     fun createPost(
         @UserContext userId: Long,
-        @RequestPart(value = "images", required = false) images: List<MultipartFile>?,
         @Valid @RequestBody request: CreatePostRequest
     ): PostResponse {
-        return tradePostService.createPost(userId, images, request)
+        return tradePostService.createPost(userId, request)
     }
 
     @Authenticated
