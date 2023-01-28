@@ -65,5 +65,8 @@ jobs:
           sudo docker stop prod-server
           sudo docker rm prod-server
           sudo docker image rm ${{ secrets.DOCKER_REPO }}
+          sudo docker image rm ${{ secrets.NGINX_DOCKER_REPO }}
           sudo docker pull ${{ secrets.DOCKER_REPO }}
-          sudo docker run -d -p 80:8080 --name prod-server ${{ secrets.DOCKER_REPO }}
+          sudo docker pull ${{ secrets.NGINX_DOCKER_REPO }}
+          docker-compose up -d
+          docker image prune -f

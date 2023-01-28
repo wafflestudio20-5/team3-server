@@ -1,12 +1,15 @@
 package com.wafflestudio.team03server.core.user.service
 
 import com.wafflestudio.team03server.common.*
+import com.wafflestudio.team03server.core.chat.repository.ChatRoomRepository
 import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
 import com.wafflestudio.team03server.core.trade.entity.TradeStatus
+import com.wafflestudio.team03server.core.trade.repository.LikePostRepository
 import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
 import com.wafflestudio.team03server.core.user.api.request.EditLocationRequest
 import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
 import com.wafflestudio.team03server.core.user.api.request.EditUsernameRequest
+import com.wafflestudio.team03server.core.user.api.response.MyChatsResponse
 import com.wafflestudio.team03server.core.user.api.response.UserResponse
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import com.wafflestudio.team03server.utils.S3Service
@@ -24,6 +27,8 @@ interface UserService {
     fun uploadImage(userId: Long, image: MultipartFile): String
     fun getBuyTradePosts(userId: Long): PostListResponse
     fun getSellTradePosts(userId: Long, sellerId: Long): PostListResponse
+    fun getMyChats(userId: Long): MyChatsResponse
+    fun getLikeTradePosts(userId: Long): PostListResponse
 }
 
 @Service
@@ -34,6 +39,8 @@ class UserServiceImpl(
     private val passwordEncoder: PasswordEncoder,
     private val s3Service: S3Service,
     private val tradePostRepository: TradePostRepository,
+    private val chatRoomRepository: ChatRoomRepository,
+    private val likePostRepository: LikePostRepository,
 ) : UserService {
     override fun getProfile(userId: Long): UserResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
@@ -42,7 +49,7 @@ class UserServiceImpl(
 
     override fun editUsername(userId: Long, editUsernameRequest: EditUsernameRequest): UserResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
-        if (isModifiedAndDuplicateUsername(editUsernameRequest.username!!, user.username)) {
+        if (isModifiedAndDuplicateUsername(user.username, editUsernameRequest.username!!)) {
             throw Exception409("이미 존재하는 유저네임 입니다.")
         }
         user.username = editUsernameRequest.username
@@ -73,6 +80,9 @@ class UserServiceImpl(
     override fun uploadImage(userId: Long, image: MultipartFile): String {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
         val imgUrl = s3Service.upload(image)
+        if (user.imgUrl != null) {
+            s3Service.deleteImage(user.imgUrl!!)
+        }
         user.imgUrl = imgUrl
         return imgUrl
     }
@@ -88,5 +98,17 @@ class UserServiceImpl(
         val seller = userRepository.findByIdOrNull(sellerId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
         val sellTradePosts = tradePostRepository.findAllBySeller(seller)
         return PostListResponse.of(user, sellTradePosts)
+    }
+
+    override fun getMyChats(userId: Long): MyChatsResponse {
+        val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        val chatRooms = chatRoomRepository.findChatRoomsWithAllByUserId(userId)
+        return MyChatsResponse.of(user, chatRooms)
+    }
+
+    override fun getLikeTradePosts(userId: Long): PostListResponse {
+        val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        val likedPosts = likePostRepository.findLikePostsWithUserAndPostByUserId(user).map { it.likedPost }
+        return PostListResponse.of(user, likedPosts)
     }
 }

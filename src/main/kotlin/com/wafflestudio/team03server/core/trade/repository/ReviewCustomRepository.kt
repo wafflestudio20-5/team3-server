@@ -12,7 +12,7 @@ class ReviewCustomRepository(
 
     fun findByRevieweeIdAndContentIsNotNull(revieweeId: Long): List<Review> {
         return queryFactory
-            .selectFrom(review)
+            .selectFrom(review).distinct()
             .innerJoin(review.reviewer).fetchJoin()
             .where(review.reviewee.id.eq(revieweeId))
             .where(review.content.isNotNull)

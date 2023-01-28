@@ -7,6 +7,7 @@ import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
 import com.wafflestudio.team03server.core.user.api.request.EditLocationRequest
 import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
 import com.wafflestudio.team03server.core.user.api.request.EditUsernameRequest
+import com.wafflestudio.team03server.core.user.api.response.MyChatsResponse
 import com.wafflestudio.team03server.core.user.api.response.UserResponse
 import com.wafflestudio.team03server.core.user.service.UserService
 import org.apache.commons.io.FilenameUtils
@@ -85,5 +86,17 @@ class UserController(
     @GetMapping("/{user-id}/sell-trade")
     fun getSellTradePosts(@UserContext userId: Long, @PathVariable(name = "user-id") sellerId: Long): PostListResponse {
         return userService.getSellTradePosts(userId, sellerId)
+    }
+
+    @Authenticated
+    @GetMapping("/like-trade")
+    fun getLikeTradePosts(@UserContext userId: Long): PostListResponse {
+        return userService.getLikeTradePosts(userId)
+    }
+
+    @Authenticated
+    @GetMapping("/chats")
+    fun getMyChats(@UserContext userId: Long): MyChatsResponse {
+        return userService.getMyChats(userId)
     }
 }
