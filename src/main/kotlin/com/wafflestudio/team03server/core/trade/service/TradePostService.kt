@@ -18,6 +18,7 @@ import com.wafflestudio.team03server.core.trade.repository.TradePostImageReposit
 import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
+import com.wafflestudio.team03server.utils.QueryUtil
 import com.wafflestudio.team03server.utils.S3Service
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -30,8 +31,7 @@ class TradePostService(
     val userRepository: UserRepository,
     val tradePostRepository: TradePostRepository,
     val likePostRepository: LikePostRepository,
-    val tradePostImageRepository: TradePostImageRepository,
-    val s3Service: S3Service,
+    val queryUtil: QueryUtil
 ) {
     fun createPost(
         userId: Long,
@@ -66,13 +66,9 @@ class TradePostService(
 
     fun getAllPosts(userId: Long, keyword: String, pageable: Pageable): PostPageResponse {
         val findUser = getUserById(userId)
-        var queryKeyword = "%"
-        if (keyword != "") {
-            queryKeyword = "%$keyword%"
-        }
-        val distance = findUser.searchScope.distance
+        val queryKeyword = queryUtil.getNativeQueryKeyword(keyword)
         val tradePosts = tradePostRepository.findByKeywordAndDistance(
-            findUser.coordinate, queryKeyword, distance, pageable.pageSize, pageable.offset
+            findUser.coordinate, queryKeyword, findUser.searchScope.distance, pageable.pageSize, pageable.offset
         )
         return PostPageResponse.of(pageable, tradePosts, findUser)
     }
