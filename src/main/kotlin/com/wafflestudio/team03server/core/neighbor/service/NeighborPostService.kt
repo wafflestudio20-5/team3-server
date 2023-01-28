@@ -12,13 +12,14 @@ import com.wafflestudio.team03server.core.neighbor.repository.NeighborLikeReposi
 import com.wafflestudio.team03server.core.neighbor.repository.NeighborPostRepository
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
+import com.wafflestudio.team03server.utils.QueryUtil
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 interface NeighborPostService {
-    fun getAllNeighborPosts(userId: Long, neighborPostName: String?, pageable: Pageable): List<NeighborPostResponse>
+    fun getAllNeighborPosts(userId: Long, neighborPostKeyword: String, pageable: Pageable): List<NeighborPostResponse>
     fun createNeighborPost(userId: Long, createNeighborPostRequest: CreateNeighborPostRequest): NeighborPostResponse
     fun getNeighborPost(userId: Long, postId: Long): NeighborPostResponse
     fun updateNeighborPost(
@@ -36,18 +37,20 @@ interface NeighborPostService {
 class NeighborPostServiceImpl(
     val userRepository: UserRepository,
     val neighborPostRepository: NeighborPostRepository,
-    val neighborLikeRepository: NeighborLikeRepository
+    val neighborLikeRepository: NeighborLikeRepository,
+    val queryUtil: QueryUtil
 ) : NeighborPostService {
 
     override fun getAllNeighborPosts(
         userId: Long,
-        neighborPostKeyword: String?,
+        neighborPostKeyword: String,
         pageable: Pageable
     ): List<NeighborPostResponse> {
-        neighborPostKeyword?.let {
-            return neighborPostRepository.findAllByContentContains(neighborPostKeyword, pageable)
-                .map { NeighborPostResponse.of(it, userId) }
-        } ?: return neighborPostRepository.findAllByQuerydsl(pageable).map { NeighborPostResponse.of(it, userId) }
+        val user = getUserById(userId)
+        val queryKeyword = queryUtil.getNativeQueryKeyword(neighborPostKeyword)
+        return neighborPostRepository.findByKeywordAndDistance(
+            user.coordinate, queryKeyword, user.searchScope.distance, pageable.pageSize, pageable.offset
+        ).map { NeighborPostResponse.of(it, userId) }
     }
 
     private fun getUserById(userId: Long) = userRepository.findByIdOrNull(userId) ?: throw Exception404("유효한 회원이 아닙니다.")
