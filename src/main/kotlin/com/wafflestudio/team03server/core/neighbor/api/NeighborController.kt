@@ -71,7 +71,7 @@ class NeighborController(
     fun likeNeighborPost(
         @UserContext userId: Long,
         @PathVariable("post-id") postId: Long
-    ) {
+    ): NeighborPostResponse {
         return neighborPostService.likeOrUnlikeNeighborPost(userId, postId)
     }
 

@@ -1,5 +1,6 @@
 package com.wafflestudio.team03server.core.user.service
 
+import com.wafflestudio.team03server.common.Exception401
 import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.common.Exception409
@@ -40,6 +41,9 @@ class AuthServiceImpl(
         }
         if (isDuplicateUsername(signUpRequest.username!!)) {
             throw Exception409("이미 존재하는 유저네임 입니다.")
+        }
+        if (signUpRequest.isEmailAuthed == false) {
+            throw Exception401("이메일 인증이 되지 않은 사용자 입니다.")
         }
         val user = signUpRequest.toUser()
         user.password = passwordEncoder.encode(user.password)

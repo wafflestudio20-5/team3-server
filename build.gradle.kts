@@ -52,8 +52,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 
     // Swagger
-//	implementation("org.springdoc:springdoc-openapi-ui:1.6.13")
-//	implementation("org.springdoc:springdoc-openapi-kotlin:1.6.13")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.13")
+    implementation("org.springdoc:springdoc-openapi-kotlin:1.6.13")
 
     // Kotlin Features
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -83,6 +83,10 @@ dependencies {
     implementation("com.querydsl:querydsl-jpa:5.0.0")
     kapt("com.querydsl:querydsl-apt:5.0.0:jpa")
     kapt("org.springframework.boot:spring-boot-configuration-processor")
+
+    // hibernate-spatial
+    implementation("org.hibernate:hibernate-spatial")
+    implementation("org.hibernate:hibernate-core")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -28,7 +28,7 @@ interface NeighborPostService {
     ): NeighborPostResponse
 
     fun deleteNeighborPost(userId: Long, postId: Long)
-    fun likeOrUnlikeNeighborPost(userId: Long, postId: Long)
+    fun likeOrUnlikeNeighborPost(userId: Long, postId: Long): NeighborPostResponse
 }
 
 @Service
@@ -109,7 +109,7 @@ class NeighborPostServiceImpl(
         if (post.publisher == user) throw Exception400("본인의 글에는 좋아요를 누를 수 없습니다.")
     }
 
-    override fun likeOrUnlikeNeighborPost(userId: Long, postId: Long) {
+    override fun likeOrUnlikeNeighborPost(userId: Long, postId: Long): NeighborPostResponse {
         val readUser = getUserById(userId)
         val readPost = getNeighborPostById(postId)
         checkPublisherEqualsLiker(readUser, readPost)
@@ -122,5 +122,6 @@ class NeighborPostServiceImpl(
         } else {
             readLike.changeStatus()
         }
+        return NeighborPostResponse.of(readPost, userId)
     }
 }
