@@ -26,7 +26,7 @@ class ChatRoom(
     val post: TradePost,
 
     @OneToMany(mappedBy = "chatRoom")
-    @OrderBy("name ASC")
+    @OrderBy("createdAt asc")
     val histories: MutableList<ChatHistory> = mutableListOf()
 
 ) {
