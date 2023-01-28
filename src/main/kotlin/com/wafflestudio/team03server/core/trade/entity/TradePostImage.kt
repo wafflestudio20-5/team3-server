@@ -9,11 +9,12 @@ class TradePostImage(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trade_post_id")
-    val post: TradePost,
+    var post: TradePost,
 
     val imgUrl: String,
 ) {
     fun addImage(post: TradePost) {
         post.images.add(this)
+        this.post = post
     }
 }

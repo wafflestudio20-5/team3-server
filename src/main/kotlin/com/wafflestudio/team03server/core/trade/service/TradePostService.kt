@@ -19,11 +19,9 @@ import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import com.wafflestudio.team03server.utils.S3Service
-import org.apache.commons.io.FilenameUtils
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
 import javax.transaction.Transactional
 
 @Service
@@ -37,45 +35,17 @@ class TradePostService(
 ) {
     fun createPost(
         userId: Long,
-        images: List<MultipartFile>?,
         request: CreatePostRequest
     ): PostResponse {
         val (user, post) = makePost(userId, request)
-        if (images != null) {
-            checkImageFiles(images)
-            saveImages(images, post)
-        }
         return PostResponse.of(post, user)
     }
 
-    private fun saveImages(images: List<MultipartFile>, post: TradePost) {
-        uploadImagesAndGetImageUrls(images).map { url -> saveImage(post, url) }
-    }
-
-    private fun uploadImagesAndGetImageUrls(images: List<MultipartFile>) =
-        images.map { s3Service.upload(it) }
-
-    private fun saveImage(_post: TradePost, url: String): TradePostImage {
-        val image = TradePostImage(post = _post, imgUrl = url)
-        image.addImage(_post)
-        return tradePostImageRepository.save(image)
-    }
-
-    private fun checkImageFiles(images: List<MultipartFile>) {
-        if (!isImageFiles(images)) throw Exception400("이미지 파일이 아닌 파일이 존재합니다.")
-    }
-
-    private fun isImageFiles(images: List<MultipartFile>): Boolean {
-        return getFileExtentions(images).all { it == "jpg" || it == "jpeg" || it == "png" }
-    }
-
-    private fun getFileExtentions(images: List<MultipartFile>) =
-        images.map { FilenameUtils.getExtension(it.originalFilename).lowercase() }
-
     private fun makePost(userId: Long, request: CreatePostRequest): Pair<User, TradePost> {
         val findUser = getUserById(userId)
-        val (title, desc, price) = request
+        val (title, desc, price, imgUrls) = request
         val post = TradePost(title, desc, price, findUser)
+        post.images = imgUrls.map { TradePostImage(post = post, imgUrl = it) }.toMutableList()
         val savedPost = tradePostRepository.save(post)
         findUser.sellPosts.add(savedPost)
         return Pair(findUser, savedPost)
