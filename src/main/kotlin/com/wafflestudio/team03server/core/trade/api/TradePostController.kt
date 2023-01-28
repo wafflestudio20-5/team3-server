@@ -5,13 +5,12 @@ import com.wafflestudio.team03server.common.UserContext
 import com.wafflestudio.team03server.core.trade.api.request.CreatePostRequest
 import com.wafflestudio.team03server.core.trade.api.request.UpdatePostRequest
 import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
-import com.wafflestudio.team03server.core.trade.api.response.PostPageResonse
+import com.wafflestudio.team03server.core.trade.api.response.PostPageResponse
 import com.wafflestudio.team03server.core.trade.api.response.PostResponse
 import com.wafflestudio.team03server.core.trade.api.response.ReservationResponse
 import com.wafflestudio.team03server.core.trade.service.TradePostService
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.multipart.MultipartFile
 import javax.validation.Valid
 
 @RestController
@@ -24,10 +23,9 @@ class TradePostController(
     @PostMapping("")
     fun createPost(
         @UserContext userId: Long,
-        @RequestPart(value = "images", required = false) images: List<MultipartFile>?,
         @Valid @RequestBody request: CreatePostRequest
     ): PostResponse {
-        return tradePostService.createPost(userId, images, request)
+        return tradePostService.createPost(userId, request)
     }
 
     @Authenticated
@@ -40,12 +38,12 @@ class TradePostController(
     @GetMapping("")
     fun getAllPosts(
         @UserContext userId: Long,
-        @RequestParam("keyword") keyword: String?,
+        @RequestParam("keyword", required = false, defaultValue = "") keyword: String?,
         @RequestParam("page", required = false, defaultValue = "1") page: Int?,
         @RequestParam("limit", required = false, defaultValue = "10") limit: Int?
-    ): PostPageResonse {
+    ): PostPageResponse {
         val pageable = PageRequest.of(page!! - 1, limit!!)
-        return tradePostService.getAllPosts(userId, keyword, pageable)
+        return tradePostService.getAllPosts(userId, keyword!!, pageable)
     }
 
     @Authenticated

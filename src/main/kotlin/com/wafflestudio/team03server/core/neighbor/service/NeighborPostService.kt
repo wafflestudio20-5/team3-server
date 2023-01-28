@@ -28,7 +28,7 @@ interface NeighborPostService {
     ): NeighborPostResponse
 
     fun deleteNeighborPost(userId: Long, postId: Long)
-    fun likeOrUnlikeNeighborPost(userId: Long, postId: Long)
+    fun likeOrUnlikeNeighborPost(userId: Long, postId: Long): NeighborPostResponse
 }
 
 @Service
@@ -41,11 +41,11 @@ class NeighborPostServiceImpl(
 
     override fun getAllNeighborPosts(
         userId: Long,
-        neighborPostName: String?,
+        neighborPostKeyword: String?,
         pageable: Pageable
     ): List<NeighborPostResponse> {
-        neighborPostName?.let {
-            return neighborPostRepository.findAllByTitleContains(neighborPostName, pageable)
+        neighborPostKeyword?.let {
+            return neighborPostRepository.findAllByContentContains(neighborPostKeyword, pageable)
                 .map { NeighborPostResponse.of(it, userId) }
         } ?: return neighborPostRepository.findAllByQuerydsl(pageable).map { NeighborPostResponse.of(it, userId) }
     }
@@ -57,8 +57,8 @@ class NeighborPostServiceImpl(
         createNeighborPostRequest: CreateNeighborPostRequest
     ): NeighborPostResponse {
         val publisher = getUserById(userId)
-        val (title, content) = createNeighborPostRequest
-        val neighborPost = NeighborPost(title = title!!, content = content!!, publisher = publisher)
+        val content = createNeighborPostRequest.content
+        val neighborPost = NeighborPost(content = content!!, publisher = publisher)
         neighborPostRepository.save(neighborPost)
         return NeighborPostResponse.of(neighborPost, userId)
     }
@@ -81,7 +81,6 @@ class NeighborPostServiceImpl(
     }
 
     private fun updateNeighborPostByRequest(post: NeighborPost, request: UpdateNeighborPostRequest) {
-        post.title = request.title ?: post.title
         post.content = request.content ?: post.content
     }
 
@@ -110,7 +109,7 @@ class NeighborPostServiceImpl(
         if (post.publisher == user) throw Exception400("본인의 글에는 좋아요를 누를 수 없습니다.")
     }
 
-    override fun likeOrUnlikeNeighborPost(userId: Long, postId: Long) {
+    override fun likeOrUnlikeNeighborPost(userId: Long, postId: Long): NeighborPostResponse {
         val readUser = getUserById(userId)
         val readPost = getNeighborPostById(postId)
         checkPublisherEqualsLiker(readUser, readPost)
@@ -123,5 +122,6 @@ class NeighborPostServiceImpl(
         } else {
             readLike.changeStatus()
         }
+        return NeighborPostResponse.of(readPost, userId)
     }
 }

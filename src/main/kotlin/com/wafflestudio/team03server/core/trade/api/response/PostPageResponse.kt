@@ -1,49 +1,45 @@
 package com.wafflestudio.team03server.core.trade.api.response
 
-import com.querydsl.core.QueryResults
 import com.wafflestudio.team03server.core.trade.entity.TradePost
 import com.wafflestudio.team03server.core.user.entity.User
+import org.springframework.data.domain.Pageable
 
-data class PostPageResonse(
+data class PostPageResponse(
     val paging: PagingResponse,
-    val posts: List<PostResponse> = mutableListOf(),
+    val posts: List<PostResponse>
 ) {
     companion object {
-        fun of(queryResult: QueryResults<TradePost>, user: User): PostPageResonse {
-            return PostPageResonse(
-                paging = PagingResponse.of(queryResult),
-                posts = getPosts(queryResult.results, user)
+        fun of(pageable: Pageable, posts: List<TradePost>, user: User): PostPageResponse {
+            return PostPageResponse(
+                paging = PagingResponse.of(pageable, posts),
+                posts = posts.map { PostResponse.of(it, user) }
             )
-        }
-
-        private fun getPosts(results: List<TradePost>, user: User): List<PostResponse> {
-            return results.map { PostResponse.of(it, user) }
         }
     }
 }
 
 data class PagingResponse(
-    val limit: Long,
+    val limit: Int,
     val offset: Long,
-    val total: Long,
+    val total: Int,
     val count: Long,
     val hasNext: Boolean,
 ) {
     companion object {
-        fun of(queryResult: QueryResults<TradePost>): PagingResponse {
+        fun of(pageable: Pageable, posts: List<TradePost>): PagingResponse {
             return PagingResponse(
-                limit = queryResult.limit,
-                offset = queryResult.offset,
-                total = queryResult.total,
-                count = calcPage(queryResult),
-                hasNext = hasNext(queryResult)
+                limit = pageable.pageSize,
+                offset = pageable.offset,
+                total = posts.size,
+                count = calcPage(pageable),
+                hasNext = hasNext(pageable, posts.size)
             )
         }
 
-        private fun calcPage(queryResult: QueryResults<TradePost>) =
-            queryResult.offset / queryResult.limit
+        private fun calcPage(pageable: Pageable) =
+            pageable.offset / pageable.pageSize
 
-        private fun hasNext(queryResult: QueryResults<TradePost>) =
-            (queryResult.limit + queryResult.offset) < queryResult.total
+        private fun hasNext(pageable: Pageable, size: Int) =
+            (pageable.pageSize + pageable.offset) < size
     }
 }
