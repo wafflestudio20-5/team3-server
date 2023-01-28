@@ -65,5 +65,8 @@ jobs:
           sudo docker stop test-server
           sudo docker rm test-server
           sudo docker image rm ${{ secrets.DOCKER_TEST_REPO }}
+          sudo docker image rm ${{ secrets.NGINX_DOCKER_REPO }}
           sudo docker pull ${{ secrets.DOCKER_TEST_REPO }}
-          sudo docker run -d -p 81:8080 --name test-server ${{ secrets.DOCKER_TEST_REPO }}
+          sudo docker pull ${{ secrets.NGINX_DOCKER_REPO }}
+          docker-compose up -d
+          docker image prune -f
