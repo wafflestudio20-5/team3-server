@@ -90,6 +90,9 @@ class TradePostService(
         findPost.title = request.title ?: findPost.title
         findPost.description = request.desc ?: findPost.description
         findPost.price = request.price ?: findPost.price
+        findPost.images.clear()
+        val tradePostImages = request.imgUrls.map { TradePostImage(post = findPost, imgUrl = it) }
+        findPost.images.addAll(tradePostImages)
     }
 
     private fun checkPostOwner(findPost: TradePost, userId: Long) {
