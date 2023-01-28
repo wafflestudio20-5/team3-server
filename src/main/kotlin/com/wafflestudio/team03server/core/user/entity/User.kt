@@ -4,13 +4,9 @@ import com.wafflestudio.team03server.common.BaseTimeEntity
 import com.wafflestudio.team03server.core.chat.entity.ChatRoom
 import com.wafflestudio.team03server.core.trade.entity.LikePost
 import com.wafflestudio.team03server.core.trade.entity.TradePost
-import javax.persistence.CascadeType
 import com.wafflestudio.team03server.core.trade.entity.Review
 import org.locationtech.jts.geom.Point
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.OneToMany
-import javax.persistence.Table
+import javax.persistence.*
 import javax.validation.constraints.NotNull
 
 @Entity
@@ -28,6 +24,9 @@ class User(
     var location: String,
 
     var coordinate: Point,
+
+    @Enumerated(EnumType.STRING)
+    var searchScope: SearchScope = SearchScope.NORMAL,
 
     @NotNull
     var temperature: Double = 36.5,

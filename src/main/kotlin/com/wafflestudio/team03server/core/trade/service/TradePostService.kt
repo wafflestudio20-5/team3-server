@@ -6,7 +6,7 @@ import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.core.trade.api.request.CreatePostRequest
 import com.wafflestudio.team03server.core.trade.api.request.UpdatePostRequest
 import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
-import com.wafflestudio.team03server.core.trade.api.response.PostPageResonse
+import com.wafflestudio.team03server.core.trade.api.response.PostPageResponse
 import com.wafflestudio.team03server.core.trade.api.response.PostResponse
 import com.wafflestudio.team03server.core.trade.api.response.ReservationResponse
 import com.wafflestudio.team03server.core.trade.entity.LikePost
@@ -64,10 +64,17 @@ class TradePostService(
     private fun getPostById(postId: Long) =
         tradePostRepository.findByIdOrNull(postId) ?: throw Exception404("ID: ${postId}에 해당하는 글이 없습니다.")
 
-    fun getAllPosts(userId: Long, keyword: String?, pageable: Pageable): PostPageResonse {
+    fun getAllPosts(userId: Long, keyword: String, pageable: Pageable): PostPageResponse {
         val findUser = getUserById(userId)
-        val queryPostResults = tradePostRepository.findAllPostWithSellerAndBuyer(keyword, pageable)
-        return PostPageResonse.of(queryPostResults, findUser)
+        var queryKeyword = "%"
+        if (keyword != "") {
+            queryKeyword = "%$keyword%"
+        }
+        val distance = findUser.searchScope.distance
+        val tradePosts = tradePostRepository.findByKeywordAndDistance(
+            findUser.coordinate, queryKeyword, distance, pageable.pageSize, pageable.offset
+        )
+        return PostPageResponse.of(pageable, tradePosts, findUser)
     }
 
     fun updatePost(userId: Long, postId: Long, request: UpdatePostRequest): PostResponse {
