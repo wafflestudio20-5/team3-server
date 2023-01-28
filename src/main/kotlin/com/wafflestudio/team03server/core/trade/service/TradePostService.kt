@@ -74,7 +74,8 @@ class TradePostService(
         val tradePosts = tradePostRepository.findByKeywordAndDistance(
             findUser.coordinate, queryKeyword, distance, pageable.pageSize, pageable.offset
         )
-        return PostPageResponse.of(pageable, tradePosts, findUser)
+        val total = tradePostRepository.getTotalRecords()
+        return PostPageResponse.of(pageable, tradePosts, findUser, total)
     }
 
     fun updatePost(userId: Long, postId: Long, request: UpdatePostRequest): PostResponse {
