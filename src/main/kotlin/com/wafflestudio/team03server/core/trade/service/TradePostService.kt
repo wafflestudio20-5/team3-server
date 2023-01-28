@@ -16,7 +16,6 @@ import com.wafflestudio.team03server.core.trade.entity.TradeStatus
 import com.wafflestudio.team03server.core.trade.repository.LikePostRepository
 import com.wafflestudio.team03server.core.trade.repository.TradePostImageRepository
 import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
-import com.wafflestudio.team03server.core.user.entity.SearchScope
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import com.wafflestudio.team03server.utils.S3Service
