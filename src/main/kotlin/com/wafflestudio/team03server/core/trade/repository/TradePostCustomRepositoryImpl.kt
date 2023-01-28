@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.wafflestudio.team03server.core.trade.entity.QTradePost.tradePost
 import com.wafflestudio.team03server.core.trade.entity.TradePost
+import com.wafflestudio.team03server.core.trade.entity.TradeStatus
 import org.springframework.data.domain.Pageable
 
 private const val TOP_RANK_CONST = 3L
@@ -40,6 +41,7 @@ class TradePostCustomRepositoryImpl(
             .orderBy(tradePost.likeTradePosts.size().desc())
             .innerJoin(tradePost.seller).fetchJoin()
             .leftJoin(tradePost.buyer).fetchJoin()
+            .where(tradePost.tradeStatus.eq(TradeStatus.COMPLETED).not())
             .limit(TOP_RANK_CONST)
             .fetch()
     }

@@ -356,8 +356,12 @@ internal class TradePostServiceTest @Autowired constructor(
         tradePostService.likePost(savedUser4.id, post4.postId)
 
         tradePostService.likePost(savedUser1.id, post5.postId)
-        tradePostService.likePost(savedUser2.id, post1.postId)
+        tradePostService.likePost(savedUser2.id, post5.postId)
 
+        // post2는 거래 완료 상태로 만들기
+        chatService.startChat(savedUser3.id, post2.postId)
+        tradePostService.changeBuyer(savedUser2.id, savedUser3.id, post2.postId)
+        tradePostService.confirmTrade(savedUser2.id, post2.postId)
         val topThreePosts = tradePostService.getTopThreePosts(savedUser1.id)
 
         // then
@@ -365,6 +369,7 @@ internal class TradePostServiceTest @Autowired constructor(
         assertThat(topThreePosts.posts[0].postId).isEqualTo(post3.postId)
         assertThat(topThreePosts.posts[0].title).isEqualTo(post3.title)
         assertThat(topThreePosts.posts[0].likeCount).isGreaterThan(topThreePosts.posts[1].likeCount)
+        assertThat(topThreePosts.posts.map { it.postId }).containsExactly(post3.postId, post4.postId, post5.postId)
     }
 
     private fun createUser(username: String, email: String, password: String, location: String): User {
