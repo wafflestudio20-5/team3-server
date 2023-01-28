@@ -6,7 +6,6 @@ import java.time.LocalDateTime
 
 data class NeighborPostResponse(
     val postId: Long,
-    val title: String,
     val content: String,
     val publisher: SimpleUserResponse,
     val comments: List<NeighborCommentResponse>,
@@ -22,7 +21,6 @@ data class NeighborPostResponse(
         fun of(post: NeighborPost, userId: Long): NeighborPostResponse {
             return NeighborPostResponse(
                 postId = post.id,
-                title = post.title,
                 content = post.content,
                 publisher = SimpleUserResponse.of(post.publisher),
                 comments = post.comments.map { NeighborCommentResponse.of(it, userId) },
