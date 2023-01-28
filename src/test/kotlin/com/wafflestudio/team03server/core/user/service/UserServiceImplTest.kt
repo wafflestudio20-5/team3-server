@@ -216,9 +216,9 @@ internal class UserServiceImplTest @Autowired constructor(
     @Test
     fun 찜한_채팅목록_내역_조회_성공() {
         // given
-        val user1 = User("user1", "abc1@naver.com", "1234", "관악구")
-        val user2 = User("user2", "abc2@naver.com", "1234", "관악구")
-        val user3 = User("user3", "abc3@naver.com", "1234", "관악구")
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
+        val user3 = createUser("user3", "abc3@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
