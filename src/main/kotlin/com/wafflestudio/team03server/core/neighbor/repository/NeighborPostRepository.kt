@@ -1,5 +1,6 @@
 package com.wafflestudio.team03server.core.neighbor.repository
 
+import com.querydsl.core.QueryResults
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborPost
 import com.wafflestudio.team03server.core.neighbor.entity.QNeighborLike.neighborLike
@@ -12,8 +13,8 @@ import org.springframework.stereotype.Component
 interface NeighborPostRepository : JpaRepository<NeighborPost, Long>, NeighborPostSupport
 
 interface NeighborPostSupport {
-    fun findAllByQuerydsl(pageable: Pageable): List<NeighborPost>
-    fun findAllByContentContains(neighborPostKeyword: String, pageable: Pageable): List<NeighborPost>
+    fun findAllByQuerydsl(pageable: Pageable): QueryResults<NeighborPost>
+    fun findAllByContentContains(neighborPostKeyword: String, pageable: Pageable): QueryResults<NeighborPost>
     fun findAllByPublisherId(publisherId: Long): List<NeighborPost>
     fun findAllByLikerId(likerId: Long): List<NeighborPost>
 }
@@ -22,7 +23,7 @@ interface NeighborPostSupport {
 class NeighborPostSupportImpl(
     private val queryFactory: JPAQueryFactory
 ) : NeighborPostSupport {
-    override fun findAllByQuerydsl(pageable: Pageable): List<NeighborPost> {
+    override fun findAllByQuerydsl(pageable: Pageable): QueryResults<NeighborPost> {
         return queryFactory
             .selectFrom(neighborPost)
             .leftJoin(neighborPost.publisher, user)
@@ -31,10 +32,10 @@ class NeighborPostSupportImpl(
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
             .distinct()
-            .fetch()
+            .fetchResults()
     }
 
-    override fun findAllByContentContains(neighborPostKeyword: String, pageable: Pageable): List<NeighborPost> {
+    override fun findAllByContentContains(neighborPostKeyword: String, pageable: Pageable): QueryResults<NeighborPost> {
         return queryFactory
             .selectFrom(neighborPost)
             .where(neighborPost.content.contains(neighborPostKeyword))
@@ -44,7 +45,7 @@ class NeighborPostSupportImpl(
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
             .distinct()
-            .fetch()
+            .fetchResults()
     }
 
     override fun findAllByPublisherId(publisherId: Long): List<NeighborPost> {

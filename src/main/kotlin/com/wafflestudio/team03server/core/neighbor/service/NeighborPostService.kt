@@ -5,6 +5,7 @@ import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.core.neighbor.api.request.CreateNeighborPostRequest
 import com.wafflestudio.team03server.core.neighbor.api.request.UpdateNeighborPostRequest
+import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostPageResponse
 import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostResponse
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborLike
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborPost
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 interface NeighborPostService {
-    fun getAllNeighborPosts(userId: Long, neighborPostName: String?, pageable: Pageable): List<NeighborPostResponse>
+    fun getAllNeighborPosts(userId: Long, neighborPostName: String?, pageable: Pageable): NeighborPostPageResponse
     fun createNeighborPost(userId: Long, createNeighborPostRequest: CreateNeighborPostRequest): NeighborPostResponse
     fun getNeighborPost(userId: Long, postId: Long): NeighborPostResponse
     fun updateNeighborPost(
@@ -43,11 +44,12 @@ class NeighborPostServiceImpl(
         userId: Long,
         neighborPostKeyword: String?,
         pageable: Pageable
-    ): List<NeighborPostResponse> {
+    ): NeighborPostPageResponse {
+        val user = getUserById(userId)
         neighborPostKeyword?.let {
-            return neighborPostRepository.findAllByContentContains(neighborPostKeyword, pageable)
-                .map { NeighborPostResponse.of(it, userId) }
-        } ?: return neighborPostRepository.findAllByQuerydsl(pageable).map { NeighborPostResponse.of(it, userId) }
+            val posts = neighborPostRepository.findAllByContentContains(neighborPostKeyword, pageable)
+            return NeighborPostPageResponse.of(posts, user)
+        } ?: return NeighborPostPageResponse.of(neighborPostRepository.findAllByQuerydsl(pageable), user)
     }
 
     private fun getUserById(userId: Long) = userRepository.findByIdOrNull(userId) ?: throw Exception404("유효한 회원이 아닙니다.")
