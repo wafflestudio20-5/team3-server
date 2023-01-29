@@ -3,7 +3,7 @@ package com.wafflestudio.team03server.core.user.api
 import com.wafflestudio.team03server.common.Authenticated
 import com.wafflestudio.team03server.common.Exception400
 import com.wafflestudio.team03server.common.UserContext
-import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostResponse
+import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostPageResponse
 import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
 import com.wafflestudio.team03server.core.user.api.request.EditLocationRequest
 import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
@@ -13,6 +13,7 @@ import com.wafflestudio.team03server.core.user.api.response.MyChatsResponse
 import com.wafflestudio.team03server.core.user.api.response.UserResponse
 import com.wafflestudio.team03server.core.user.service.UserService
 import org.apache.commons.io.FilenameUtils
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -114,13 +115,21 @@ class UserController(
 
     @Authenticated
     @GetMapping("/neighborhood-post")
-    fun getMyNeighborhoodPosts(@UserContext userId: Long): List<NeighborPostResponse> {
-        return userService.getMyNeighborhoodPosts(userId)
+    fun getMyNeighborhoodPosts(
+        @UserContext userId: Long,
+        @RequestParam("page", required = false, defaultValue = "1") page: Int?
+    ): NeighborPostPageResponse {
+        val pageable = PageRequest.of(page!! - 1, 5)
+        return userService.getMyNeighborhoodPosts(userId, pageable)
     }
 
     @Authenticated
     @GetMapping("/like-neighborhood")
-    fun getLikeNeighborhoodPosts(@UserContext userId: Long): List<NeighborPostResponse> {
-        return userService.getLikeNeighborhoodPosts(userId)
+    fun getLikeNeighborhoodPosts(
+        @UserContext userId: Long,
+        @RequestParam("page", required = false, defaultValue = "1") page: Int?
+    ): NeighborPostPageResponse {
+        val pageable = PageRequest.of(page!! - 1, 5)
+        return userService.getLikeNeighborhoodPosts(userId, pageable)
     }
 }

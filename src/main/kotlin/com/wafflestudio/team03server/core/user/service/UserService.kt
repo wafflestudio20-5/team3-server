@@ -2,7 +2,7 @@ package com.wafflestudio.team03server.core.user.service
 
 import com.wafflestudio.team03server.common.*
 import com.wafflestudio.team03server.core.chat.repository.ChatRoomRepository
-import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostResponse
+import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostPageResponse
 import com.wafflestudio.team03server.core.neighbor.repository.NeighborPostRepository
 import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
 import com.wafflestudio.team03server.core.trade.entity.TradeStatus
@@ -16,6 +16,7 @@ import com.wafflestudio.team03server.core.user.api.response.UserResponse
 import com.wafflestudio.team03server.core.user.entity.SearchScope
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import com.wafflestudio.team03server.utils.S3Service
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -33,8 +34,8 @@ interface UserService {
     fun getSellTradePosts(userId: Long, sellerId: Long): PostListResponse
     fun getMyChats(userId: Long): MyChatsResponse
     fun getLikeTradePosts(userId: Long): PostListResponse
-    fun getMyNeighborhoodPosts(userId: Long): List<NeighborPostResponse>
-    fun getLikeNeighborhoodPosts(userId: Long): List<NeighborPostResponse>
+    fun getMyNeighborhoodPosts(userId: Long, pageable: Pageable): NeighborPostPageResponse
+    fun getLikeNeighborhoodPosts(userId: Long, pageable: Pageable): NeighborPostPageResponse
 }
 
 @Service
@@ -124,13 +125,17 @@ class UserServiceImpl(
         return PostListResponse.of(user, likedPosts)
     }
 
-    override fun getMyNeighborhoodPosts(userId: Long): List<NeighborPostResponse> {
+    override fun getMyNeighborhoodPosts(userId: Long, pageable: Pageable): NeighborPostPageResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
-        return neighborPostRepository.findAllByPublisherId(userId).map { NeighborPostResponse.of(it, userId) }
+        val posts = neighborPostRepository.findByPublisherId(pageable.pageSize, pageable.offset, userId)
+        val total = neighborPostRepository.getTotalRecords()
+        return NeighborPostPageResponse.of(posts, user, pageable.pageSize, pageable.offset, total)
     }
 
-    override fun getLikeNeighborhoodPosts(userId: Long): List<NeighborPostResponse> {
+    override fun getLikeNeighborhoodPosts(userId: Long, pageable: Pageable): NeighborPostPageResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
-        return neighborPostRepository.findAllByLikerId(userId).map { NeighborPostResponse.of(it, userId) }
+        val posts = neighborPostRepository.findByLikerId(pageable.pageSize, pageable.offset, userId)
+        val total = neighborPostRepository.getTotalRecords()
+        return NeighborPostPageResponse.of(posts, user, pageable.pageSize, pageable.offset, total)
     }
 }
