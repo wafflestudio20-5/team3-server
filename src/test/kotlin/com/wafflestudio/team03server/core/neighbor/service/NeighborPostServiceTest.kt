@@ -43,7 +43,7 @@ internal class NeighborPostServiceTest @Autowired constructor(
 
         // when
         val pageable = PageRequest.of(0, 50)
-        val neighborPosts = neighborPostService.getAllNeighborPosts(user1.id, null, pageable)
+        val neighborPosts = neighborPostService.getAllNeighborPosts(user1.id, "", pageable)
 
         // then
         assertThat(neighborPosts.size).isEqualTo(10)
@@ -59,7 +59,7 @@ internal class NeighborPostServiceTest @Autowired constructor(
 
         // when
         val pageable = PageRequest.of(0, 50)
-        val neighborPosts = neighborPostService.getAllNeighborPosts(user1.id, "삼겹살", pageable)
+        val neighborPosts = neighborPostService.getAllNeighborPosts(user1.id, "맛있다", pageable)
 
         // then
         assertThat(neighborPosts.size).isEqualTo(1)
@@ -70,13 +70,13 @@ internal class NeighborPostServiceTest @Autowired constructor(
     fun createNeighborPost() {
         // given
         val user1 = createUser("user1", "user1@me.com", "abcd!1234")
-        val request = CreateNeighborPostRequest("제목", "내용")
+        val request = CreateNeighborPostRequest("내용")
 
         // when
         val response = neighborPostService.createNeighborPost(user1.id, request)
 
         // then
-        assertThat(response.title).isEqualTo(request.title)
+//        assertThat(response.title).isEqualTo(request.title)
         assertThat(response.content).isEqualTo(request.content)
         assertThat(response.publisher.id).isEqualTo(user1.id)
         assertThat(response.comments.size).isEqualTo(0)
@@ -97,7 +97,7 @@ internal class NeighborPostServiceTest @Autowired constructor(
 
         // then
         assertThat(findPost.postId).isEqualTo(targetPost.id)
-        assertThat(findPost.title).isEqualTo(targetPost.title)
+//        assertThat(findPost.title).isEqualTo(targetPost.title)
         assertThat(findPost.content).isEqualTo(targetPost.content)
         assertThat(findPost.publisher.id).isEqualTo(user1.id)
         assertThat(findPost.comments.size).isEqualTo(targetPost.comments.size)
@@ -114,12 +114,12 @@ internal class NeighborPostServiceTest @Autowired constructor(
         val targetPost = createPost("삼겹살", "맛있다", user1)
 
         // when
-        val request = UpdateNeighborPostRequest("목살", "괜찮다")
+        val request = UpdateNeighborPostRequest("괜찮다")
         val updatedPost = neighborPostService.updateNeighborPost(user1.id, targetPost.id, request)
 
         // then
         assertThat(updatedPost.postId).isEqualTo(targetPost.id)
-        assertThat(updatedPost.title).isEqualTo(request.title)
+//        assertThat(updatedPost.title).isEqualTo(request.title)
         assertThat(updatedPost.content).isEqualTo(request.content)
     }
 
@@ -136,7 +136,7 @@ internal class NeighborPostServiceTest @Autowired constructor(
 
         // then
         val pageable = PageRequest.of(0, 50)
-        val posts = neighborPostService.getAllNeighborPosts(user1.id, null, pageable)
+        val posts = neighborPostService.getAllNeighborPosts(user1.id, "", pageable)
         assertThat(posts.size).isEqualTo(10)
     }
 
@@ -166,7 +166,7 @@ internal class NeighborPostServiceTest @Autowired constructor(
     }
 
     private fun createPost(title: String, content: String, user: User): NeighborPost {
-        val post = NeighborPost(title, content, user)
+        val post = NeighborPost(content, user)
         neighborPostRepository.save(post)
         return post
     }

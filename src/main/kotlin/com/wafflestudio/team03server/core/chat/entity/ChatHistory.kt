@@ -18,6 +18,7 @@ class ChatHistory(
     val sender: User,
 
     val message: String,
+    var readCount: Int = 2,
     val createdAt: LocalDateTime
 ) {
     companion object {

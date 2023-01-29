@@ -9,9 +9,9 @@ data class PostPageResponse(
     val posts: List<PostResponse>
 ) {
     companion object {
-        fun of(pageable: Pageable, posts: List<TradePost>, user: User): PostPageResponse {
+        fun of(pageable: Pageable, posts: List<TradePost>, user: User, total: Long): PostPageResponse {
             return PostPageResponse(
-                paging = PagingResponse.of(pageable, posts),
+                paging = PagingResponse.of(pageable, posts, total),
                 posts = posts.map { PostResponse.of(it, user) }
             )
         }
@@ -21,25 +21,25 @@ data class PostPageResponse(
 data class PagingResponse(
     val limit: Int,
     val offset: Long,
-    val total: Int,
+    val total: Long,
     val count: Long,
     val hasNext: Boolean,
 ) {
     companion object {
-        fun of(pageable: Pageable, posts: List<TradePost>): PagingResponse {
+        fun of(pageable: Pageable, posts: List<TradePost>, total: Long): PagingResponse {
             return PagingResponse(
                 limit = pageable.pageSize,
                 offset = pageable.offset,
-                total = posts.size,
+                total = total,
                 count = calcPage(pageable),
-                hasNext = hasNext(pageable, posts.size)
+                hasNext = hasNext(pageable, total)
             )
         }
 
         private fun calcPage(pageable: Pageable) =
             pageable.offset / pageable.pageSize
 
-        private fun hasNext(pageable: Pageable, size: Int) =
-            (pageable.pageSize + pageable.offset) < size
+        private fun hasNext(pageable: Pageable, total: Long) =
+            (pageable.pageSize + pageable.offset) < total
     }
 }
