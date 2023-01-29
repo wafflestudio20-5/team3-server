@@ -22,11 +22,11 @@ class NeighborController(
     @GetMapping("")
     fun getAllNeighborPosts(
         @UserContext userId: Long,
-        @RequestParam("keyword") neighborPostKeyword: String?,
+        @RequestParam("keyword", required = false, defaultValue = "") neighborPostKeyword: String?,
         @RequestParam("page", required = false, defaultValue = "1") page: Int?
     ): List<NeighborPostResponse> {
         val pageable = PageRequest.of(page!! - 1, 5)
-        return neighborPostService.getAllNeighborPosts(userId, neighborPostKeyword, pageable)
+        return neighborPostService.getAllNeighborPosts(userId, neighborPostKeyword!!, pageable)
     }
 
     @Authenticated

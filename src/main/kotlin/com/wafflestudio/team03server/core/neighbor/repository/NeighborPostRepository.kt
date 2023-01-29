@@ -5,11 +5,28 @@ import com.wafflestudio.team03server.core.neighbor.entity.NeighborPost
 import com.wafflestudio.team03server.core.neighbor.entity.QNeighborLike.neighborLike
 import com.wafflestudio.team03server.core.neighbor.entity.QNeighborPost.neighborPost
 import com.wafflestudio.team03server.core.user.entity.QUser.user
+import org.locationtech.jts.geom.Point
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Component
 
-interface NeighborPostRepository : JpaRepository<NeighborPost, Long>, NeighborPostSupport
+interface NeighborPostRepository : JpaRepository<NeighborPost, Long>, NeighborPostSupport {
+    @Query(
+        value = "SELECT p.*, ST_Distance_Sphere(u.coordinate, :point) as distance FROM neighbor_post p " +
+            "JOIN users u ON p.publisher_id = u.id WHERE p.content LIKE :keyword HAVING distance <= :distance " +
+            "ORDER BY p.created_at DESC LIMIT :limit OFFSET :offset",
+        nativeQuery = true
+    )
+    fun findByKeywordAndDistance(
+        @Param("point") point: Point,
+        @Param("keyword") keyword: String,
+        @Param("distance") distance: Double,
+        @Param("limit") limit: Int,
+        @Param("offset") offset: Long,
+    ): List<NeighborPost>
+}
 
 interface NeighborPostSupport {
     fun findAllByQuerydsl(pageable: Pageable): List<NeighborPost>
