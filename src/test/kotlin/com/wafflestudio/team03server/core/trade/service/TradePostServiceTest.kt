@@ -83,7 +83,7 @@ internal class TradePostServiceTest @Autowired constructor(
         tradePostService.createPost(savedUser.id, request2)
 
         // when
-        val posts = tradePostService.getAllPosts(savedUser.id, null, PageRequest.of(0, 10))
+        val posts = tradePostService.getAllPosts(savedUser.id, "", PageRequest.of(0, 10))
 
         // then
         assertThat(posts.posts.size).isEqualTo(2)
@@ -98,7 +98,7 @@ internal class TradePostServiceTest @Autowired constructor(
             tradePostService.createPost(savedUser.id, request)
         }
 
-        val allPosts = tradePostService.getAllPosts(savedUser.id, null, PageRequest.of(0, 10))
+        val allPosts = tradePostService.getAllPosts(savedUser.id, "", PageRequest.of(0, 10))
 
         assertThat(allPosts.posts.size).isEqualTo(10)
         assertThat(allPosts.posts[0].title).isEqualTo("title99")
@@ -140,7 +140,7 @@ internal class TradePostServiceTest @Autowired constructor(
         tradePostService.removePost(savedUser.id, createdPost.postId)
 
         //then
-        val posts = tradePostService.getAllPosts(savedUser.id, null, PageRequest.of(0, 10))
+        val posts = tradePostService.getAllPosts(savedUser.id, "", PageRequest.of(0, 10))
         assertThat(posts.posts.size).isEqualTo(0)
     }
 
