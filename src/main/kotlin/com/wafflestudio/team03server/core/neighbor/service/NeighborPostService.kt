@@ -49,10 +49,11 @@ class NeighborPostServiceImpl(
     ): NeighborPostPageResponse {
         val user = getUserById(userId)
         val queryKeyword = queryUtil.getNativeQueryKeyword(neighborPostKeyword)
-        val results = neighborPostRepository.findByKeywordAndDistance(
+        val posts = neighborPostRepository.findByKeywordAndDistance(
             user.coordinate, queryKeyword, user.searchScope.distance, pageable.pageSize, pageable.offset
         )
-        return NeighborPostPageResponse.of(results, user)
+        val total = neighborPostRepository.getTotalRecords()
+        return NeighborPostPageResponse.of(posts, user, pageable.pageSize, pageable.offset, total)
     }
 
     private fun getUserById(userId: Long) = userRepository.findByIdOrNull(userId) ?: throw Exception404("유효한 회원이 아닙니다.")

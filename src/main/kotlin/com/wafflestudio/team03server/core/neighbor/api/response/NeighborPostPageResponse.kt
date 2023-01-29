@@ -1,6 +1,5 @@
 package com.wafflestudio.team03server.core.neighbor.api.response
 
-import com.querydsl.core.QueryResults
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborPost
 import com.wafflestudio.team03server.core.user.entity.User
 
@@ -9,13 +8,9 @@ data class NeighborPostPageResponse(
     val posts: List<NeighborPostResponse>
 ) {
     companion object {
-        fun of(queryResults: QueryResults<NeighborPost>, user: User): NeighborPostPageResponse {
-            val posts = queryResults.results
-            val limit = queryResults.limit
-            val offset = queryResults.offset
-            val total = queryResults.total
+        fun of(posts: List<NeighborPost>, user: User, limit: Int, offset: Long, total: Long): NeighborPostPageResponse {
             return NeighborPostPageResponse(
-                paging = NeighborPagingResponse.of(posts, limit, offset, total),
+                paging = NeighborPagingResponse.of(limit, offset, total),
                 posts = posts.map { NeighborPostResponse.of(it, user.id) }
             )
         }
@@ -24,21 +19,25 @@ data class NeighborPostPageResponse(
 
 data class NeighborPagingResponse(
     val total: Long,
+    val limit: Int,
     val count: Long,
+    val offset: Long,
     val hasNext: Boolean
 ) {
     companion object {
-        fun of(posts: List<NeighborPost>, limit: Long, offset: Long, total: Long): NeighborPagingResponse {
+        fun of(limit: Int, offset: Long, total: Long): NeighborPagingResponse {
             return NeighborPagingResponse(
                 total = total,
+                limit = limit,
                 count = countPage(offset, limit),
+                offset = offset,
                 hasNext = hasNext(offset, limit, total)
             )
         }
 
-        private fun countPage(offset: Long, limit: Long) = offset / limit + 1
+        private fun countPage(offset: Long, limit: Int) = offset / limit
 
-        private fun hasNext(offset: Long, limit: Long, total: Long) =
+        private fun hasNext(offset: Long, limit: Int, total: Long) =
             (limit + offset) < total
     }
 }
