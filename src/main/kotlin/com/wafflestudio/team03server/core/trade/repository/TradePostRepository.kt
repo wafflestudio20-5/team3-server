@@ -13,9 +13,9 @@ interface TradePostRepository : JpaRepository<TradePost, Long>, TradePostCustomR
     fun findAllBySeller(seller: User): List<TradePost>
 
     @Query(
-        value = "SELECT p.*, ST_Distance_Sphere(u.coordinate, :point) as distance FROM trade_post p " +
-            "JOIN users u ON p.seller_id = u.id WHERE p.title LIKE :keyword HAVING distance <= :distance " +
-            "ORDER BY p.created_at DESC LIMIT :limit OFFSET :offset",
+        value = "SELECT SQL_CALC_FOUND_ROWS p.*, ST_Distance_Sphere(u.coordinate, :point) as distance " +
+            "FROM trade_post p JOIN users u ON p.seller_id = u.id WHERE p.title LIKE :keyword " +
+            "HAVING distance <= :distance ORDER BY p.created_at DESC LIMIT :limit OFFSET :offset",
         nativeQuery = true
     )
     fun findByKeywordAndDistance(
@@ -25,4 +25,7 @@ interface TradePostRepository : JpaRepository<TradePost, Long>, TradePostCustomR
         @Param("limit") limit: Int,
         @Param("offset") offset: Long,
     ): List<TradePost>
+
+    @Query(value = "SELECT FOUND_ROWS()", nativeQuery = true)
+    fun getTotalRecords(): Long
 }
