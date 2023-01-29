@@ -3,9 +3,11 @@ package com.wafflestudio.team03server.core.user.api
 import com.wafflestudio.team03server.common.Authenticated
 import com.wafflestudio.team03server.common.Exception400
 import com.wafflestudio.team03server.common.UserContext
+import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostResponse
 import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
 import com.wafflestudio.team03server.core.user.api.request.EditLocationRequest
 import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
+import com.wafflestudio.team03server.core.user.api.request.EditSearchScopeRequest
 import com.wafflestudio.team03server.core.user.api.request.EditUsernameRequest
 import com.wafflestudio.team03server.core.user.api.response.MyChatsResponse
 import com.wafflestudio.team03server.core.user.api.response.UserResponse
@@ -50,6 +52,16 @@ class UserController(
         @Valid @RequestBody editLocationRequest: EditLocationRequest
     ): ResponseEntity<UserResponse> {
         return ResponseEntity(userService.editLocation(userId, editLocationRequest), HttpStatus.OK)
+    }
+
+    @Authenticated
+    @PatchMapping("/me/search-scope")
+    fun editSearchScope(
+        @UserContext userId: Long,
+        @Valid @RequestBody editSearchScopeRequest: EditSearchScopeRequest
+    ): ResponseEntity<Any> {
+        userService.editSearchScope(userId, editSearchScopeRequest.searchScope!!)
+        return ResponseEntity(HttpStatus.OK)
     }
 
     @Authenticated
@@ -98,5 +110,17 @@ class UserController(
     @GetMapping("/chats")
     fun getMyChats(@UserContext userId: Long): MyChatsResponse {
         return userService.getMyChats(userId)
+    }
+
+    @Authenticated
+    @GetMapping("/neighborhood-post")
+    fun getMyNeighborhoodPosts(@UserContext userId: Long): List<NeighborPostResponse> {
+        return userService.getMyNeighborhoodPosts(userId)
+    }
+
+    @Authenticated
+    @GetMapping("/like-neighborhood")
+    fun getLikeNeighborhoodPosts(@UserContext userId: Long): List<NeighborPostResponse> {
+        return userService.getLikeNeighborhoodPosts(userId)
     }
 }

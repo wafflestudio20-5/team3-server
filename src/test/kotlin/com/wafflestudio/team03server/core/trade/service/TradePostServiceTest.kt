@@ -30,15 +30,16 @@ internal class TradePostServiceTest @Autowired constructor(
         // given
         val user = createUser("user1", "abc@naver.com", "1234", "관악구")
         val savedUser = userRepository.save(user)
-        val request = CreatePostRequest("title1", "String1", 10000)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
 
         // when
-        val response = tradePostService.createPost(savedUser.id, null, request)
+        val response = tradePostService.createPost(savedUser.id, request)
 
         // then
         assertThat(response.title).isEqualTo(request.title)
         assertThat(response.desc).isEqualTo(request.desc)
         assertThat(response.price).isEqualTo(request.price)
+        assertThat(response.imageUrls).containsExactlyInAnyOrder("img1", "img2")
         assertThat(response.seller.id).isEqualTo(savedUser.id)
         assertThat(response.buyer).isNull()
         assertThat(response.reservationCount).isEqualTo(0)
@@ -54,8 +55,8 @@ internal class TradePostServiceTest @Autowired constructor(
         // given
         val user = createUser("user1", "abc@naver.com", "1234", "관악구")
         val savedUser = userRepository.save(user)
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val createPost = tradePostService.createPost(savedUser.id, null, request)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val createPost = tradePostService.createPost(savedUser.id, request)
 
         // when
         val findPost = tradePostService.getPost(savedUser.id, createPost.postId)
@@ -76,13 +77,13 @@ internal class TradePostServiceTest @Autowired constructor(
         // given
         val user = createUser("user1", "abc@naver.com", "1234", "관악구")
         val savedUser = userRepository.save(user)
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val request2 = CreatePostRequest("title2", "String2", 20000)
-        tradePostService.createPost(savedUser.id, null, request)
-        tradePostService.createPost(savedUser.id, null, request2)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val request2 = CreatePostRequest("title2", "String2", 20000, mutableListOf("img1", "img2"))
+        tradePostService.createPost(savedUser.id, request)
+        tradePostService.createPost(savedUser.id, request2)
 
         // when
-        val posts = tradePostService.getAllPosts(savedUser.id, null, PageRequest.of(0, 10))
+        val posts = tradePostService.getAllPosts(savedUser.id, "", PageRequest.of(0, 10))
 
         // then
         assertThat(posts.posts.size).isEqualTo(2)
@@ -93,11 +94,11 @@ internal class TradePostServiceTest @Autowired constructor(
         val user = createUser("user1", "abc@naver.com", "1234", "관악구")
         val savedUser = userRepository.save(user)
         for (i in 0..99) {
-            val request = CreatePostRequest("title$i", "String$i", i)
-            tradePostService.createPost(savedUser.id, null, request)
+            val request = CreatePostRequest("title$i", "String$i", i, mutableListOf("img1", "img2"))
+            tradePostService.createPost(savedUser.id, request)
         }
 
-        val allPosts = tradePostService.getAllPosts(savedUser.id, null, PageRequest.of(0, 10))
+        val allPosts = tradePostService.getAllPosts(savedUser.id, "", PageRequest.of(0, 10))
 
         assertThat(allPosts.posts.size).isEqualTo(10)
         assertThat(allPosts.posts[0].title).isEqualTo("title99")
@@ -112,17 +113,19 @@ internal class TradePostServiceTest @Autowired constructor(
         // given
         val user = createUser("user1", "abc@naver.com", "1234", "관악구")
         val savedUser = userRepository.save(user)
-        val request = CreatePostRequest("title1", "desc1", 10000)
-        val createdPost = tradePostService.createPost(savedUser.id, null, request)
+        val request = CreatePostRequest("title1", "desc1", 10000, mutableListOf("img1", "img2"))
+        val createdPost = tradePostService.createPost(savedUser.id, request)
 
         // when
-        val updateRequest = UpdatePostRequest("변경된 title", null, 20000)
+        val updateRequest = UpdatePostRequest("변경된 title", null, 20000, mutableListOf("img3", "img4"))
         val updatePost = tradePostService.updatePost(savedUser.id, createdPost.postId, updateRequest)
 
         // then
         assertThat(updatePost.title).isEqualTo("변경된 title")
         assertThat(updatePost.desc).isEqualTo(createdPost.desc)
         assertThat(updatePost.price).isEqualTo(updateRequest.price)
+        assertThat(updatePost.imageUrls.size).isEqualTo(2)
+        assertThat(updatePost.imageUrls).containsExactlyInAnyOrder("img3", "img4")
     }
 
     @Test
@@ -130,14 +133,14 @@ internal class TradePostServiceTest @Autowired constructor(
         // given
         val user = createUser("user1", "abc@naver.com", "1234", "관악구")
         val savedUser = userRepository.save(user)
-        val request = CreatePostRequest("title1", "desc1", 10000)
-        val createdPost = tradePostService.createPost(savedUser.id, null, request)
+        val request = CreatePostRequest("title1", "desc1", 10000, mutableListOf("img1", "img2"))
+        val createdPost = tradePostService.createPost(savedUser.id, request)
 
         // when
         tradePostService.removePost(savedUser.id, createdPost.postId)
 
         //then
-        val posts = tradePostService.getAllPosts(savedUser.id, null, PageRequest.of(0, 10))
+        val posts = tradePostService.getAllPosts(savedUser.id, "", PageRequest.of(0, 10))
         assertThat(posts.posts.size).isEqualTo(0)
     }
 
@@ -150,8 +153,8 @@ internal class TradePostServiceTest @Autowired constructor(
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val post = tradePostService.createPost(savedUser1.id, null, request)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val post = tradePostService.createPost(savedUser1.id, request)
         val chat1_1 = chatService.startChat(savedUser2.id, post.postId) // 첫 채팅
         val chat1_2 = chatService.startChat(savedUser2.id, post.postId) // 같은 사용자 두 번째 채팅
         val chat2 = chatService.startChat(savedUser3.id, post.postId)
@@ -176,8 +179,8 @@ internal class TradePostServiceTest @Autowired constructor(
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val post = tradePostService.createPost(savedUser1.id, null, request)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val post = tradePostService.createPost(savedUser1.id, request)
         val chat1_1 = chatService.startChat(savedUser2.id, post.postId) // 첫 채팅
         val chat1_2 = chatService.startChat(savedUser2.id, post.postId) // 같은 사용자 두 번째 채팅
         val chat2 = chatService.startChat(savedUser3.id, post.postId)
@@ -202,8 +205,8 @@ internal class TradePostServiceTest @Autowired constructor(
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val post = tradePostService.createPost(savedUser1.id, null, request)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val post = tradePostService.createPost(savedUser1.id, request)
         val chat1_1 = chatService.startChat(savedUser2.id, post.postId) // 첫 채팅
         val chat1_2 = chatService.startChat(savedUser2.id, post.postId) // 같은 사용자 두 번째 채팅
         val chat2 = chatService.startChat(savedUser3.id, post.postId)
@@ -229,8 +232,8 @@ internal class TradePostServiceTest @Autowired constructor(
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val post = tradePostService.createPost(savedUser1.id, null, request)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val post = tradePostService.createPost(savedUser1.id, request)
         val chat1_1 = chatService.startChat(savedUser2.id, post.postId) // 첫 채팅
         val chat1_2 = chatService.startChat(savedUser2.id, post.postId) // 같은 사용자 두 번째 채팅
         val chat2 = chatService.startChat(savedUser3.id, post.postId)
@@ -254,8 +257,8 @@ internal class TradePostServiceTest @Autowired constructor(
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
         val savedUser3 = userRepository.save(user3)
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val post = tradePostService.createPost(savedUser1.id, null, request)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val post = tradePostService.createPost(savedUser1.id, request)
         val chat1_1 = chatService.startChat(savedUser2.id, post.postId) // 첫 채팅
         val chat1_2 = chatService.startChat(savedUser2.id, post.postId) // 같은 사용자 두 번째 채팅
         val chat2 = chatService.startChat(savedUser3.id, post.postId)
@@ -277,8 +280,8 @@ internal class TradePostServiceTest @Autowired constructor(
         val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val post = tradePostService.createPost(savedUser1.id, null, request)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val post = tradePostService.createPost(savedUser1.id, request)
 
         // when
         tradePostService.likePost(savedUser2.id, post.postId)
@@ -299,8 +302,8 @@ internal class TradePostServiceTest @Autowired constructor(
         val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val post = tradePostService.createPost(savedUser1.id, null, request)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val post = tradePostService.createPost(savedUser1.id, request)
 
         // when
         tradePostService.likePost(savedUser2.id, post.postId)
@@ -329,16 +332,16 @@ internal class TradePostServiceTest @Autowired constructor(
         val savedUser5 = userRepository.save(user5)
 
         // 글 생성
-        val request1 = CreatePostRequest("title1", "String1", 10000)
-        val request2 = CreatePostRequest("title2", "String2", 10000)
-        val request3 = CreatePostRequest("title3", "String3", 10000)
-        val request4 = CreatePostRequest("title4", "String4", 10000)
-        val request5 = CreatePostRequest("title5", "String5", 10000)
-        val post1 = tradePostService.createPost(savedUser1.id, null, request1)
-        val post2 = tradePostService.createPost(savedUser2.id, null, request2)
-        val post3 = tradePostService.createPost(savedUser2.id, null, request3)
-        val post4 = tradePostService.createPost(savedUser3.id, null, request4)
-        val post5 = tradePostService.createPost(savedUser4.id, null, request5)
+        val request1 = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val request2 = CreatePostRequest("title2", "String2", 10000, mutableListOf("img1", "img2"))
+        val request3 = CreatePostRequest("title3", "String3", 10000, mutableListOf("img1", "img2"))
+        val request4 = CreatePostRequest("title4", "String4", 10000, mutableListOf("img1", "img2"))
+        val request5 = CreatePostRequest("title5", "String5", 10000, mutableListOf("img1", "img2"))
+        val post1 = tradePostService.createPost(savedUser1.id, request1)
+        val post2 = tradePostService.createPost(savedUser2.id, request2)
+        val post3 = tradePostService.createPost(savedUser2.id, request3)
+        val post4 = tradePostService.createPost(savedUser3.id, request4)
+        val post5 = tradePostService.createPost(savedUser4.id, request5)
 
         // when
         // 글 찜 누르기

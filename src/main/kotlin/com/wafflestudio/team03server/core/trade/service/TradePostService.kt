@@ -6,7 +6,7 @@ import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.core.trade.api.request.CreatePostRequest
 import com.wafflestudio.team03server.core.trade.api.request.UpdatePostRequest
 import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
-import com.wafflestudio.team03server.core.trade.api.response.PostPageResonse
+import com.wafflestudio.team03server.core.trade.api.response.PostPageResponse
 import com.wafflestudio.team03server.core.trade.api.response.PostResponse
 import com.wafflestudio.team03server.core.trade.api.response.ReservationResponse
 import com.wafflestudio.team03server.core.trade.entity.LikePost
@@ -14,16 +14,13 @@ import com.wafflestudio.team03server.core.trade.entity.TradePost
 import com.wafflestudio.team03server.core.trade.entity.TradePostImage
 import com.wafflestudio.team03server.core.trade.entity.TradeStatus
 import com.wafflestudio.team03server.core.trade.repository.LikePostRepository
-import com.wafflestudio.team03server.core.trade.repository.TradePostImageRepository
 import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
-import com.wafflestudio.team03server.utils.S3Service
-import org.apache.commons.io.FilenameUtils
+import com.wafflestudio.team03server.utils.QueryUtil
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
 import javax.transaction.Transactional
 
 @Service
@@ -32,50 +29,21 @@ class TradePostService(
     val userRepository: UserRepository,
     val tradePostRepository: TradePostRepository,
     val likePostRepository: LikePostRepository,
-    val tradePostImageRepository: TradePostImageRepository,
-    val s3Service: S3Service,
+    val queryUtil: QueryUtil
 ) {
     fun createPost(
         userId: Long,
-        images: List<MultipartFile>?,
         request: CreatePostRequest
     ): PostResponse {
         val (user, post) = makePost(userId, request)
-        if (images != null) {
-            checkImageFiles(images)
-            saveImages(images, post)
-        }
         return PostResponse.of(post, user)
     }
 
-    private fun saveImages(images: List<MultipartFile>, post: TradePost) {
-        uploadImagesAndGetImageUrls(images).map { url -> saveImage(post, url) }
-    }
-
-    private fun uploadImagesAndGetImageUrls(images: List<MultipartFile>) =
-        images.map { s3Service.upload(it) }
-
-    private fun saveImage(_post: TradePost, url: String): TradePostImage {
-        val image = TradePostImage(post = _post, imgUrl = url)
-        image.addImage(_post)
-        return tradePostImageRepository.save(image)
-    }
-
-    private fun checkImageFiles(images: List<MultipartFile>) {
-        if (!isImageFiles(images)) throw Exception400("이미지 파일이 아닌 파일이 존재합니다.")
-    }
-
-    private fun isImageFiles(images: List<MultipartFile>): Boolean {
-        return getFileExtentions(images).all { it == "jpg" || it == "jpeg" || it == "png" }
-    }
-
-    private fun getFileExtentions(images: List<MultipartFile>) =
-        images.map { FilenameUtils.getExtension(it.originalFilename).lowercase() }
-
     private fun makePost(userId: Long, request: CreatePostRequest): Pair<User, TradePost> {
         val findUser = getUserById(userId)
-        val (title, desc, price) = request
+        val (title, desc, price, imgUrls) = request
         val post = TradePost(title, desc, price, findUser)
+        post.images = imgUrls.map { TradePostImage(post = post, imgUrl = it) }.toMutableList()
         val savedPost = tradePostRepository.save(post)
         findUser.sellPosts.add(savedPost)
         return Pair(findUser, savedPost)
@@ -94,10 +62,14 @@ class TradePostService(
     private fun getPostById(postId: Long) =
         tradePostRepository.findByIdOrNull(postId) ?: throw Exception404("ID: ${postId}에 해당하는 글이 없습니다.")
 
-    fun getAllPosts(userId: Long, keyword: String?, pageable: Pageable): PostPageResonse {
+    fun getAllPosts(userId: Long, keyword: String, pageable: Pageable): PostPageResponse {
         val findUser = getUserById(userId)
-        val queryPostResults = tradePostRepository.findAllPostWithSellerAndBuyer(keyword, pageable)
-        return PostPageResonse.of(queryPostResults, findUser)
+        val queryKeyword = queryUtil.getNativeQueryKeyword(keyword)
+        val tradePosts = tradePostRepository.findByKeywordAndDistance(
+            findUser.coordinate, queryKeyword, findUser.searchScope.distance, pageable.pageSize, pageable.offset
+        )
+        val total = tradePostRepository.getTotalRecords()
+        return PostPageResponse.of(pageable, tradePosts, findUser, total)
     }
 
     fun updatePost(userId: Long, postId: Long, request: UpdatePostRequest): PostResponse {
@@ -120,6 +92,9 @@ class TradePostService(
         findPost.title = request.title ?: findPost.title
         findPost.description = request.desc ?: findPost.description
         findPost.price = request.price ?: findPost.price
+        findPost.images.clear()
+        val tradePostImages = request.imgUrls.map { TradePostImage(post = findPost, imgUrl = it) }
+        findPost.images.addAll(tradePostImages)
     }
 
     private fun checkPostOwner(findPost: TradePost, userId: Long) {

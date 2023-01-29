@@ -3,7 +3,7 @@ package com.wafflestudio.team03server.core.chat.service
 import com.wafflestudio.team03server.common.Exception400
 import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.core.chat.api.response.RoomUUIDResponse
-import com.wafflestudio.team03server.core.chat.api.dto.ChatMessage
+import com.wafflestudio.team03server.core.chat.api.dto.ReceivedChatMessage
 import com.wafflestudio.team03server.core.chat.api.response.MessagesResponse
 import com.wafflestudio.team03server.core.chat.entity.ChatHistory
 import com.wafflestudio.team03server.core.chat.entity.ChatRoom
@@ -66,15 +66,15 @@ class ChatService(
     private fun getUserById(userId: Long): User =
         userRepository.findByIdOrNull(userId) ?: throw Exception404("id: ${userId}에 해당하는 유저가 존재하지 않습니다.")
 
-    fun saveMessage(message: ChatMessage) {
+    fun saveMessage(message: ReceivedChatMessage): Long {
         val chatRoom = getChatRoomByUUID(message.roomUUID)
         val sender = getUserById(message.senderId)
         val _message = message.message
         val createdAt = message.createdAt
-        saveChatMessage(chatRoom, sender, _message, createdAt)
+        return saveChatMessage(chatRoom, sender, _message, createdAt)
     }
 
-    private fun saveChatMessage(chatRoom: ChatRoom, sender: User, message: String, createdAt: LocalDateTime) {
+    private fun saveChatMessage(chatRoom: ChatRoom, sender: User, message: String, createdAt: LocalDateTime): Long {
         val chatHistory = ChatHistory.create(
             _chatRoom = chatRoom,
             _sender = sender,
@@ -82,14 +82,35 @@ class ChatService(
             _createdAt = createdAt,
         )
         val savedChatHistory = chatHistoryRepository.save(chatHistory)
+        return savedChatHistory.id
     }
 
     private fun getChatRoomByUUID(roomUUID: String) =
         chatRoomRepository.findChatRoomByRoomUUID(roomUUID) ?: throw Exception404("잘못된 채팅방 UUID입니다.")
 
     fun getMessages(userId: Long, roomUUID: String, youId: Long): MessagesResponse {
+        val me = getUserById(userId)
         val you = getUserById(youId)
         val chatRoom = getChatRoomByUUID(roomUUID)
+        reduceReadCountOfChats(chatRoom, me)
         return MessagesResponse.of(you, chatRoom)
+    }
+
+    private fun reduceReadCountOfChats(chatRoom: ChatRoom, me: User) {
+        chatRoom.histories.map { checkAndReduceReadCount(it, me) }
+    }
+
+    private fun checkAndReduceReadCount(chatHistory: ChatHistory, me: User) {
+        if (canReduceReadCount(chatHistory, me)) {
+            chatHistory.readCount--
+        }
+    }
+
+    private fun canReduceReadCount(chat: ChatHistory, me: User) = chat.sender != me && chat.readCount == 1
+
+    fun readChat(chatId: Long) {
+        val chatHistory =
+            chatHistoryRepository.findByIdOrNull(chatId) ?: throw Exception404("ID: ${chatId}에 해당하는 채팅이 없습니다.")
+        chatHistory.readCount--
     }
 }

@@ -22,11 +22,11 @@ class NeighborController(
     @GetMapping("")
     fun getAllNeighborPosts(
         @UserContext userId: Long,
-        @RequestParam("name") neighborPostName: String?,
+        @RequestParam("keyword", required = false, defaultValue = "") neighborPostKeyword: String?,
         @RequestParam("page", required = false, defaultValue = "1") page: Int?
     ): List<NeighborPostResponse> {
-        val pageable = PageRequest.of(page!! - 1, 50)
-        return neighborPostService.getAllNeighborPosts(userId, neighborPostName, pageable)
+        val pageable = PageRequest.of(page!! - 1, 5)
+        return neighborPostService.getAllNeighborPosts(userId, neighborPostKeyword!!, pageable)
     }
 
     @Authenticated
@@ -71,7 +71,7 @@ class NeighborController(
     fun likeNeighborPost(
         @UserContext userId: Long,
         @PathVariable("post-id") postId: Long
-    ) {
+    ): NeighborPostResponse {
         return neighborPostService.likeOrUnlikeNeighborPost(userId, postId)
     }
 

@@ -1,7 +1,7 @@
 package com.wafflestudio.team03server.core.chat.service
 
 import com.wafflestudio.team03server.common.Exception400
-import com.wafflestudio.team03server.core.chat.api.dto.ChatMessage
+import com.wafflestudio.team03server.core.chat.api.dto.ReceivedChatMessage
 import com.wafflestudio.team03server.core.chat.repository.ChatHistoryRepository
 import com.wafflestudio.team03server.core.chat.repository.ChatRoomRepository
 import com.wafflestudio.team03server.core.trade.api.request.CreatePostRequest
@@ -34,8 +34,8 @@ internal class ChatServiceTest @Autowired constructor(
         val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val post1 = tradePostService.createPost(savedUser1.id, null, request)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val post1 = tradePostService.createPost(savedUser1.id, request)
 
         // when
         val chat = chatService.startChat(savedUser2.id, post1.postId)
@@ -52,8 +52,8 @@ internal class ChatServiceTest @Autowired constructor(
         val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val post1 = tradePostService.createPost(savedUser1.id, null, request)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val post1 = tradePostService.createPost(savedUser1.id, request)
 
         // when
         org.junit.jupiter.api.assertThrows<Exception400> { chatService.startChat(savedUser1.id, post1.postId) }
@@ -66,10 +66,10 @@ internal class ChatServiceTest @Autowired constructor(
         val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val post1 = tradePostService.createPost(savedUser1.id, null, request)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val post1 = tradePostService.createPost(savedUser1.id, request)
         val chat = chatService.startChat(savedUser2.id, post1.postId)
-        val chatMessage = ChatMessage(chat.roomUUID, savedUser2.id, "안녕하세요!", LocalDateTime.now())
+        val chatMessage = ReceivedChatMessage(chat.roomUUID, savedUser2.id, "안녕하세요!", LocalDateTime.now())
 
         // when
         chatService.saveMessage(chatMessage)
@@ -82,6 +82,7 @@ internal class ChatServiceTest @Autowired constructor(
         assertThat(history.chatRoom.post.title).isEqualTo("title1")
         assertThat(history.message).isEqualTo("안녕하세요!")
         assertThat(history.sender).isEqualTo(savedUser2)
+        assertThat(history.readCount).isEqualTo(2)
     }
 
     @Test
@@ -91,11 +92,11 @@ internal class ChatServiceTest @Autowired constructor(
         val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
         val savedUser1 = userRepository.save(user1)
         val savedUser2 = userRepository.save(user2)
-        val request = CreatePostRequest("title1", "String1", 10000)
-        val post1 = tradePostService.createPost(savedUser1.id, null, request)
+        val request = CreatePostRequest("title1", "String1", 10000, mutableListOf("img1", "img2"))
+        val post1 = tradePostService.createPost(savedUser1.id, request)
         val chat = chatService.startChat(savedUser2.id, post1.postId)
-        val chatMessage = ChatMessage(chat.roomUUID, savedUser2.id, "안녕하세요!", LocalDateTime.now())
-        val chatMessage2 = ChatMessage(chat.roomUUID, savedUser1.id, "안녕하세요?", LocalDateTime.now())
+        val chatMessage = ReceivedChatMessage(chat.roomUUID, savedUser2.id, "안녕하세요!", LocalDateTime.now())
+        val chatMessage2 = ReceivedChatMessage(chat.roomUUID, savedUser1.id, "안녕하세요?", LocalDateTime.now())
         chatService.saveMessage(chatMessage)
         chatService.saveMessage(chatMessage2)
 

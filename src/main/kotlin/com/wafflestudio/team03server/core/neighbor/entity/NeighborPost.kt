@@ -6,7 +6,6 @@ import javax.persistence.*
 
 @Entity
 class NeighborPost(
-    var title: String,
     var content: String,
 
     @ManyToOne(fetch = FetchType.LAZY)

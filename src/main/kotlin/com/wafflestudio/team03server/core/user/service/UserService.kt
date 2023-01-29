@@ -2,6 +2,8 @@ package com.wafflestudio.team03server.core.user.service
 
 import com.wafflestudio.team03server.common.*
 import com.wafflestudio.team03server.core.chat.repository.ChatRoomRepository
+import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostResponse
+import com.wafflestudio.team03server.core.neighbor.repository.NeighborPostRepository
 import com.wafflestudio.team03server.core.trade.api.response.PostListResponse
 import com.wafflestudio.team03server.core.trade.entity.TradeStatus
 import com.wafflestudio.team03server.core.trade.repository.LikePostRepository
@@ -11,6 +13,7 @@ import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
 import com.wafflestudio.team03server.core.user.api.request.EditUsernameRequest
 import com.wafflestudio.team03server.core.user.api.response.MyChatsResponse
 import com.wafflestudio.team03server.core.user.api.response.UserResponse
+import com.wafflestudio.team03server.core.user.entity.SearchScope
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import com.wafflestudio.team03server.utils.S3Service
 import org.springframework.data.repository.findByIdOrNull
@@ -23,12 +26,15 @@ interface UserService {
     fun getProfile(userId: Long): UserResponse
     fun editUsername(userId: Long, editUsernameRequest: EditUsernameRequest): UserResponse
     fun editLocation(userId: Long, editLocationRequest: EditLocationRequest): UserResponse
+    fun editSearchScope(userId: Long, searchScope: SearchScope)
     fun editPassword(userId: Long, editPasswordRequest: EditPasswordRequest)
     fun uploadImage(userId: Long, image: MultipartFile): String
     fun getBuyTradePosts(userId: Long): PostListResponse
     fun getSellTradePosts(userId: Long, sellerId: Long): PostListResponse
     fun getMyChats(userId: Long): MyChatsResponse
     fun getLikeTradePosts(userId: Long): PostListResponse
+    fun getMyNeighborhoodPosts(userId: Long): List<NeighborPostResponse>
+    fun getLikeNeighborhoodPosts(userId: Long): List<NeighborPostResponse>
 }
 
 @Service
@@ -41,6 +47,7 @@ class UserServiceImpl(
     private val tradePostRepository: TradePostRepository,
     private val chatRoomRepository: ChatRoomRepository,
     private val likePostRepository: LikePostRepository,
+    private val neighborPostRepository: NeighborPostRepository,
 ) : UserService {
     override fun getProfile(userId: Long): UserResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
@@ -64,6 +71,11 @@ class UserServiceImpl(
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
         user.location = editLocationRequest.location!!
         return UserResponse.of(user)
+    }
+
+    override fun editSearchScope(userId: Long, searchScope: SearchScope) {
+        val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        user.searchScope = searchScope
     }
 
     override fun editPassword(userId: Long, editPasswordRequest: EditPasswordRequest) {
@@ -110,5 +122,15 @@ class UserServiceImpl(
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
         val likedPosts = likePostRepository.findLikePostsWithUserAndPostByUserId(user).map { it.likedPost }
         return PostListResponse.of(user, likedPosts)
+    }
+
+    override fun getMyNeighborhoodPosts(userId: Long): List<NeighborPostResponse> {
+        val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        return neighborPostRepository.findAllByPublisherId(userId).map { NeighborPostResponse.of(it, userId) }
+    }
+
+    override fun getLikeNeighborhoodPosts(userId: Long): List<NeighborPostResponse> {
+        val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
+        return neighborPostRepository.findAllByLikerId(userId).map { NeighborPostResponse.of(it, userId) }
     }
 }
