@@ -43,7 +43,7 @@ class TradePostService(
         val findUser = getUserById(userId)
         val (title, desc, price, imgUrls) = request
         val post = TradePost(title, desc, price, findUser)
-        post.images = imgUrls.map { TradePostImage(post = post, imgUrl = it) }.toMutableList()
+        post.images = imgUrls!!.map { TradePostImage(post = post, imgUrl = it) }.toMutableList()
         val savedPost = tradePostRepository.save(post)
         findUser.sellPosts.add(savedPost)
         return Pair(findUser, savedPost)
@@ -93,7 +93,7 @@ class TradePostService(
         findPost.description = request.desc ?: findPost.description
         findPost.price = request.price ?: findPost.price
         findPost.images.clear()
-        val tradePostImages = request.imgUrls.map { TradePostImage(post = findPost, imgUrl = it) }
+        val tradePostImages = request.imgUrls!!.map { TradePostImage(post = findPost, imgUrl = it) }
         findPost.images.addAll(tradePostImages)
     }
 
