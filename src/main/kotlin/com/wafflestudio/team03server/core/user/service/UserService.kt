@@ -127,15 +127,13 @@ class UserServiceImpl(
 
     override fun getMyNeighborhoodPosts(userId: Long, pageable: Pageable): NeighborPostPageResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
-        val posts = neighborPostRepository.findByPublisherId(pageable.pageSize, pageable.offset, userId)
-        val total = neighborPostRepository.getTotalRecords()
-        return NeighborPostPageResponse.of(posts, user, pageable.pageSize, pageable.offset, total)
+        val results = neighborPostRepository.findAllByPublisherId(userId, pageable)
+        return NeighborPostPageResponse.of(results.results, user, pageable, results.total)
     }
 
     override fun getLikeNeighborhoodPosts(userId: Long, pageable: Pageable): NeighborPostPageResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
-        val posts = neighborPostRepository.findByLikerId(pageable.pageSize, pageable.offset, userId)
-        val total = neighborPostRepository.getTotalRecords()
-        return NeighborPostPageResponse.of(posts, user, pageable.pageSize, pageable.offset, total)
+        val results = neighborPostRepository.findAllByLikerId(userId, pageable)
+        return NeighborPostPageResponse.of(results.results, user, pageable, results.total)
     }
 }

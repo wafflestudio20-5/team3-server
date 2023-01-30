@@ -2,15 +2,16 @@ package com.wafflestudio.team03server.core.neighbor.api.response
 
 import com.wafflestudio.team03server.core.neighbor.entity.NeighborPost
 import com.wafflestudio.team03server.core.user.entity.User
+import org.springframework.data.domain.Pageable
 
 data class NeighborPostPageResponse(
     val paging: NeighborPagingResponse,
     val posts: List<NeighborPostResponse>
 ) {
     companion object {
-        fun of(posts: List<NeighborPost>, user: User, limit: Int, offset: Long, total: Long): NeighborPostPageResponse {
+        fun of(posts: List<NeighborPost>, user: User, pageable: Pageable, total: Long): NeighborPostPageResponse {
             return NeighborPostPageResponse(
-                paging = NeighborPagingResponse.of(limit, offset, total),
+                paging = NeighborPagingResponse.of(pageable, total),
                 posts = posts.map { NeighborPostResponse.of(it, user.id) }
             )
         }
@@ -25,13 +26,13 @@ data class NeighborPagingResponse(
     val hasNext: Boolean
 ) {
     companion object {
-        fun of(limit: Int, offset: Long, total: Long): NeighborPagingResponse {
+        fun of(pageable: Pageable, total: Long): NeighborPagingResponse {
             return NeighborPagingResponse(
                 total = total,
-                limit = limit,
-                count = countPage(offset, limit),
-                offset = offset,
-                hasNext = hasNext(offset, limit, total)
+                limit = pageable.pageSize,
+                count = countPage(pageable.offset, pageable.pageSize),
+                offset = pageable.offset,
+                hasNext = hasNext(pageable.offset, pageable.pageSize, total)
             )
         }
 

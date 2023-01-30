@@ -53,7 +53,7 @@ class NeighborPostServiceImpl(
             user.coordinate, queryKeyword, user.searchScope.distance, pageable.pageSize, pageable.offset
         )
         val total = neighborPostRepository.getTotalRecords()
-        return NeighborPostPageResponse.of(posts, user, pageable.pageSize, pageable.offset, total)
+        return NeighborPostPageResponse.of(posts, user, pageable, total)
     }
 
     private fun getUserById(userId: Long) = userRepository.findByIdOrNull(userId) ?: throw Exception404("유효한 회원이 아닙니다.")
