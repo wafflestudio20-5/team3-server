@@ -3,7 +3,6 @@ package com.wafflestudio.team03server.core.user.api.request
 import com.wafflestudio.team03server.core.user.entity.Coordinate
 import com.wafflestudio.team03server.core.user.entity.User
 import org.locationtech.jts.geom.Point
-import org.locationtech.jts.io.WKTReader
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
