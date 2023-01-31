@@ -15,6 +15,7 @@ import com.wafflestudio.team03server.core.trade.entity.TradePostImage
 import com.wafflestudio.team03server.core.trade.entity.TradeStatus
 import com.wafflestudio.team03server.core.trade.repository.LikePostRepository
 import com.wafflestudio.team03server.core.trade.repository.TradePostRepository
+import com.wafflestudio.team03server.core.user.api.response.UserResponse
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import com.wafflestudio.team03server.utils.QueryUtil
@@ -184,5 +185,10 @@ class TradePostService(
         val user = getUserById(userId)
         val findTopThreeLikePosts = tradePostRepository.findTopThreeLikePosts()
         return PostListResponse.of(user, findTopThreeLikePosts)
+    }
+
+    fun getTopThreeWarmestPeople(): List<UserResponse> {
+        val findTopThreeWarmestPeople = userRepository.findTopThreeWarmestPeople()
+        return findTopThreeWarmestPeople.map { UserResponse.of(it) }
     }
 }
