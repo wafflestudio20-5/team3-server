@@ -32,15 +32,13 @@ data class SignUpRequest(
     @field:NotNull(message = "이메일 인증 정보가 없습니다.")
     val isEmailAuthed: Boolean?
 ) {
-    fun toUser(): User {
-        val pointWKT = "POINT(${coordinate!!.lng} ${coordinate.lat})"
-        val point = WKTReader().read(pointWKT) as Point
+    fun toUser(coordinate: Point): User {
         return User(
             username = username!!,
             email = email!!,
             password = password!!,
             location = location!!,
-            coordinate = point
+            coordinate = coordinate
         )
     }
 }
