@@ -1,9 +1,7 @@
 package com.wafflestudio.team03server.core.user.service
 
-import com.wafflestudio.team03server.common.Exception401
-import com.wafflestudio.team03server.common.Exception403
-import com.wafflestudio.team03server.common.Exception404
-import com.wafflestudio.team03server.common.Exception409
+import com.wafflestudio.team03server.common.*
+import com.wafflestudio.team03server.core.user.api.request.ResetPasswordRequest
 import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
 import com.wafflestudio.team03server.core.user.api.response.LoginResponse
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
@@ -23,6 +21,7 @@ interface AuthService {
     fun verifyEmail(code: String, email: String): Boolean
     fun login(email: String, password: String): LoginResponse
     fun refresh(refreshToken: String): AuthToken
+    fun resetPassword(resetPasswordRequest: ResetPasswordRequest)
 }
 
 @Service
@@ -89,5 +88,16 @@ class AuthServiceImpl(
         val email = authTokenService.getCurrentUserEmail(refreshToken)
         val user = userRepository.findByEmail(email) ?: throw Exception404("사용자를 찾을 수 없습니다.")
         return authTokenService.generateAccessTokenAndRefreshToken(email, user)
+    }
+
+    override fun resetPassword(resetPasswordRequest: ResetPasswordRequest) {
+        val user = userRepository.findByEmail(resetPasswordRequest.email) ?: throw Exception404("존재하지 않는 이메일입니다.")
+        if (!resetPasswordRequest.isEmailAuthed) {
+            throw Exception401("이메일 인증이 되지 않은 사용자 입니다.")
+        }
+        if (resetPasswordRequest.newPassword != resetPasswordRequest.newPasswordConfirm) {
+            throw Exception400("비밀번호가 일치하지 않습니다.")
+        }
+        user.password = passwordEncoder.encode(resetPasswordRequest.newPassword)
     }
 }

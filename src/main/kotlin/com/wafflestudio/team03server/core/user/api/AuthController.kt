@@ -2,6 +2,7 @@ package com.wafflestudio.team03server.core.user.api
 
 import com.wafflestudio.team03server.core.user.api.request.LoginRequest
 import com.wafflestudio.team03server.core.user.api.request.RefreshRequest
+import com.wafflestudio.team03server.core.user.api.request.ResetPasswordRequest
 import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
 import com.wafflestudio.team03server.core.user.api.response.LoginResponse
 import com.wafflestudio.team03server.core.user.service.AuthService
@@ -62,5 +63,12 @@ class AuthController(
     fun refresh(@RequestBody @Valid refreshRequest: RefreshRequest): ResponseEntity<AuthToken> {
         val authToken = authService.refresh(refreshRequest.refreshToken!!)
         return ResponseEntity(authToken, HttpStatus.OK)
+    }
+
+    // 비밀번호 재설정
+    @PatchMapping("/resetPassword")
+    fun resetPassword(@RequestBody @Valid resetPasswordRequest: ResetPasswordRequest): ResponseEntity<Any> {
+        authService.resetPassword(resetPasswordRequest)
+        return ResponseEntity(HttpStatus.OK)
     }
 }
