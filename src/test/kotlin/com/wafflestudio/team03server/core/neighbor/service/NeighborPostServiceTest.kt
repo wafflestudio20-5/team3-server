@@ -46,7 +46,7 @@ internal class NeighborPostServiceTest @Autowired constructor(
         val neighborPosts = neighborPostService.getAllNeighborPosts(user1.id, "", pageable)
 
         // then
-        assertThat(neighborPosts.size).isEqualTo(10)
+        assertThat(neighborPosts.posts.size).isEqualTo(10)
     }
 
     @Test
@@ -62,7 +62,7 @@ internal class NeighborPostServiceTest @Autowired constructor(
         val neighborPosts = neighborPostService.getAllNeighborPosts(user1.id, "맛있다", pageable)
 
         // then
-        assertThat(neighborPosts.size).isEqualTo(1)
+        assertThat(neighborPosts.posts.size).isEqualTo(1)
     }
 
     @Test
@@ -136,8 +136,8 @@ internal class NeighborPostServiceTest @Autowired constructor(
 
         // then
         val pageable = PageRequest.of(0, 50)
-        val posts = neighborPostService.getAllNeighborPosts(user1.id, "", pageable)
-        assertThat(posts.size).isEqualTo(10)
+        val neighborPosts = neighborPostService.getAllNeighborPosts(user1.id, "", pageable)
+        assertThat(neighborPosts.posts.size).isEqualTo(10)
     }
 
     @Test

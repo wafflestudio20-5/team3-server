@@ -3,6 +3,7 @@ package com.wafflestudio.team03server.core.neighbor.api
 import com.wafflestudio.team03server.common.Authenticated
 import com.wafflestudio.team03server.common.UserContext
 import com.wafflestudio.team03server.core.neighbor.api.request.*
+import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostPageResponse
 import com.wafflestudio.team03server.core.neighbor.api.response.NeighborPostResponse
 import com.wafflestudio.team03server.core.neighbor.service.NeighborCommentService
 import com.wafflestudio.team03server.core.neighbor.service.NeighborPostService
@@ -24,7 +25,7 @@ class NeighborController(
         @UserContext userId: Long,
         @RequestParam("keyword", required = false, defaultValue = "") neighborPostKeyword: String?,
         @RequestParam("page", required = false, defaultValue = "1") page: Int?
-    ): List<NeighborPostResponse> {
+    ): NeighborPostPageResponse {
         val pageable = PageRequest.of(page!! - 1, 5)
         return neighborPostService.getAllNeighborPosts(userId, neighborPostKeyword!!, pageable)
     }
