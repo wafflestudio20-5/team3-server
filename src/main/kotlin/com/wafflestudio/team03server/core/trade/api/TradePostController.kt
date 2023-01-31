@@ -109,10 +109,9 @@ class TradePostController(
         return tradePostService.getTopThreePosts(userId)
     }
 
-    // 따뜻한 사람 top3
-    @Authenticated
+    // 따뜻한 사람 top
     @GetMapping("/warmest-people")
-    fun getWarmestPeople(@UserContext userId: Long): List<UserResponse> {
+    fun getWarmestPeople(): List<UserResponse> {
         return tradePostService.getTopThreeWarmestPeople()
     }
 }
