@@ -9,6 +9,7 @@ import com.wafflestudio.team03server.core.trade.api.response.PostPageResponse
 import com.wafflestudio.team03server.core.trade.api.response.PostResponse
 import com.wafflestudio.team03server.core.trade.api.response.ReservationResponse
 import com.wafflestudio.team03server.core.trade.service.TradePostService
+import com.wafflestudio.team03server.core.user.api.response.UserResponse
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -40,10 +41,11 @@ class TradePostController(
         @UserContext userId: Long,
         @RequestParam("keyword", required = false, defaultValue = "") keyword: String?,
         @RequestParam("page", required = false, defaultValue = "1") page: Int?,
-        @RequestParam("limit", required = false, defaultValue = "10") limit: Int?
+        @RequestParam("limit", required = false, defaultValue = "10") limit: Int?,
+        @RequestParam("isTrading", required = false, defaultValue = "false") isTrading: Boolean?
     ): PostPageResponse {
         val pageable = PageRequest.of(page!! - 1, limit!!)
-        return tradePostService.getAllPosts(userId, keyword!!, pageable)
+        return tradePostService.getAllPosts(userId, keyword!!, pageable, isTrading!!)
     }
 
     @Authenticated
@@ -106,5 +108,11 @@ class TradePostController(
     @GetMapping("/top3")
     fun getTopThreePosts(@UserContext userId: Long): PostListResponse {
         return tradePostService.getTopThreePosts(userId)
+    }
+
+    // 따뜻한 사람 top
+    @GetMapping("/warmest-people")
+    fun getWarmestPeople(): List<UserResponse> {
+        return tradePostService.getTopThreeWarmestPeople()
     }
 }

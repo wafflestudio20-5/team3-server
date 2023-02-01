@@ -3,6 +3,7 @@ package com.wafflestudio.team03server.core.user.service
 import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.common.Exception409
+import com.wafflestudio.team03server.core.user.api.request.ResetPasswordRequest
 import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
 import com.wafflestudio.team03server.core.user.entity.Coordinate
 import com.wafflestudio.team03server.core.user.entity.User
@@ -127,6 +128,20 @@ internal class AuthServiceImplTest @Autowired constructor(
         }
         //then
         assertThat(exception.message).isEqualTo("이메일 또는 비밀번호가 잘못되었습니다.")
+    }
+
+    @Test
+    fun 비밀번호_재설정_성공() {
+        // given
+        val user = createUser("user1", "b@naver.com", "1234", "송도동")
+        val savedUser = userRepository.save(user)
+        val resetPasswordRequest = ResetPasswordRequest("b@naver.com", true, "abcd1234!", "abcd1234!")
+
+        // when
+        authService.resetPassword(resetPasswordRequest)
+
+        // then
+        assertThat(passwordEncoder.matches("abcd1234!", savedUser.password))
     }
 
     private fun createSignUpRequest(
