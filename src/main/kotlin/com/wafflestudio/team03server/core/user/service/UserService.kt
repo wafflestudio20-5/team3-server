@@ -71,6 +71,7 @@ class UserServiceImpl(
     override fun editLocation(userId: Long, editLocationRequest: EditLocationRequest): UserResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw Exception404("사용자를 찾을 수 없습니다.")
         user.location = editLocationRequest.location!!
+        user.coordinate = authService.coordinateToPoint(editLocationRequest.coordinate!!)
         return UserResponse.of(user)
     }
 
