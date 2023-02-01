@@ -10,7 +10,9 @@ import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
 import com.wafflestudio.team03server.core.user.api.request.EditSearchScopeRequest
 import com.wafflestudio.team03server.core.user.api.request.EditUsernameRequest
 import com.wafflestudio.team03server.core.user.api.response.MyChatsResponse
+import com.wafflestudio.team03server.core.user.api.response.RandomNickNameResponse
 import com.wafflestudio.team03server.core.user.api.response.UserResponse
+import com.wafflestudio.team03server.core.user.service.RandomNickNameService
 import com.wafflestudio.team03server.core.user.service.UserService
 import org.apache.commons.io.FilenameUtils
 import org.springframework.data.domain.PageRequest
@@ -23,7 +25,8 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/users")
 class UserController(
-    private val userService: UserService
+    private val userService: UserService,
+    private val randomNickNameService: RandomNickNameService,
 ) {
 
     @GetMapping("/{user-id}")
@@ -131,5 +134,10 @@ class UserController(
     ): NeighborPostPageResponse {
         val pageable = PageRequest.of(page!! - 1, 5)
         return userService.getLikeNeighborhoodPosts(userId, pageable)
+    }
+
+    @GetMapping("/random-nickname")
+    fun getRandomNickName(): RandomNickNameResponse {
+        return randomNickNameService.getRandomNickname()
     }
 }

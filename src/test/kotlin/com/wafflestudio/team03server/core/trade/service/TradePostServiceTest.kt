@@ -375,6 +375,34 @@ internal class TradePostServiceTest @Autowired constructor(
         assertThat(topThreePosts.posts.map { it.postId }).containsExactly(post3.postId, post4.postId, post5.postId)
     }
 
+    @Test
+    fun 따뜻한_사람_탑3_조회_성공() {
+        // given
+        // 유저 생성 및 온도 설정
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
+        val user3 = createUser("user3", "abc3@naver.com", "1234", "관악구")
+        val user4 = createUser("user4", "abc4@naver.com", "1234", "관악구")
+        val user5 = createUser("user5", "abc5@naver.com", "1234", "관악구")
+        user1.temperature = 80.3
+        user4.temperature = 99.9
+        user2.temperature = 50.2
+        val savedUser1 = userRepository.save(user1)
+        val savedUser2 = userRepository.save(user2)
+        val savedUser3 = userRepository.save(user3)
+        val savedUser4 = userRepository.save(user4)
+        val savedUser5 = userRepository.save(user5)
+
+        // when
+        val topThreeWarmestPeople = tradePostService.getTopThreeWarmestPeople()
+
+        // then
+        assertThat(topThreeWarmestPeople.size).isEqualTo(3)
+        assertThat(topThreeWarmestPeople[0].id).isEqualTo(savedUser4.id)
+        assertThat(topThreeWarmestPeople[1].id).isEqualTo(savedUser1.id)
+        assertThat(topThreeWarmestPeople[2].id).isEqualTo(savedUser2.id)
+    }
+
     private fun createUser(username: String, email: String, password: String, location: String): User {
         return User(username, email, password, location, WKTReader().read("POINT(1.0 1.0)") as Point)
     }

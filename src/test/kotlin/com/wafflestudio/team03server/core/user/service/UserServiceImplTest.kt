@@ -11,6 +11,7 @@ import com.wafflestudio.team03server.core.trade.service.TradePostService
 import com.wafflestudio.team03server.core.user.api.request.EditLocationRequest
 import com.wafflestudio.team03server.core.user.api.request.EditPasswordRequest
 import com.wafflestudio.team03server.core.user.api.request.EditUsernameRequest
+import com.wafflestudio.team03server.core.user.entity.Coordinate
 import com.wafflestudio.team03server.core.user.entity.User
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -98,7 +99,7 @@ internal class UserServiceImplTest @Autowired constructor(
         val user = createUser("user1", "a@naver.com", "1234", "송도동")
         val savedUser = userRepository.save(user)
         //when
-        userService.editLocation(savedUser.id, EditLocationRequest("Edited"))
+        userService.editLocation(savedUser.id, EditLocationRequest("Edited", Coordinate(37.0, 127.0)))
         //then
         val findUser = userRepository.findByIdOrNull(savedUser.id) ?: throw Exception404("")
         assertThat(findUser.location).isEqualTo("Edited")

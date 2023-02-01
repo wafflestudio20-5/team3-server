@@ -15,13 +15,13 @@ class ExceptionHandler {
 
     // Request Validation
     @ExceptionHandler(value = [MethodArgumentNotValidException::class])
-    fun handle(e: MethodArgumentNotValidException): ResponseEntity<Any> {
+    fun handle(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
         val errors = mutableListOf<ErrorResponse>()
         e.bindingResult.fieldErrors.forEach { fieldError ->
             val errorMessage = fieldError.defaultMessage ?: "값이 유효하지 않습니다."
             errors.add(ErrorResponse(errorMessage))
         }
-        return ResponseEntity(errors, HttpStatus.BAD_REQUEST)
+        return ResponseEntity(errors[0], HttpStatus.BAD_REQUEST)
     }
 
     // For Social login signup flow exception
