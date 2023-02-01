@@ -6,6 +6,9 @@ import com.wafflestudio.team03server.common.Exception403
 import com.wafflestudio.team03server.common.Exception404
 import com.wafflestudio.team03server.common.Exception409
 import com.wafflestudio.team03server.core.chat.service.ChatService
+import com.wafflestudio.team03server.core.neighbor.entity.NeighborPost
+import com.wafflestudio.team03server.core.neighbor.repository.NeighborPostRepository
+import com.wafflestudio.team03server.core.neighbor.service.NeighborPostService
 import com.wafflestudio.team03server.core.trade.api.request.CreatePostRequest
 import com.wafflestudio.team03server.core.trade.service.TradePostService
 import com.wafflestudio.team03server.core.user.api.request.EditLocationRequest
@@ -20,6 +23,7 @@ import org.locationtech.jts.geom.Point
 import org.locationtech.jts.io.WKTReader
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.transaction.annotation.Transactional
@@ -30,6 +34,8 @@ import java.time.LocalDateTime
 internal class UserServiceImplTest @Autowired constructor(
     val userRepository: UserRepository,
     val userService: UserService,
+    val neighborPostRepository: NeighborPostRepository,
+    val neighborPostService: NeighborPostService,
     val tradePostService: TradePostService,
     val chatService: ChatService,
     val passwordEncoder: PasswordEncoder
@@ -274,7 +280,48 @@ internal class UserServiceImplTest @Autowired constructor(
         assertThat(myChats.chats.size).isEqualTo(3)
     }
 
+    @Test
+    fun 좋아요한_글_조회_성공() {
+        // given
+        // 유저 생성
+        val user1 = createUser("user1", "abc1@naver.com", "1234", "관악구")
+        val user2 = createUser("user2", "abc2@naver.com", "1234", "관악구")
+        val savedUser1 = userRepository.save(user1)
+        val savedUser2 = userRepository.save(user2)
+
+        // 글 생성
+        val post1 = createNeighborPost("내용", user1)
+        val post2 = createNeighborPost("내용", user1)
+        val post3 = createNeighborPost("내용", user1)
+        val post4 = createNeighborPost("내용", user1)
+        val post5 = createNeighborPost("내용", user1)
+        val savedPost1 = neighborPostRepository.save(post1)
+        val savedPost2 = neighborPostRepository.save(post2)
+        val savedPost3 = neighborPostRepository.save(post3)
+        val savedPost4 = neighborPostRepository.save(post4)
+        val savedPost5 = neighborPostRepository.save(post5)
+
+        // 좋아요 설정
+        neighborPostService.likeOrUnlikeNeighborPost(savedUser2.id, savedPost1.id)
+        neighborPostService.likeOrUnlikeNeighborPost(savedUser2.id, savedPost3.id)
+        neighborPostService.likeOrUnlikeNeighborPost(savedUser2.id, savedPost3.id)
+        neighborPostService.likeOrUnlikeNeighborPost(savedUser2.id, savedPost2.id)
+
+        // when
+        val pageable = PageRequest.of(0, 5)
+        val likedPosts = userService.getLikeNeighborhoodPosts(savedUser2.id, pageable)
+
+        // then
+        assertThat(likedPosts.posts.size).isEqualTo(2)
+        assertThat(likedPosts.posts.map { it.postId }).contains(savedPost2.id, savedPost1.id)
+        assertThat(likedPosts.posts.map { it.postId }).doesNotContain(savedPost3.id)
+    }
+
     private fun createUser(username: String, email: String, password: String, location: String): User {
         return User(username, email, password, location, WKTReader().read("POINT(1.0 1.0)") as Point)
+    }
+
+    private fun createNeighborPost(content: String, user: User): NeighborPost {
+        return NeighborPost(content, user)
     }
 }

@@ -61,7 +61,10 @@ class NeighborPostSupportImpl(
             .fetchJoin()
             .leftJoin(neighborLike)
             .on(neighborPost.id.eq(neighborLike.likedPost.id))
-            .where(neighborLike.liker.id.eq(likerId))
+            .where(
+                neighborLike.liker.id.eq(likerId),
+                neighborLike.deleteStatus.eq(false)
+            )
             .orderBy(neighborPost.createdAt.desc())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
