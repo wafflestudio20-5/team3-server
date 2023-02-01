@@ -5,9 +5,12 @@ import com.wafflestudio.team03server.core.user.api.request.ResetPasswordRequest
 import com.wafflestudio.team03server.core.user.api.request.SignUpRequest
 import com.wafflestudio.team03server.core.user.api.response.LoginResponse
 import com.wafflestudio.team03server.core.user.api.response.SimpleUserResponse
+import com.wafflestudio.team03server.core.user.entity.Coordinate
 import com.wafflestudio.team03server.core.user.repository.UserRepository
 import com.wafflestudio.team03server.utils.EmailService
 import com.wafflestudio.team03server.utils.RedisUtil
+import org.locationtech.jts.geom.Point
+import org.locationtech.jts.io.WKTReader
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,6 +25,7 @@ interface AuthService {
     fun login(email: String, password: String): LoginResponse
     fun refresh(refreshToken: String): AuthToken
     fun resetPassword(resetPasswordRequest: ResetPasswordRequest)
+    fun coordinateToPoint(coordinate: Coordinate): Point
 }
 
 @Service
@@ -44,7 +48,8 @@ class AuthServiceImpl(
         if (signUpRequest.isEmailAuthed == false) {
             throw Exception401("이메일 인증이 되지 않은 사용자 입니다.")
         }
-        val user = signUpRequest.toUser()
+        val point = coordinateToPoint(signUpRequest.coordinate!!)
+        val user = signUpRequest.toUser(point)
         user.password = passwordEncoder.encode(user.password)
         val (accessToken, refreshToken) = authTokenService.generateAccessTokenAndRefreshToken(signUpRequest.email, user)
         userRepository.save(user)
@@ -99,5 +104,10 @@ class AuthServiceImpl(
             throw Exception400("비밀번호가 일치하지 않습니다.")
         }
         user.password = passwordEncoder.encode(resetPasswordRequest.newPassword)
+    }
+
+    override fun coordinateToPoint(coordinate: Coordinate): Point {
+        val pointWKT = "POINT(${coordinate.lng} ${coordinate.lat})"
+        return WKTReader().read(pointWKT) as Point
     }
 }

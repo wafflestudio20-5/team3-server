@@ -15,15 +15,17 @@ interface TradePostRepository : JpaRepository<TradePost, Long>, TradePostCustomR
     @Query(
         value = "SELECT SQL_CALC_FOUND_ROWS p.*, ST_Distance_Sphere(u.coordinate, :point) as distance " +
             "FROM trade_post p JOIN users u ON p.seller_id = u.id WHERE p.title LIKE :keyword " +
+            "AND IF(:isTrading, p.trade_status = 'TRADING', 1 = 1) " +
             "HAVING distance <= :distance ORDER BY p.created_at DESC LIMIT :limit OFFSET :offset",
         nativeQuery = true
     )
-    fun findByKeywordAndDistance(
+    fun findAllByKeywordAndDistance(
         @Param("point") point: Point,
         @Param("keyword") keyword: String,
         @Param("distance") distance: Double,
         @Param("limit") limit: Int,
         @Param("offset") offset: Long,
+        @Param("isTrading") isTrading: Boolean
     ): List<TradePost>
 
     @Query(value = "SELECT FOUND_ROWS()", nativeQuery = true)
