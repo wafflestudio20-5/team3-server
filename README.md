@@ -38,7 +38,9 @@
 
 ### 👔 Code Convention
 
-- ktlint 썼던거 관련 내용 적기
+- 팀원 간 코드 스타일을 맞추고 가독성을 높여 코드 리뷰를 원할하게 하기 위해 ktlint를 사용하였습니다.
+- 제일 많이 쓰이는 [jlleitschuh/ktlint-gradle](https://github.com/jlleitschuh/ktlint-gradle)을 사용하였습니다.
+- Github Action 을 이용하여 main 브랜치에 PR 올릴때마다 자동으로 스타일 검사를 하도록 설정하였습니다.
 
 ### 😎 Commit Convention
 - 아래와 같은 커밋 컨벤션을 통해 서로의 작업물이 어떤 유형의 것인지 파악하기 쉽도록 하였습니다.
