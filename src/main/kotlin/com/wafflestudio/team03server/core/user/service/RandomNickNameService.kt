@@ -17,10 +17,15 @@ class RandomNickNameService(
 
     private fun findRandomNickNameWhileNotDuplicated(): String {
         var randomNickName = requestRandomNickname()
-        while (userRepository.findByUsername(randomNickName) != null) {
+        while (userRepository.findByUsername(randomNickName) != null && isValid(randomNickName)) {
             randomNickName = requestRandomNickname()
         }
         return randomNickName
+    }
+
+    private fun isValid(randomNickName: String): Boolean {
+        val regex = "^([a-zA-Z0-9가-힣]){2,10}\$".toRegex()
+        return regex matches randomNickName
     }
 
     private fun requestRandomNickname(): String {
