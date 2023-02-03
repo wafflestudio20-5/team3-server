@@ -4,9 +4,8 @@
 - 단순 게시판 기능 외에 예약, 거래, 채팅 등의 부가 기능이 더해진 서비스를 구현해보면서 구성원들의 개발 실력 성장을 이루고자 했고,
 서비스 기획에 인풋을 줄이기 위해 기존에 있는 서비스를 기반으로 클론 코딩을 하였습니다.
 
-## 😀 유저 플로우 및 소개 영상
-
-
+## 😎 서비스 소개 영상 및 사진
+![A1 (300 DPI)](https://user-images.githubusercontent.com/72662822/216527033-e0d0cad2-e19a-4502-97e4-d2f56d9a1938.png)
 
 
 ## 👨‍👩‍👧‍👦 누가 만들었나요?
@@ -14,8 +13,6 @@
 |                           [김좌훈(JwahoonKim)](https://github.com/JwahoonKim)                                                                           |                                                    [김준형(leeeryboy)](https://github.com/leeeryboy)                                                    |                                    [곽민지(Joanne19-drive)](https://github.com/Joanne19-drive)                                  |
 |:-----------------------------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------:|
 | <a href="https://github.com/JwahoonKim"><img src="https://avatars.githubusercontent.com/u/72662822?v=4" width="160px" style='border-radius: 50%'></a> | <a href="https://github.com/leeeryboy"><img src="https://avatars.githubusercontent.com/u/62370411?v=4" width="160px" style='border-radius: 50%'></a> | <a href="https://github.com/Joanne19-drive"><img src="https://avatars.githubusercontent.com/u/84649662?v=4" width="160px" style='border-radius: 50%'></a> |
-
-
 
 ## 📚 기술 스택
 <div align=center> 
