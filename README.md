@@ -14,6 +14,10 @@
 |:-----------------------------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------:|
 | <a href="https://github.com/JwahoonKim"><img src="https://avatars.githubusercontent.com/u/72662822?v=4" width="160px" style='border-radius: 50%'></a> | <a href="https://github.com/leeeryboy"><img src="https://avatars.githubusercontent.com/u/62370411?v=4" width="160px" style='border-radius: 50%'></a> | <a href="https://github.com/Joanne19-drive"><img src="https://avatars.githubusercontent.com/u/84649662?v=4" width="160px" style='border-radius: 50%'></a> |
 
+## 🏛️ 서버 구조
+![image](https://user-images.githubusercontent.com/72662822/216547325-5e281374-e3f4-405d-aa8c-4ac6b1c018c4.png)
+
+
 ## 📚 기술 스택
 <div align=center> 
     <img src="https://img.shields.io/badge/kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white">
