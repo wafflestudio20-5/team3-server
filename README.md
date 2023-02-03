@@ -57,14 +57,15 @@
 
 
 ## 📖 기술적인 이슈 및 개발 과정을 겪으며 정리한 글
-1. [채팅을 웹소켓으로 구현하며..](https://kjhoon0330.tistory.com/entry/Spring-Dev-%EC%9B%B9%EC%86%8C%EC%BC%93%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
-2. [채팅 읽은 사람 표시 기능 구현 및 어려웠던 점, 추후 개선해야할 사항](https://kjhoon0330.tistory.com/entry/Spring-%EC%B1%84%ED%8C%85-%EC%9D%BD%EC%9D%8C-%ED%99%95%EC%9D%B8-%EA%B8%B0%EB%8A%A5-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0)
-3. [깃 머지 전략](https://kjhoon0330.tistory.com/entry/Git-Merge-%EC%A0%84%EB%9E%B5%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
-4. [회원 가입에 Redis를 쓰게된 계기](https://leeeryboy.tistory.com/2)
-5. [N + 1 문제 해결](https://kjhoon0330.tistory.com/entry/Spring-JPA-N-1-%EB%AC%B8%EC%A0%9C%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
-6. [동네 주변 글은 어떻게 찾을 수 있었는가](https://leeeryboy.tistory.com/3)
-7. [Docker를 활용한 배포 과정](https://kjhoon0330.tistory.com/entry/Spring-Dev-%EC%9B%B9%EC%86%8C%EC%BC%93%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
-8. [JWT Token 관련 issue](https://kjhoon0330.tistory.com/entry/Spring-Dev-%EC%9B%B9%EC%86%8C%EC%BC%93%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
+1. [채팅 읽은 사람 표시 기능 구현 및 어려웠던 점, 추후 개선해야할 사항](https://kjhoon0330.tistory.com/entry/Spring-%EC%B1%84%ED%8C%85-%EC%9D%BD%EC%9D%8C-%ED%99%95%EC%9D%B8-%EA%B8%B0%EB%8A%A5-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0)
+2. [회원 가입에 Redis를 쓰게된 계기](https://leeeryboy.tistory.com/2)
+3. [동네 주변 글은 어떻게 찾을 수 있었는가](https://leeeryboy.tistory.com/3)
+4. [채팅을 웹소켓으로 구현하며..](https://kjhoon0330.tistory.com/entry/Spring-Dev-%EC%9B%B9%EC%86%8C%EC%BC%93%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
+5. [JWT Token 관련 issue](https://kjhoon0330.tistory.com/entry/Spring-Dev-%EC%9B%B9%EC%86%8C%EC%BC%93%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
+6. [Docker를 활용한 배포 과정](https://kjhoon0330.tistory.com/entry/Spring-Dev-%EC%9B%B9%EC%86%8C%EC%BC%93%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
+7. [깃 머지 전략](https://kjhoon0330.tistory.com/entry/Git-Merge-%EC%A0%84%EB%9E%B5%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
+8. [N + 1 문제 해결](https://kjhoon0330.tistory.com/entry/Spring-JPA-N-1-%EB%AC%B8%EC%A0%9C%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
+
 
 
 ## DB Diagram
