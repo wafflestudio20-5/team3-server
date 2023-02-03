@@ -62,7 +62,7 @@
 3. [깃 머지 전략](https://kjhoon0330.tistory.com/entry/Git-Merge-%EC%A0%84%EB%9E%B5%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
 4. [회원 가입에 Redis를 쓰게된 계기](https://leeeryboy.tistory.com/2)
 5. [N + 1 문제 해결](https://kjhoon0330.tistory.com/entry/Spring-JPA-N-1-%EB%AC%B8%EC%A0%9C%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
-6. [동네 주변 글은 어떻게 찾을 수 있었는가](https://kjhoon0330.tistory.com/entry/Spring-Dev-%EC%9B%B9%EC%86%8C%EC%BC%93%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
+6. [동네 주변 글은 어떻게 찾을 수 있었는가](https://leeeryboy.tistory.com/3)
 7. [Docker를 활용한 배포 과정](https://kjhoon0330.tistory.com/entry/Spring-Dev-%EC%9B%B9%EC%86%8C%EC%BC%93%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
 8. [JWT Token 관련 issue](https://kjhoon0330.tistory.com/entry/Spring-Dev-%EC%9B%B9%EC%86%8C%EC%BC%93%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
 
