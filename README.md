@@ -66,7 +66,7 @@
 3. [동네 주변 글은 어떻게 찾을 수 있었는가](https://leeeryboy.tistory.com/3)
 4. [채팅을 웹소켓으로 구현하며..](https://kjhoon0330.tistory.com/entry/Spring-Dev-%EC%9B%B9%EC%86%8C%EC%BC%93%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
 5. [JWT Token은 어디에 저장해야할까?](https://leeeryboy.tistory.com/4)
-6. [Docker를 활용한 배포 과정](https://kjhoon0330.tistory.com/entry/Spring-Dev-%EC%9B%B9%EC%86%8C%EC%BC%93%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
+6. [Docker와 Github Actions를 활용한 배포 과정](https://velog.io/@beinte0419/Spring-Boot-Docker-Github-Actions를-활용한-자동-배포)
 7. [깃 머지 전략](https://kjhoon0330.tistory.com/entry/Git-Merge-%EC%A0%84%EB%9E%B5%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
 8. [N + 1 문제 해결](https://kjhoon0330.tistory.com/entry/Spring-JPA-N-1-%EB%AC%B8%EC%A0%9C%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
 
