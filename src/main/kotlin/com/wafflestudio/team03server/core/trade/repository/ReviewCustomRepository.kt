@@ -15,7 +15,7 @@ class ReviewCustomRepository(
             .selectFrom(review).distinct()
             .innerJoin(review.reviewer).fetchJoin()
             .where(review.reviewee.id.eq(revieweeId))
-            .where(review.content.isNotNull)
+            .where(review.content.isNotEmpty)
             .orderBy(review.createdAt.desc())
             .fetch()
     }
