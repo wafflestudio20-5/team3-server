@@ -30,6 +30,7 @@ class ReviewService(
         val reviewer = getUserById(reviewerId)
         checkTradeFinished(post)
         checkReviewerBuyerOrSeller(reviewer, post)
+        checkDuplicateReview(postId, reviewerId)
         val reviewee = if (reviewer == post.seller) post.buyer else post.seller
         val (score, content) = createReviewRequest
         val review = Review.create(post, reviewer, reviewee!!, score!!, content)
@@ -81,6 +82,12 @@ class ReviewService(
     private fun checkReviewerBuyerOrSeller(reviewer: User, post: TradePost) {
         if (reviewer != post.buyer && reviewer != post.seller) {
             throw Exception403("거래 당사자만 후기를 작성할 수 있습니다.")
+        }
+    }
+
+    private fun checkDuplicateReview(tradePostId: Long, reviewerId: Long) {
+        if (reviewRepository.findByTradePostIdAndReviewerId(tradePostId, reviewerId) != null) {
+            throw Exception403("이미 작성한 후기가 있습니다.")
         }
     }
 
