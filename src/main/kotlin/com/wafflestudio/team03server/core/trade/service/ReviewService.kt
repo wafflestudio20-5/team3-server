@@ -51,6 +51,7 @@ class ReviewService(
         val review = getReviewById(reviewId)
         val reviewer = getUserById(userId)
         checkReviewer(reviewer, review)
+        review.reviewee.temperature -= review.score
         reviewRepository.delete(review)
     }
 
