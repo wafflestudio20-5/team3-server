@@ -34,6 +34,11 @@ class ReviewService(
         val (score, content) = createReviewRequest
         val review = Review.create(post, reviewer, reviewee!!, score!!, content)
         reviewee.temperature = round((reviewee.temperature + score) * 10) / 10
+        if (reviewee.temperature < 0) {
+            reviewee.temperature = 0.0
+        } else if (reviewee.temperature > 100) {
+            reviewee.temperature = 100.0
+        }
         reviewRepository.save(review)
     }
 
@@ -51,7 +56,7 @@ class ReviewService(
         val review = getReviewById(reviewId)
         val reviewer = getUserById(userId)
         checkReviewer(reviewer, review)
-        review.reviewee.temperature -= review.score
+        review.reviewee.temperature = round((review.reviewee.temperature - review.score) * 10) / 10
         reviewRepository.delete(review)
     }
 
